@@ -19,6 +19,7 @@ import { loadModels, demoModels, ensembleFor } from "../js/modelli.js";
 import { loadAvalanche, avForSpot } from "../js/valanghe.js";
 import { loadStations, stationsFor } from "../js/stazioni.js";
 import { METODO } from "../js/calibrazione.js";
+import { loadQuote, demoQuote } from "../js/quote.js";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const DEMO = process.argv.includes("--demo");
@@ -88,10 +89,18 @@ async function main(){
   await caricaCalibrazione();
   if(DEMO){
     log("modalità dimostrativa");
-    demoWeather(); demoModels(); state.stations = []; state.av = {};
+    demoWeather(); demoModels(); demoQuote(); state.stations = []; state.av = {};
   }else{
-    const res = await Promise.allSettled([loadWeather(), loadModels(), loadAvalanche(), loadStations()]);
-    const names = ["meteo", "modelli", "valanghe", "stazioni"];
+    // i 5 modelli si aggiornano solo poche volte al giorno: li scarichiamo ogni 3 ore (00, 03, 06… UTC)
+    // e negli altri giri riusiamo quelli dell'ultimo file pubblicato, per restare ben sotto i limiti di Open-Meteo
+    let modelliRiusati = false;
+    if(new Date().getUTCHours() % 3 !== 0 && !process.argv.includes("--modelli")){
+      const prev = await ultimoPubblicato();
+      const eta = prev ? (Date.now() - new Date(prev.aggiornato || prev.generated).getTime()) / 3600e3 : null;
+      if(prev && prev.ens && Object.keys(prev.ens).length && eta < 4){ state.ens = prev.ens; state.ensMemo = {}; modelliRiusati = true; }
+    }
+    const res = await Promise.allSettled([loadWeather(), modelliRiusati ? Promise.resolve() : loadModels(), loadAvalanche(), loadStations(), loadQuote()]);
+    const names = ["meteo", modelliRiusati ? "modelli (riusati, si aggiornano ogni 3 ore)" : "modelli", "valanghe", "stazioni", "quote"];
     res.forEach((r, i) => log(names[i].padEnd(9), r.status === "fulfilled" ? "ok" : "ERRORE " + (r.reason && r.reason.message)));
     const meteoOk = !!state.wx[SPOTS[0].id], modelliOk = Object.keys(state.ens || {}).length > 0;
     if(!meteoOk || !modelliOk){
@@ -115,7 +124,7 @@ async function main(){
   const wx = {}; for(const s of SPOTS) wx[s.id] = slimWx(state.wx[s.id]);
   const snapshot = round({
     generated: riuso || new Date().toISOString(), demo: DEMO, aggiornato: new Date().toISOString(),
-    wx, ens: state.ens, av: state.av, avDate: state.avDate, avErr: state.avErr, stations: state.stations,
+    wx, ens: state.ens, quote: state.quote, av: state.av, avDate: state.avDate, avErr: state.avErr, stations: state.stations,
     sources: {meteo: "Open-Meteo.com (CC BY 4.0)", stazioni: "Meteo Alto Adige, Meteotrentino via avalanche.report (CC BY 4.0); ARPAV Veneto (CC BY 4.0)", valanghe: "Bollettini EAWS/AINEVA"}
   });
   snapshot.cal = state.cal;   // fuori dall'arrotondamento: i fattori servono con due decimali
@@ -149,7 +158,9 @@ async function main(){
         })),
         // neve misurata dalle stazioni vicine (Δ 24h = neve nuova delle ultime 24 ore)
         stations: stationsFor(s).map(st => ({id: st.id, name: st.name, elev: st.elev, km: st.km, hs: st.hs, d24: st.d24, d48: st.d48, d72: st.d72, date: st.date})),
-        avalanche: av ? {level: av.level, exact: av.exact} : null
+        avalanche: av ? {level: av.level, exact: av.exact} : null,
+        // neve prevista alle tre quote (per calibrare in futuro anche per quota)
+        quote: state.quote && state.quote[s.id] ? Object.fromEntries(Object.entries(state.quote[s.id].lv).map(([k, L]) => [k, {elev: L.elev, d: L.d}])) : null
       };
     }
     await mkdir(ARCH_DIR, {recursive: true});

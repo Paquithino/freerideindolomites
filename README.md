@@ -90,6 +90,10 @@ npm run dati:demo   # stessa cosa con dati dimostrativi, senza internet
 ```
 Se `public/dati/ultimo.json` manca o ha più di 3 ore, il sito scarica i dati direttamente (comodo in sviluppo).
 
+## Neve per quota
+
+`js/quote.js`: per ogni spot la previsione alle tre quote di `spot.q` (Vetta / Metà / Base, da snow-forecast), con neve, pioggia o mista decise ora per ora dalla temperatura alla quota e quota neve stimata dallo zero termico. I 5 modelli del confronto si scaricano ogni 3 ore (negli altri giri si riusano), così le richieste a Open-Meteo restano sotto i limiti anche con le tre quote.
+
 ## Calibrazione dei modelli
 
 `npm run calibra` (o il workflow **Calibra i modelli** nella scheda Actions, che parte anche il 1° di ogni mese) confronta ciò che ogni modello prevedeva 1, 2 e 3 giorni prima (Open-Meteo Previous Runs API, archivio da gennaio 2024) con la neve misurata dalle stazioni nivometriche dell'Alto Adige (open data Provincia di Bolzano, CC0). Scrive nel ramo `dati`:

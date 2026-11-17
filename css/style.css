@@ -17,8 +17,10 @@ button{font:inherit;color:inherit}
 header.top{position:sticky;top:0;z-index:20;background:linear-gradient(180deg,rgba(11,18,32,.97),rgba(11,18,32,.88));backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding-top:var(--safe-t)}
 .hbar{display:flex;align-items:center;gap:10px;height:56px}
 .logo{width:34px;height:34px;flex:none}
-.brand{font-weight:800;letter-spacing:.2px;font-size:17px;line-height:1.1}
+.brand{font-weight:800;letter-spacing:.2px;font-size:17px;line-height:1.1;color:var(--tx);text-decoration:none;min-width:0}
 .brand small{display:block;font-weight:500;color:var(--tx2);font-size:11.5px;letter-spacing:.3px}
+.brand .wordmark{display:block;height:19px;width:auto;max-width:100%;color:#e8eef9}
+a.brand small{margin-top:5px;font-size:10.5px;letter-spacing:1.6px;text-transform:uppercase;color:#7f93b8;white-space:nowrap}
 .hbar .sp{flex:1}
 .iconbtn{background:var(--card);border:1px solid var(--line);border-radius:12px;width:40px;height:40px;display:grid;place-items:center;cursor:pointer}
 .iconbtn svg{width:20px;height:20px}
@@ -126,15 +128,50 @@ nav.tabs a.on{color:var(--ice)}
 footer{color:var(--tx3);font-size:11.5px;padding:10px 0 24px;text-align:center}
 @media (min-width:600px){.metrics{grid-template-columns:repeat(4,1fr)}.hero .k b{font-size:24px}}
 
-/* ---- pianifica (heatmap 10 giorni) ---- */
-.plan-wrap{overflow-x:auto;margin:12px -14px 0;padding:0 14px 6px;-webkit-overflow-scrolling:touch}
-table.plan{border-collapse:separate;border-spacing:3px;font-size:12px;min-width:100%}
-table.plan th{color:var(--tx2);font-weight:600;padding:4px 2px;white-space:nowrap;text-align:center}
-table.plan th.sp,table.plan td.sp{position:sticky;left:0;z-index:2;background:var(--bg);text-align:left;padding:6px 8px 6px 0;max-width:118px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
-table.plan td.c{width:38px;min-width:38px;height:34px;text-align:center;border-radius:7px;font-weight:700;color:#06223a;background:var(--card)}
-table.plan td.c.z{color:var(--tx3);font-weight:400}
-table.plan td.c.low{opacity:.55}
-table.plan th.we{color:var(--ice)}
+/* ---- previsione (per giorno / per spot) ---- */
+.pv-mode{display:flex;gap:0;margin:12px 0 4px;border:1px solid var(--line);border-radius:10px;overflow:hidden;width:max-content}
+.pv-mode button{background:var(--card);border:0;padding:8px 14px;font-size:13.5px;color:var(--tx2);cursor:pointer}
+.pv-mode button + button{border-left:1px solid var(--line)}
+.pv-mode button.on{background:#0e2a3d;color:var(--ice);font-weight:600}
+.pv-days{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px;align-items:start}
+.pv-day{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.pv-day.nada{padding:10px 14px;opacity:.85}
+.pv-h{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.pv-day.nada .pv-h{margin-bottom:2px}
+.pv-h b{font-size:15.5px;text-transform:capitalize}
+.pv-dt{color:var(--tx3);font-size:12px}
+.pv-we{font-size:10.5px;color:var(--ice);border:1px solid #155e75;border-radius:99px;padding:1px 7px}
+.pv-rg{margin-left:auto;font-size:12px;color:var(--tx2);white-space:nowrap}
+.pv-none{margin:0;color:var(--tx3);font-size:13px}
+.pv-bar{display:grid;grid-template-columns:minmax(0,38%) 1fr auto;align-items:center;gap:10px;padding:5px 0;cursor:pointer}
+.pv-bar + .pv-bar{border-top:1px solid #1b2740}
+.pv-bar .n{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pv-bar .b{height:12px;background:var(--bg2);border-radius:99px;overflow:hidden}
+.pv-bar .b i{display:block;height:100%;border-radius:99px}
+.pv-bar em{font-style:normal;font-weight:700;font-size:14px;color:var(--powder);text-align:right;min-width:50px;font-variant-numeric:tabular-nums}
+.pv-bar em small{display:block;font-weight:400;font-size:10.5px;color:var(--tx3)}
+.pv-bar.low{opacity:.6}
+.pv-bar:hover .n{color:var(--ice)}
+.pv-more{margin:6px 0 0;font-size:12px;color:var(--tx3)}
+.pv-grid{margin-top:10px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:8px 10px}
+.pv-row{display:grid;grid-template-columns:minmax(0,34%) 1fr 30px;align-items:center;gap:8px;padding:3px 0;cursor:pointer}
+.pv-row .n{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pv-row:hover .n{color:var(--ice)}
+.pv-row em{font-style:normal;font-weight:700;font-size:13px;color:var(--powder);text-align:right;font-variant-numeric:tabular-nums}
+.pv-row .cells{display:grid;grid-template-columns:repeat(10,1fr);gap:2px}
+.pv-row .cells span{height:26px;border-radius:5px;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#06223a}
+.pv-row .cells span.low{opacity:.55}
+.pv-hd{cursor:default;position:sticky;top:0;background:var(--card);z-index:1}
+.pv-hd .cells span{background:none;height:auto;flex-direction:column;font-weight:600;font-size:10.5px;color:var(--tx3);line-height:1.15;text-transform:capitalize}
+.pv-hd .cells span.we{color:var(--ice)}
+.pv-hd em{color:var(--tx3);font-weight:600;font-size:10.5px}
+@media (min-width:960px){
+  .pv-days{grid-template-columns:repeat(auto-fill,minmax(380px,1fr))}
+  .pv-row{grid-template-columns:240px 1fr 46px}
+  .pv-row .cells{gap:4px}
+  .pv-row .cells span{height:34px;font-size:13px}
+  .pv-hd .cells span{font-size:12px;height:auto}
+}
 .plan-legend{display:flex;align-items:center;gap:6px;color:var(--tx2);font-size:11.5px;margin-top:8px;flex-wrap:wrap}
 .plan-legend i{width:22px;height:12px;border-radius:3px;display:inline-block}
 .best{margin-top:12px}
@@ -165,7 +202,7 @@ table.plan th.we{color:var(--ice)}
    ========================================================= */
 .dgrid{display:flex;flex-direction:column}
 .dcol{display:contents}
-.o-now{order:1}.o-cam{order:2}.o-snow{order:3}.o-meas{order:4}.o-plan{order:5}.o-models{order:6}.o-hour{order:7}.o-av{order:8}.o-sf{order:9}
+.o-now{order:1}.o-cam{order:2}.o-snow{order:3}.o-quote{order:3}.o-meas{order:4}.o-plan{order:5}.o-models{order:6}.o-hour{order:7}.o-av{order:8}.o-sf{order:9}
 .desk-only{display:none !important}
 .card,.chip,.lnk,nav.tabs a{transition:background .15s,border-color .15s,color .15s,transform .08s}
 
@@ -202,8 +239,8 @@ table.plan th.we{color:var(--ice)}
   /* header: il logo sta sopra la barra laterale */
   header.top{margin-left:calc(-1 * var(--side));background:rgba(11,18,32,.92)}
   header.top .hbar{height:64px;padding:0 32px 0 22px;max-width:none}
-  header.top .logo{width:38px;height:38px}
   .brand{font-size:19px}
+  .brand .wordmark{height:24px}
   header.top .iconbtn[href*="info"]{display:none}
 
   /* barra laterale */
@@ -271,12 +308,7 @@ table.plan th.we{color:var(--ice)}
   .o-plan .days{min-width:0 !important}
   .sec{padding:18px}
 
-  /* ---- pianifica ---- */
-  table.plan{font-size:13.5px;border-spacing:4px;table-layout:fixed;width:100%}
-  table.plan th.sp{width:260px}
-  table.plan th.sp,table.plan td.sp{max-width:none}
-  table.plan td.c{height:42px;font-size:14px}
-  table.plan td.sp:hover{color:var(--ice)}
+  /* ---- previsione ---- */
   #bestDays{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr))}
 
   /* ---- valanghe e webcam ---- */
@@ -366,3 +398,18 @@ table.mdl.wind td span{display:block;font-size:11px;line-height:1.1;margin-top:1
 table.mdl.wind td.ww{background:#3b2f0b;color:#fde68a}
 table.mdl.wind td.wb{background:#3f1515;color:#fecaca}
 .banner.wip{background:#10243f;border-color:#1e40af;color:#bfdbfe}
+
+/* neve per quota (Vetta / Metà / Base) */
+table.mdl.qt td span{display:block;font-size:10.5px;font-weight:500;color:var(--tx2);margin-top:1px}
+table.mdl.qt td.s span{color:#0b3550}
+table.mdl.qt td.l b{display:block;color:var(--tx);font-size:13px}
+table.mdl.qt td.l span{display:block;font-size:11px;color:var(--tx3)}
+table.mdl.qt td.qr{background:#1e293b;color:#93c5fd}
+table.mdl.qt tr.zt td{background:none;border-top:1px dashed var(--line,#1f2a37);color:var(--tx2);font-size:12px}
+table.mdl.qt tr.zt td b{color:var(--tx);font-size:13px}
+/* telefoni stretti: logo e sottotitolo un po' più piccoli */
+@media (max-width:380px){
+  .brand .wordmark{height:16px}
+  a.brand small{font-size:9px;letter-spacing:.5px}
+}
+a.brand{overflow:hidden}

@@ -6,6 +6,7 @@ import { camsHTML } from "./webcam.js";
 import { loadStations, stationsHTML, bestStation } from "./stazioni.js";
 import { loadModels, demoModels, ensembleFor, agreement, regionRegime, regimeLabel, flowEffect, correctHourly } from "./modelli.js";
 import { MODELS, LAVORI_IN_CORSO } from "./config.js";
+import { loadQuote, quoteHTML, demoQuote } from "./quote.js";
 
 /* =========================================================
    APP — rendering delle viste e navigazione
@@ -129,7 +130,7 @@ function renderAside(){
     ${(() => { const meas = SPOTS.map(s => [s, bestStation(s)]).filter(x => x[1] && (x[1].d24 || 0) >= 1).sort((a, b) => b[1].d24 - a[1].d24).slice(0, 4);
       return meas.length ? `<div class="sec"><h4>📏 Neve nuova misurata · 24h</h4>${meas.map(([s, b]) => row(s, `+${r0(b.d24)} cm`, `${esc(b.name)} · ${r0(b.hs)} cm al suolo`)).join("")}</div>` : ""; })()}
     <div class="sec"><h4>🎯 Giornate migliori</h4>${best.length ? best.map(([s, b]) => row(s, `${dayName(b.date)} ${dayNum(b.date)}`, `~${r0(b.fresh)} cm freschi · affidabilità ${b.conf}`)).join("") : `<p class="note" style="margin:0">Nessuna nevicata ≥ 10 cm prevista nei prossimi ${FORECAST_DAYS} giorni.</p>`}
-      <a class="more" href="#pianifica">Apri la pianificazione →</a></div>
+      <a class="more" href="#previsione">Apri la previsione →</a></div>
     <div class="sec"><h4>⚠️ Pericolo valanghe</h4>${avs.length ? avs.map(([s, a]) => `<div class="arow" data-spot="${s.id}"><div><b>${esc(s.name)}</b><span>${DNAME[a.level] || "n.d."}</span></div>${dsq(a.level)}</div>`).join("") : `<p class="note" style="margin:0">${state.avErr ? "Bollettini non raggiungibili." : "Bollettini non ancora emessi: la stagione dei bollettini parte di solito a dicembre."}</p>`}
       <a class="more" href="#valanghe">Tutti i bollettini →</a></div>
     <div class="sec"><h4>💨 Vento in quota più forte</h4>${top(m => m.w7 || 0, 3).map(([s, m]) => row(s, `${r0(m.w7)} km/h`, `da ${dirName(m.w7dir)} · ~3.000 m`)).join("")}</div>`;
@@ -151,27 +152,61 @@ function renderList(){
   $("#updated").textContent = state.updated ? `Aggiornato alle ${state.updated.toLocaleTimeString("it-IT", {hour:"2-digit", minute:"2-digit"})} · meteo alla quota di riferimento di ogni spot` : "";
 }
 
-/* ---------- pianifica ---------- */
+/* ---------- previsione (ex pianifica) ----------
+   Due viste senza scorrimento laterale:
+   - "Per giorno": una scheda per giorno con gli spot dove nevica, ordinati, con barra proporzionale
+   - "Per spot": una riga per spot con i giorni a quadretti che si adattano alla larghezza */
+const giornoLungo = iso => new Date(iso + "T12:00:00Z").toLocaleDateString("it-IT", {weekday: "long", day: "numeric", month: "short", timeZone: "UTC"});
+const nomeCorto = s => s.name.split(" · ")[0];
+function cielo(codes){
+  // icona del tempo più frequente tra gli spot
+  const c = {}; codes.forEach(k => { if(k != null){ const i = wmo(k)[0]; c[i] = (c[i] || 0) + 1; } });
+  return Object.keys(c).sort((a, b) => c[b] - c[a])[0] || "";
+}
+function planGiorni(arr, days){
+  const piani = new Map(arr.map(s => [s, dailyPlan(s)]));
+  const scala = Math.max(20, ...arr.flatMap(s => piani.get(s).map(d => d.snow || 0)));
+  return `<div class="pv-days">${days.map((g, i) => {
+    const R = regimeLabel(regionRegime(g.date));
+    const conNeve = arr.map(s => [s, piani.get(s)[i]]).filter(([, d]) => d && d.snow >= 1).sort((a, b) => b[1].snow - a[1].snow);
+    const max = conNeve.length ? conNeve[0][1].snow : 0;
+    const cod = arr.map(s => piani.get(s)[i] && piani.get(s)[i].code);
+    const testa = `<div class="pv-h"><b>${i === 0 ? "Oggi" : i === 1 ? "Domani" : giornoLungo(g.date)}</b>${i <= 1 ? `<span class="pv-dt">${giornoLungo(g.date)}</span>` : ""}
+      ${isWeekend(g.date) ? `<span class="pv-we">weekend</span>` : ""}<span class="pv-rg" title="${esc(R.name)}: ${esc(R.desc)}">${R.icon} ${esc(R.name.split(" ")[0])}</span></div>`;
+    if(!conNeve.length) return `<div class="pv-day nada">${testa}<p class="pv-none">${cielo(cod)} Nessuna nevicata prevista</p></div>`;
+    const righe = conNeve.slice(0, 6).map(([s, d]) => {
+      const c = snowColor(d.snow) || "#bae6fd", w = Math.max(6, Math.round(100 * d.snow / scala));
+      const forb = d.ens && d.ens.n >= 2 && d.ens.max - d.ens.min >= 3 ? `<small>${r0(d.ens.min)}–${r0(d.ens.max)}</small>` : "";
+      return `<div class="pv-bar ${d.conf === "bassa" ? "low" : ""}" data-spot="${s.id}"><span class="n">${state.fav.has(s.id) ? "★ " : ""}${esc(nomeCorto(s))}</span>
+        <span class="b"><i style="width:${w}%;background:${c}"></i></span><em>${r0(d.snow)} cm${forb}</em></div>`;
+    }).join("");
+    const altri = conNeve.length - 6;
+    return `<div class="pv-day">${testa}${righe}${altri > 0 ? `<p class="pv-more">+ altri ${altri} spot con neve (fino a ${r0(conNeve[6][1].snow)} cm)</p>` : ""}</div>`;
+  }).join("")}</div>`;
+}
+function planSpot(arr, days){
+  const tot = s => dailyPlan(s).reduce((a, d) => a + (d.snow || 0), 0);
+  const cellaGiorno = (d, g) => {
+    const c = d && d.snow >= 1 ? snowColor(d.snow) : null;
+    return `<span class="${c ? "" : "z"} ${d && d.conf === "bassa" ? "low" : ""} ${isWeekend(g.date) ? "we" : ""}" ${c ? `style="background:${c}"` : ""} title="${g.date}: ${d ? r1(d.snow) : "–"} cm">${d && d.snow >= 1 ? r0(d.snow) : ""}</span>`;
+  };
+  return `<div class="pv-grid">
+    <div class="pv-row pv-hd"><span class="n"></span><div class="cells" style="grid-template-columns:repeat(${days.length},1fr)">${days.map((g, i) => `<span class="${isWeekend(g.date) ? "we" : ""}">${i === 0 ? "oggi" : dayName(g.date).slice(0, 2)}<br>${dayNum(g.date)}</span>`).join("")}</div><em>tot</em></div>
+    ${arr.map(s => { const p = dailyPlan(s); return `<div class="pv-row" data-spot="${s.id}"><span class="n">${state.fav.has(s.id) ? "★ " : ""}${esc(nomeCorto(s))}</span>
+      <div class="cells" style="grid-template-columns:repeat(${days.length},1fr)">${days.map((g, i) => cellaGiorno(p[i], g)).join("")}</div><em>${r0(tot(s))}</em></div>`; }).join("")}
+  </div>
+  <div class="plan-legend">cm/giorno: <i style="background:#bae6fd"></i>1–5 <i style="background:#7dd3fc"></i>5–10 <i style="background:#38bdf8"></i>10–20 <i style="background:#a78bfa"></i>20–35 <i style="background:#e879f9"></i>35+ · sbiadito = previsione poco affidabile</div>`;
+}
 function renderPlan(){
   $("#planChips").innerHTML = chipsHTML(AREAS, state.planArea, "data-planarea");
+  document.querySelectorAll("[data-pvmode]").forEach(b => b.classList.toggle("on", b.dataset.pvmode === state.planMode));
   const arr = filterArea(SPOTS.slice(), state.planArea);
   const any = arr.find(s => dailyPlan(s).length);
   if(!any){ $("#planTable").innerHTML = state.loading ? '<div class="skeleton"></div>' : '<p class="note">Previsioni non disponibili.</p>'; $("#bestDays").innerHTML = ""; return; }
   const days = dailyPlan(any);
   const totals = s => dailyPlan(s).reduce((a, d) => a + d.snow, 0);
   arr.sort((a, b) => totals(b) - totals(a));
-  let h = `<table class="plan"><thead><tr><th class="sp">Spot</th>${days.map((d, i) =>
-    `<th class="${isWeekend(d.date) ? "we" : ""}">${i === 0 ? "Oggi" : dayName(d.date)}<br>${dayNum(d.date)}</th>`).join("")}<th>Tot</th></tr>
-    <tr class="rg-row"><th class="sp">Venti in quota</th>${days.map(d => { const k = regionRegime(d.date), R = regimeLabel(k); return `<th title="${esc(R.name)}: ${esc(R.desc)}">${R.icon}<br><small>${esc(R.name.split(" ")[0])}</small></th>`; }).join("")}<th></th></tr></thead><tbody>`;
-  for(const s of arr){
-    const p = dailyPlan(s);
-    h += `<tr><td class="sp" data-spot="${s.id}">${state.fav.has(s.id) ? "★ " : ""}${esc(s.name)}</td>${p.map(d => {
-      const c = snowColor(d.snow);
-      return `<td class="c ${c ? "" : "z"} ${d.conf === "bassa" ? "low" : ""}" ${c ? `style="background:${c}"` : ""} title="${esc(s.name)} ${d.date}: ${r1(d.snow)} cm${d.ens && d.ens.n >= 2 ? ` (modelli ${r0(d.ens.min)}–${r0(d.ens.max)})` : ""}">${d.snow >= 1 ? r0(d.snow) : "·"}</td>`;
-    }).join("")}<td class="c z"><b style="color:var(--powder)">${r0(totals(s))}</b></td></tr>`;
-  }
-  h += `</tbody></table>`;
-  $("#planTable").innerHTML = h;
+  $("#planTable").innerHTML = state.planMode === "spot" ? planSpot(arr, days) : planGiorni(arr, days);
 
   const best = arr.map(s => [s, bestDay(s)]).filter(x => x[1]).sort((a, b) => b[1].score - a[1].score).slice(0, 5);
   $("#bestDays").innerHTML = best.length ? best.map(([s, b]) => `<div class="card" data-spot="${s.id}"><div class="t" style="align-items:center">
@@ -318,8 +353,9 @@ function renderDetail(id){
         <div class="big"><b style="color:var(--powder)">+${r0(m.n72)}</b><span>cm prossime 72h</span></div>
         <div class="big"><b style="color:var(--powder)">+${r0(m.n7d)}</b><span>cm prossimi 7 gg</span></div>
       </div>`);
+    main += sec("o-quote", `Neve per quota · Vetta, Metà, Base`, quoteHTML(s));
     main += sec("o-meas", "Neve misurata · stazioni vicine", stationsHTML(s));
-    main += sec("o-plan", `Pianifica · prossimi ${FORECAST_DAYS} giorni`,
+    main += sec("o-plan", `Previsione · prossimi ${FORECAST_DAYS} giorni`,
       `${best ? `<div class="flags" style="margin:0 0 10px"><span class="flag p">🎯 Giornata migliore: ${dayName(best.date)} ${dayNum(best.date)} · ~${r0(best.fresh)} cm freschi · affidabilità ${best.conf}</span></div>` : ""}${daysHTML(s)}`);
     main += sec("o-models", "Confronto modelli", modelsHTML(s));
     main += sec("o-hour", "Ora per ora · ieri → 3 giorni", hourlyChart(s, m));
@@ -355,7 +391,7 @@ function route(){
   const h = (location.hash || "#spot").slice(1);
   let tab = "spot", view = "v-spot";
   if(h.startsWith("spot-")){ view = "v-detail"; tab = ""; renderDetail(h.slice(5)); window.scrollTo(0, 0); }
-  else if(h === "pianifica"){ tab = view = "pianifica"; view = "v-pianifica"; renderPlan(); }
+  else if(h === "previsione" || h === "pianifica"){ tab = "previsione"; view = "v-pianifica"; renderPlan(); }
   else if(h === "valanghe"){ tab = "valanghe"; view = "v-valanghe"; renderAv(); }
   else if(h === "webcam"){ tab = "webcam"; view = "v-webcam"; renderCams(); }
   else renderList();
@@ -376,6 +412,8 @@ document.addEventListener("click", e => {
   if(vw){ state.view = vw.dataset.view; LS.set("fr_view", state.view); renderList(); return; }
   const a = e.target.closest("[data-area]");
   if(a){ state.area = a.dataset.area; LS.set("fr_area", state.area); renderList(); return; }
+  const pm = e.target.closest("[data-pvmode]");
+  if(pm){ state.planMode = pm.dataset.pvmode; LS.set("fr_pvmode", state.planMode); renderPlan(); return; }
   const pa = e.target.closest("[data-planarea]");
   if(pa){ state.planArea = pa.dataset.planarea; renderPlan(); return; }
   const ca = e.target.closest("[data-camarea]");
@@ -397,7 +435,7 @@ async function loadSnapshot(){
     if(!r.ok) return false;
     const j = unpackTimes(await r.json());
     if(!j.generated || Date.now() - new Date(j.generated).getTime() > SNAPSHOT_MAX_AGE) return false;
-    state.wx = j.wx || {}; state.ens = j.ens || {}; state.ensMemo = {}; state.cal = j.cal || null;
+    state.wx = j.wx || {}; state.ens = j.ens || {}; state.ensMemo = {}; state.cal = j.cal || null; state.quote = j.quote || null;
     state.av = j.av || {}; state.avDate = j.avDate || {}; state.avErr = !!j.avErr;
     state.stations = j.stations || []; state.stationsDate = j.generated;
     state.updated = new Date(j.generated); state.source = "automazione"; state.demoSnap = !!j.demo;
@@ -415,12 +453,13 @@ async function loadAll(){
   state.source = "diretto";
   // la calibrazione serve prima di scaricare i modelli (per applicare i fattori)
   try{ const r = await fetch("./dati/calibrazione.json", {cache: "no-store"}); if(r.ok) state.cal = await r.json(); }catch(e){}
-  const [w] = await Promise.allSettled([loadWeather(), loadAvalanche(), loadStations(), loadModels()]);
+  const [w] = await Promise.allSettled([loadWeather(), loadAvalanche(), loadStations(), loadModels(), loadQuote()]);
   if(w.status === "rejected"){
     const cache = LS.get("fr_wx_cache", null);
     if(cache && Date.now() - cache.t < 6 * 3600e3){ state.wx = cache.wx; state.updated = new Date(cache.t); state.wxErr = false; }
     else { state.wxErr = true; demoWeather(); state.demo = true; state.updated = null; }
     if(!Object.keys(state.ens || {}).length && state.demo) demoModels();
+    if(!state.quote && state.demo) demoQuote();
   } else { state.demo = false; state.wxErr = false; state.updated = new Date(); }
   state.loading = false; $("#refresh").classList.remove("spin");
   rerender();
