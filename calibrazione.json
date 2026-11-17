@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-17T14:25:56.306Z",
+ "generated": "2026-11-17T15:27:14.916Z",
  "metodo": 2,
  "scala": 0.9103889992879391,
  "models": {
@@ -232,7 +232,8 @@
    "alt": 2125,
    "lat": 46.3636,
    "lon": 11.5467,
-   "km": 0.8779087546141439
+   "km": 0.8779087546141439,
+   "rete": "Alto Adige"
   },
   {
    "code": "61690SF",
@@ -240,7 +241,8 @@
    "alt": 2050,
    "lat": 46.565,
    "lon": 11.9036,
-   "km": 1.1790778782467586
+   "km": 1.1790778782467586,
+   "rete": "Alto Adige"
   },
   {
    "code": "91180SF",
@@ -248,7 +250,8 @@
    "alt": 1910,
    "lat": 46.6636,
    "lon": 12.3704,
-   "km": 2.354211667136873
+   "km": 2.354211667136873,
+   "rete": "Alto Adige"
   },
   {
    "code": "74200MS",
@@ -256,7 +259,8 @@
    "alt": 2055,
    "lat": 46.5119,
    "lon": 11.6888,
-   "km": 5.477173405312802
+   "km": 5.477173405312802,
+   "rete": "Alto Adige"
   },
   {
    "code": "78110MS",
@@ -264,7 +268,8 @@
    "alt": 1715,
    "lat": 46.4092,
    "lon": 11.6017,
-   "km": 6.433750312992548
+   "km": 6.433750312992548,
+   "rete": "Alto Adige"
   },
   {
    "code": "62270SF",
@@ -272,7 +277,8 @@
    "alt": 2297,
    "lat": 46.6377,
    "lon": 11.8122,
-   "km": 9.332338245135055
+   "km": 9.332338245135055,
+   "rete": "Alto Adige"
   },
   {
    "code": "42830SF",
@@ -280,8 +286,624 @@
    "alt": 2340,
    "lat": 46.6712,
    "lon": 12.1115,
-   "km": 10.087445197816852
+   "km": 10.087445197816852,
+   "rete": "Alto Adige"
+  },
+  {
+   "code": "ARPAV-3",
+   "name": "Arabba",
+   "alt": 1642,
+   "lat": 46.49998395,
+   "lon": 11.87607301,
+   "km": 1.150143076990639,
+   "rete": "Veneto"
+  },
+  {
+   "code": "ARPAV-347",
+   "name": "Passo Falzarego nivo (Q1988)",
+   "alt": 1988,
+   "lat": 46.52016977,
+   "lon": 12.02802485,
+   "km": 1.4799747714346618,
+   "rete": "Veneto"
+  },
+  {
+   "code": "ARPAV-382",
+   "name": "Monti Alti di Ornella",
+   "alt": 2227,
+   "lat": 46.47569444,
+   "lon": 11.88627778,
+   "km": 1.6617403633629269,
+   "rete": "Veneto"
+  },
+  {
+   "code": "ARPAV-385",
+   "name": "Ra Valles",
+   "alt": 2592,
+   "lat": 46.54916889,
+   "lon": 12.07691963,
+   "km": 2.6635746801414686,
+   "rete": "Veneto"
+  },
+  {
+   "code": "ARPAV-602",
+   "name": "Monte Cherz",
+   "alt": 2010,
+   "lat": 46.51528101,
+   "lon": 11.87823031,
+   "km": 2.814381311500769,
+   "rete": "Veneto"
+  },
+  {
+   "code": "ARPAV-11",
+   "name": "Malga Ciapela",
+   "alt": 1475,
+   "lat": 46.42867129,
+   "lon": 11.90478762,
+   "km": 3.1293726422767696,
+   "rete": "Veneto"
+  },
+  {
+   "code": "ARPAV-383",
+   "name": "Cima Pradazzo",
+   "alt": 2195,
+   "lat": 46.3559,
+   "lon": 11.82266667,
+   "km": 3.669260350817625,
+   "rete": "Veneto"
+  },
+  {
+   "code": "ARPAV-384",
+   "name": "Col dei Baldi",
+   "alt": 1913,
+   "lat": 46.41521667,
+   "lon": 12.07313333,
+   "km": 3.7148096727409383,
+   "rete": "Veneto"
+  },
+  {
+   "code": "ARPAV-657",
+   "name": "Andraz - Cernadoi",
+   "alt": 1520,
+   "lat": 46.4902,
+   "lon": 11.987652,
+   "km": 4.230702052805704,
+   "rete": "Veneto"
+  },
+  {
+   "code": "ARPAV-642",
+   "name": "Tre Cime di Lavaredo",
+   "alt": 2375,
+   "lat": 46.617594,
+   "lon": 12.31782,
+   "km": 5.010169521266771,
+   "rete": "Veneto"
+  },
+  {
+   "code": "ARPAV-641",
+   "name": "Pale di San Martino",
+   "alt": 2580,
+   "lat": 46.279275,
+   "lon": 11.88639,
+   "km": 6.082240462554425,
+   "rete": "Veneto"
+  },
+  {
+   "code": "ARPAV-394",
+   "name": "Monte Piana",
+   "alt": 2262,
+   "lat": 46.61342241,
+   "lon": 12.25026321,
+   "km": 6.128789691446402,
+   "rete": "Veneto"
+  },
+  {
+   "code": "ARPAV-395",
+   "name": "Casera Coltrondo",
+   "alt": 1929,
+   "lat": 46.66519444,
+   "lon": 12.44352778,
+   "km": 7.921531468224771,
+   "rete": "Veneto"
+  },
+  {
+   "code": "ARPAV-390",
+   "name": "Malga Losch",
+   "alt": 1757,
+   "lat": 46.26238889,
+   "lon": 11.95947222,
+   "km": 11.494125042332763,
+   "rete": "Veneto"
+  },
+  {
+   "code": "ARPAV-37",
+   "name": "Passo Falzarego",
+   "alt": 2090,
+   "lat": 46.51873107,
+   "lon": 12.00683651,
+   "km": 0.7378989793521324,
+   "rete": "Veneto (precipitazione)"
+  },
+  {
+   "code": "ARPAV-80",
+   "name": "Passo Pordoi",
+   "alt": 2154,
+   "lat": 46.48343791,
+   "lon": 11.82249512,
+   "km": 1.2031456665056917,
+   "rete": "Veneto (precipitazione)"
+  },
+  {
+   "code": "ARPAV-238",
+   "name": "Misurina",
+   "alt": 1743,
+   "lat": 46.5764122,
+   "lon": 12.25007045,
+   "km": 2.37730504597297,
+   "rete": "Veneto (precipitazione)"
+  },
+  {
+   "code": "ARPAV-203",
+   "name": "Passo Valles",
+   "alt": 2042,
+   "lat": 46.33914263,
+   "lon": 11.80160227,
+   "km": 4.629553708102699,
+   "rete": "Veneto (precipitazione)"
+  },
+  {
+   "code": "ARPAV-505",
+   "name": "Ponte Rio Cordon (Selva di Cadore)",
+   "alt": 1764,
+   "lat": 46.45098415,
+   "lon": 12.09595652,
+   "km": 4.774813972786023,
+   "rete": "Veneto (precipitazione)"
+  },
+  {
+   "code": "ARPAV-132",
+   "name": "Pescul",
+   "alt": 1402,
+   "lat": 46.4371972,
+   "lon": 12.06900907,
+   "km": 4.977208529608388,
+   "rete": "Veneto (precipitazione)"
+  },
+  {
+   "code": "ARPAV-55",
+   "name": "Pian del Crep (Val di Zoldo)",
+   "alt": 1741,
+   "lat": 46.37934829,
+   "lon": 12.09312208,
+   "km": 5.2349657923096595,
+   "rete": "Veneto (precipitazione)"
+  },
+  {
+   "code": "ARPAV-47",
+   "name": "Faloria",
+   "alt": 2235,
+   "lat": 46.52744551,
+   "lon": 12.17508664,
+   "km": 5.42686487453969,
+   "rete": "Veneto (precipitazione)"
+  },
+  {
+   "code": "ARPAV-91",
+   "name": "Passo Monte Croce Comelico",
+   "alt": 1621,
+   "lat": 46.65215334,
+   "lon": 12.42397152,
+   "km": 6.467954765992508,
+   "rete": "Veneto (precipitazione)"
   }
  ],
- "fonti": "Altezza neve: Provincia autonoma di Bolzano, open data meteo (CC0). Previsioni passate e vento: Open-Meteo.com Previous Runs e Historical Forecast API (CC BY 4.0)."
+ "perZona": {
+  "bz": {
+   "nome": "Alto Adige",
+   "giornate": 3059,
+   "grosse": {
+    "icon": {
+     "1": {
+      "n": 147,
+      "rapporto": 0.9166322773799405
+     },
+     "2": {
+      "n": 147,
+      "rapporto": 0.5895820690213213
+     },
+     "3": {
+      "n": 147,
+      "rapporto": 0.5469636282720395
+     }
+    },
+    "icon2i": {
+     "1": {
+      "n": 57,
+      "rapporto": 1.040301217688528
+     },
+     "2": {
+      "n": 57,
+      "rapporto": 0.776639606921598
+     },
+     "3": {
+      "n": 0,
+      "rapporto": null
+     }
+    },
+    "ecmwf": {
+     "1": {
+      "n": 47,
+      "rapporto": 0.9061120326655606
+     },
+     "2": {
+      "n": 50,
+      "rapporto": 0.8234504256084401
+     },
+     "3": {
+      "n": 50,
+      "rapporto": 0.5788154897494306
+     }
+    },
+    "gfs": {
+     "1": {
+      "n": 92,
+      "rapporto": 0.7478413793103451
+     },
+     "2": {
+      "n": 90,
+      "rapporto": 0.5697059029971229
+     },
+     "3": {
+      "n": 90,
+      "rapporto": 0.5057345406050401
+     }
+    },
+    "mf": {
+     "1": {
+      "n": 147,
+      "rapporto": 0.7127361734838368
+     },
+     "2": {
+      "n": 147,
+      "rapporto": 0.6272201318930285
+     },
+     "3": {
+      "n": 147,
+      "rapporto": 0.5406885948942027
+     }
+    }
+   },
+   "regimi": {
+    "N": {
+     "giorni": 79,
+     "misurata": 407.3999999999999,
+     "prevista": 406.2900000000001,
+     "rapporto": 1.0027320386915746
+    },
+    "SW": {
+     "giorni": 300,
+     "misurata": 1309.4,
+     "prevista": 1357.0200000000002,
+     "rapporto": 0.9649084022343074
+    },
+    "SE": {
+     "giorni": 128,
+     "misurata": 1363.5999999999997,
+     "prevista": 1230.62,
+     "rapporto": 1.1080593521964537
+    },
+    "CALM": {
+     "giorni": 227,
+     "misurata": 876.1000000000001,
+     "prevista": 808.2600000000004,
+     "rapporto": 1.0839333877712614
+    },
+    "NE": {
+     "giorni": 36,
+     "misurata": 89.49999999999999,
+     "prevista": 144.72,
+     "rapporto": 0.6184355997788833
+    },
+    "W": {
+     "giorni": 65,
+     "misurata": 166.09999999999997,
+     "prevista": 91.04,
+     "rapporto": 1.824472759226713
+    }
+   },
+   "verifica1": {
+    "grezzo": {
+     "n": 835,
+     "mae": 3.614790419161679,
+     "bias": -0.20856287425149678,
+     "nevicateGrosse": 147,
+     "prese": 131,
+     "falsiAllarmi": 9,
+     "grosseRapporto": 0.687805963506898
+    },
+    "calibrato": {
+     "n": 896,
+     "mae": 4.033207924107143,
+     "bias": 1.2615179687500004,
+     "nevicateGrosse": 147,
+     "prese": 134,
+     "falsiAllarmi": 26,
+     "grosseRapporto": 0.9062059311405105
+    }
+   }
+  },
+  "ve": {
+   "nome": "Veneto",
+   "giornate": 0
+  }
+ },
+ "pioggiaVeneto": {
+  "tutte": {
+   "giornate": 3911,
+   "grosse": {
+    "icon": {
+     "1": {
+      "n": 194,
+      "rapporto": 0.9081115688676086
+     },
+     "2": {
+      "n": 194,
+      "rapporto": 0.7851297182941759
+     },
+     "3": {
+      "n": 194,
+      "rapporto": 0.7583231266006014
+     }
+    },
+    "icon2i": {
+     "1": {
+      "n": 119,
+      "rapporto": 0.9551374207188168
+     },
+     "2": {
+      "n": 116,
+      "rapporto": 0.9632167953500484
+     },
+     "3": {
+      "n": 0,
+      "rapporto": null
+     }
+    },
+    "ecmwf": {
+     "1": {
+      "n": 87,
+      "rapporto": 0.8981963927855721
+     },
+     "2": {
+      "n": 75,
+      "rapporto": 0.8237935758867415
+     },
+     "3": {
+      "n": 75,
+      "rapporto": 0.5977317704369014
+     }
+    },
+    "gfs": {
+     "1": {
+      "n": 287,
+      "rapporto": 1.146759243540555
+     },
+     "2": {
+      "n": 287,
+      "rapporto": 1.1823413574169
+     },
+     "3": {
+      "n": 287,
+      "rapporto": 1.1428716938851717
+     }
+    },
+    "mf": {
+     "1": {
+      "n": 87,
+      "rapporto": 1.193787575150302
+     },
+     "2": {
+      "n": 87,
+      "rapporto": 0.9951903807615238
+     },
+     "3": {
+      "n": 87,
+      "rapporto": 0.751035404141617
+     }
+    }
+   },
+   "regimi": {
+    "SW": {
+     "giorni": 444,
+     "misurata": 3320.8000000000025,
+     "prevista": 4040.7000000000007,
+     "rapporto": 0.8218378003811225
+    },
+    "CALM": {
+     "giorni": 358,
+     "misurata": 1422.0000000000016,
+     "prevista": 1892.9999999999995,
+     "rapporto": 0.7511885895404131
+    },
+    "SE": {
+     "giorni": 194,
+     "misurata": 3206.2,
+     "prevista": 3652.799999999996,
+     "rapporto": 0.8777376259307937
+    },
+    "N": {
+     "giorni": 126,
+     "misurata": 260.40000000000003,
+     "prevista": 543.5999999999998,
+     "rapporto": 0.47902869757174416
+    },
+    "W": {
+     "giorni": 102,
+     "misurata": 269.2000000000001,
+     "prevista": 568.2000000000002,
+     "rapporto": 0.47377683914114754
+    },
+    "NE": {
+     "giorni": 40,
+     "misurata": 116.80000000000004,
+     "prevista": 185.89999999999995,
+     "rapporto": 0.6282947821409364
+    }
+   },
+   "verifica1": {
+    "grezzo": {
+     "n": 1264,
+     "mae": 4.29778481012658,
+     "bias": 1.810759493670885,
+     "nevicateGrosse": 287,
+     "prese": 270,
+     "falsiAllarmi": 28,
+     "grosseRapporto": 1.0589413642073815
+    },
+    "calibrato": {
+     "n": 1343,
+     "mae": 4.026405063291143,
+     "bias": 1.6784661206254656,
+     "nevicateGrosse": 287,
+     "prese": 272,
+     "falsiAllarmi": 32,
+     "grosseRapporto": 1.0059279190574815
+    }
+   }
+  },
+  "fredde": {
+   "giornate": 2303,
+   "grosse": {
+    "icon": {
+     "1": {
+      "n": 98,
+      "rapporto": 1.0089030932541951
+     },
+     "2": {
+      "n": 98,
+      "rapporto": 0.7486588289008105
+     },
+     "3": {
+      "n": 98,
+      "rapporto": 0.7910055929688398
+     }
+    },
+    "icon2i": {
+     "1": {
+      "n": 48,
+      "rapporto": 1.2572234762979684
+     },
+     "2": {
+      "n": 48,
+      "rapporto": 0.9382618510158013
+     },
+     "3": {
+      "n": 0,
+      "rapporto": null
+     }
+    },
+    "ecmwf": {
+     "1": {
+      "n": 48,
+      "rapporto": 0.9125282167042885
+     },
+     "2": {
+      "n": 48,
+      "rapporto": 0.8531602708803611
+     },
+     "3": {
+      "n": 48,
+      "rapporto": 0.5490970654627538
+     }
+    },
+    "gfs": {
+     "1": {
+      "n": 157,
+      "rapporto": 1.2715175905491365
+     },
+     "2": {
+      "n": 157,
+      "rapporto": 1.2629819550824348
+     },
+     "3": {
+      "n": 157,
+      "rapporto": 1.227151759054913
+     }
+    },
+    "mf": {
+     "1": {
+      "n": 48,
+      "rapporto": 1.4555304740406318
+     },
+     "2": {
+      "n": 48,
+      "rapporto": 1.0112866817155755
+     },
+     "3": {
+      "n": 48,
+      "rapporto": 0.6474040632054174
+     }
+    }
+   },
+   "regimi": {
+    "SW": {
+     "giorni": 282,
+     "misurata": 2069.2,
+     "prevista": 2569.9000000000005,
+     "rapporto": 0.8051675162457681
+    },
+    "CALM": {
+     "giorni": 209,
+     "misurata": 743.6000000000006,
+     "prevista": 1155.6000000000013,
+     "rapporto": 0.6434752509518863
+    },
+    "SE": {
+     "giorni": 111,
+     "misurata": 1642.1999999999994,
+     "prevista": 2186.2999999999997,
+     "rapporto": 0.7511320495814845
+    },
+    "N": {
+     "giorni": 89,
+     "misurata": 168.60000000000002,
+     "prevista": 421.4999999999999,
+     "rapporto": 0.4000000000000002
+    },
+    "W": {
+     "giorni": 54,
+     "misurata": 86.2,
+     "prevista": 151.7,
+     "rapporto": 0.5682267633487146
+    },
+    "NE": {
+     "giorni": 25,
+     "misurata": 91.00000000000003,
+     "prevista": 160.7,
+     "rapporto": 0.5662725575606723
+    }
+   },
+   "verifica1": {
+    "grezzo": {
+     "n": 770,
+     "mae": 4.2224675324675305,
+     "bias": 2.3959740259740263,
+     "nevicateGrosse": 157,
+     "prese": 155,
+     "falsiAllarmi": 18,
+     "grosseRapporto": 1.161008697909905
+    },
+    "calibrato": {
+     "n": 803,
+     "mae": 3.8129140722291415,
+     "bias": 2.082836861768369,
+     "nevicateGrosse": 157,
+     "prese": 156,
+     "falsiAllarmi": 18,
+     "grosseRapporto": 1.0687537323120861
+    }
+   }
+  }
+ },
+ "fonti": "Altezza neve: Provincia autonoma di Bolzano, open data meteo (CC0); ARPA Veneto, dati storici (CC BY 4.0). Previsioni passate e vento: Open-Meteo.com Previous Runs e Historical Forecast API (CC BY 4.0)."
 }
