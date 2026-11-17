@@ -1,7 +1,7 @@
 import { SPOTS, AREAS, AV_LINKS, PROV_NAME, FORECAST_DAYS, SF_HOME } from "./config.js";
 import { $, esc, LS, r0, r1, scoreColor, snowColor, state, unpackTimes } from "./state.js";
 import { wmo, dirName, metrics, dailyPlan, bestDay, dayName, dayNum, isWeekend, loadWeather, demoWeather, romeNowISO } from "./meteo.js";
-import { DNAME, avForSpot, avBlockHTML, dsq, loadAvalanche } from "./valanghe.js";
+import { DNAME, avForSpot, avBlockHTML, dsq, loadAvalanche, bollettiniPerServizio, gradiHTML, problemiHTML, testiHTML, intestazione, stripTags, PROB } from "./valanghe.js";
 import { camsHTML } from "./webcam.js";
 import { loadStations, stationsHTML, bestStation } from "./stazioni.js";
 import { loadModels, demoModels, ensembleFor, agreement, regionRegime, regimeLabel, flowEffect, correctHourly } from "./modelli.js";
@@ -371,9 +371,32 @@ function renderDetail(id){
 /* ---------- valanghe / webcam ---------- */
 function renderAv(){
   const arr = SPOTS.map(s => [s, avForSpot(s)]).sort((a, b) => ((b[1]?.level) || 0) - ((a[1]?.level) || 0));
+  // 1. bollettini completi, raggruppati per servizio
+  const servizi = bollettiniPerServizio(SPOTS);
+  let bh;
+  if(state.loading && !Object.keys(state.av).length) bh = '<div class="skeleton"></div>'.repeat(2);
+  else if(!servizi.length) bh = `<div class="sec note">${state.avErr ? "Non riesco a raggiungere i bollettini da qui: aprili dai link ufficiali qui sotto." : "Nessun bollettino attivo in questo momento: i servizi valanghe iniziano a pubblicarli ogni giorno di solito a dicembre. Appena escono li trovi qui, completi."}</div>`;
+  else bh = servizi.map(sv => `<div class="avsrv"><h3 class="ttl" style="font-size:16px;margin:16px 0 8px">${esc(sv.nome)}${sv.date ? ` <span class="small">· ${new Date(sv.date + "T12:00:00Z").toLocaleDateString("it-IT", {weekday: "long", day: "numeric", month: "long", timeZone: "UTC"})}</span>` : ""}</h3>
+    ${sv.items.map(({b, level, spots}) => {
+      const zone = (b.regions || []).map(r => r.name);
+      const hl = stripTags(b.avalancheActivity && b.avalancheActivity.highlights);
+      const probs = [...new Set((b.avalancheProblems || []).map(p => PROB[p.problemType] || p.problemType))];
+      return `<details class="avb"><summary>
+        <div class="avb-h">${dsq(level)}<div style="min-width:0"><b>${DNAME[level] || "n.d."}</b>
+          <span class="avb-z">${esc(zone.slice(0, 3).join(", "))}${zone.length > 3 ? (zone.length === 4 ? " e un'altra zona" : ` e altre ${zone.length - 3} zone`) : ""}</span></div></div>
+        ${spots.length ? `<div class="avb-sp">${spots.map(s => `<span>${esc(s.name.split(" · ")[0])}</span>`).join("")}</div>` : ""}
+        ${hl ? `<p class="avb-hl">${esc(hl)}</p>` : ""}
+        ${probs.length ? `<p class="avb-pr">${probs.map(esc).join(" · ")}</p>` : ""}
+        <span class="avb-more">Leggi il bollettino</span>
+      </summary>
+      <div class="avb-body">${gradiHTML(b)}${problemiHTML(b) ? `<div style="margin-top:8px">${problemiHTML(b)}</div>` : ""}${testiHTML(b)}
+        ${zone.length > 3 ? `<p class="small">Zone: ${esc(zone.join(", "))}</p>` : ""}${intestazione(b, sv.p)}</div></details>`;
+    }).join("")}</div>`).join("");
+  $("#avBulletins").innerHTML = bh;
+  // 2. elenco rapido per spot
   let h;
-  if(state.loading && !Object.keys(state.av).length) h = '<div class="skeleton"></div>'.repeat(3);
-  else if(!arr.some(x => x[1])) h = `<div class="sec note">${state.avErr ? "Non riesco a raggiungere i bollettini da qui: aprili dai link ufficiali qui sotto." : "Nessun bollettino attivo: a inizio e fine stagione i servizi valanghe non li emettono tutti i giorni."}</div>`;
+  if(state.loading && !Object.keys(state.av).length) h = "";
+  else if(!arr.some(x => x[1])) h = `<p class="note">Il grado per spot comparirà quando i bollettini saranno pubblicati.</p>`;
   else h = arr.map(([s, av]) => `<div class="card" data-spot="${s.id}"><div class="t" style="align-items:center">${av ? dsq(av.level) : dsq(0)}
       <div style="min-width:0"><h3 style="font-size:15px">${esc(s.name)}</h3><div class="sub">${av ? `${DNAME[av.level] || "n.d."} · ${av.exact ? esc(av.names.slice(0, 2).join(", ")) : "max bollettino " + esc(av.provs.map(p => PROV_NAME[p]).join("/"))}` : "Bollettino non disponibile"}</div></div>
     </div></div>`).join("");
