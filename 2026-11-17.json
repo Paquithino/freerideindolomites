@@ -1,0 +1,5551 @@
+{
+ "date": "2026-11-17",
+ "generated": "2026-11-17T11:47:22.519Z",
+ "demo": false,
+ "models": [
+  "icon",
+  "icon2i",
+  "ecmwf",
+  "gfs",
+  "mf"
+ ],
+ "spots": {
+  "cortina": {
+   "elev": 2400,
+   "forecast": [
+    {
+     "date": "2026-11-17",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0.1,
+      "ecmwf": 0.7,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 62.6,
+      "icon2i": 53.4,
+      "ecmwf": null,
+      "gfs": 24.3,
+      "mf": 66.5
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "SW",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-18",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 0.4,
+      "gfs": 0,
+      "mf": 2.3
+     },
+     "wind": {
+      "icon": 69.7,
+      "icon2i": 59,
+      "ecmwf": null,
+      "gfs": 36,
+      "mf": 46.8
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-19",
+     "freeride": 4.9,
+     "base": 15.2,
+     "models": {
+      "icon": 13.4,
+      "icon2i": 3.3,
+      "ecmwf": 3,
+      "gfs": 8,
+      "mf": 4.9
+     },
+     "wind": {
+      "icon": 52.2,
+      "icon2i": 49.7,
+      "ecmwf": null,
+      "gfs": 19.4,
+      "mf": 52.5
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "CALM",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-20",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.3,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 31.8,
+      "ecmwf": null,
+      "gfs": 19.7,
+      "mf": 41.2
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "CALM",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-21",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.5,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 48.6,
+      "ecmwf": null,
+      "gfs": 16.8
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-22",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.7,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 31.1,
+      "ecmwf": null,
+      "gfs": 14.2
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-23",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 43.9,
+      "ecmwf": null,
+      "gfs": 15
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    }
+   ],
+   "stations": [
+    {
+     "id": "Dürrensteinhütte - Rifugio Vallandro",
+     "name": "Dürrensteinhütte - Rifugio Vallandro",
+     "elev": 2107,
+     "km": 14.1,
+     "hs": 7,
+     "d24": -1,
+     "d48": -1,
+     "d72": -0.5,
+     "date": "2026-11-17T10:00:00+01:00"
+    },
+    {
+     "id": "PIZL2",
+     "name": "Piz la Ila - Piz la Ila",
+     "elev": 2050,
+     "km": 15.7,
+     "hs": 6.4,
+     "d24": 1.8,
+     "d48": 3.2,
+     "d72": -0.7,
+     "date": "2026-11-17T12:00:00+01:00"
+    }
+   ],
+   "avalanche": null
+  },
+  "alta-badia": {
+   "elev": 2300,
+   "forecast": [
+    {
+     "date": "2026-11-17",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 69.7,
+      "icon2i": 63.9,
+      "ecmwf": null,
+      "gfs": 24.3,
+      "mf": 60.5
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "SW",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-18",
+     "freeride": 0.1,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 1.2,
+      "gfs": 0.1,
+      "mf": 0.1
+     },
+     "wind": {
+      "icon": 74.5,
+      "icon2i": 65.2,
+      "ecmwf": null,
+      "gfs": 36,
+      "mf": 55.9
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-19",
+     "freeride": 3.2,
+     "base": 14.3,
+     "models": {
+      "icon": 13.2,
+      "icon2i": 3,
+      "ecmwf": 3.2,
+      "gfs": 6.8,
+      "mf": 2.8
+     },
+     "wind": {
+      "icon": 47.8,
+      "icon2i": 55.2,
+      "ecmwf": null,
+      "gfs": 19.4,
+      "mf": 52.3
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "CALM",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-20",
+     "freeride": 0.1,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.1,
+      "gfs": 0,
+      "mf": 0.2
+     },
+     "wind": {
+      "icon": 41.5,
+      "ecmwf": null,
+      "gfs": 19.7,
+      "mf": 47.9
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "CALM",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-21",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.3,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 38.8,
+      "ecmwf": null,
+      "gfs": 16.8
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-22",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.7,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 28.1,
+      "ecmwf": null,
+      "gfs": 14.2
+     },
+     "regime": "CALM",
+     "regimes": {
+      "icon": "CALM",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-23",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 37.8,
+      "ecmwf": null,
+      "gfs": 15
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    }
+   ],
+   "stations": [
+    {
+     "id": "PIZL2",
+     "name": "Piz la Ila - Piz la Ila",
+     "elev": 2050,
+     "km": 1.2,
+     "hs": 6.4,
+     "d24": 1.8,
+     "d48": 3.2,
+     "d72": -0.7,
+     "date": "2026-11-17T12:00:00+01:00"
+    },
+    {
+     "id": "KREU1",
+     "name": "Kreuzkofeljoch - Passo Poma",
+     "elev": 2297,
+     "km": 10.5,
+     "hs": 10.2,
+     "d24": -2.5,
+     "d48": -3.4,
+     "d72": -3.3,
+     "date": "2026-11-17T12:00:00+01:00"
+    },
+    {
+     "id": "Sellajoch - Passo Sella",
+     "name": "Sellajoch - Passo Sella",
+     "elev": 2110,
+     "km": 10.9,
+     "hs": 5,
+     "d24": 0,
+     "d48": 0,
+     "d72": -1,
+     "date": "2026-11-17T10:00:00+01:00"
+    }
+   ],
+   "avalanche": null
+  },
+  "val-gardena": {
+   "elev": 2300,
+   "forecast": [
+    {
+     "date": "2026-11-17",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0.9,
+      "ecmwf": 0.4,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 65,
+      "icon2i": 62.1,
+      "ecmwf": null,
+      "gfs": 25.5,
+      "mf": 69.5
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "SW",
+      "mf": "SW"
+     }
+    },
+    {
+     "date": "2026-11-18",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 0.7,
+      "gfs": 0,
+      "mf": 1.1
+     },
+     "wind": {
+      "icon": 66.5,
+      "icon2i": 58.3,
+      "ecmwf": null,
+      "gfs": 44.6,
+      "mf": 54.4
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-19",
+     "freeride": 3.1,
+     "base": 11.9,
+     "models": {
+      "icon": 11.1,
+      "icon2i": 3.1,
+      "ecmwf": 2.2,
+      "gfs": 4.7,
+      "mf": 2.8
+     },
+     "wind": {
+      "icon": 46.2,
+      "icon2i": 50.3,
+      "ecmwf": null,
+      "gfs": 16.7,
+      "mf": 49.9
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "CALM",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-20",
+     "freeride": 0.1,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.1,
+      "gfs": 0,
+      "mf": 0.2
+     },
+     "wind": {
+      "icon": 39.1,
+      "ecmwf": null,
+      "gfs": 20.8,
+      "mf": 47.9
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "CALM",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-21",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.3,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 39.5,
+      "ecmwf": null,
+      "gfs": 14.2
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-22",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.7,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 31.8,
+      "ecmwf": null,
+      "gfs": 15
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-23",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 33.2,
+      "ecmwf": null,
+      "gfs": 12.4
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    }
+   ],
+   "stations": [
+    {
+     "id": "Fermeda Hütte - Rifugio Fermeda",
+     "name": "Fermeda Hütte - Rifugio Fermeda",
+     "elev": 2090,
+     "km": 2.2,
+     "hs": 2,
+     "d24": 0.3,
+     "d48": 1,
+     "d72": -1.8,
+     "date": "2026-11-17T11:00:00+01:00"
+    },
+    {
+     "id": "Sellajoch - Passo Sella",
+     "name": "Sellajoch - Passo Sella",
+     "elev": 2110,
+     "km": 6.5,
+     "hs": 5,
+     "d24": 0,
+     "d48": 0,
+     "d72": -1,
+     "date": "2026-11-17T10:00:00+01:00"
+    },
+    {
+     "id": "KREU1",
+     "name": "Kreuzkofeljoch - Passo Poma",
+     "elev": 2297,
+     "km": 9.3,
+     "hs": 10.2,
+     "d24": -2.5,
+     "d48": -3.4,
+     "d72": -3.3,
+     "date": "2026-11-17T12:00:00+01:00"
+    }
+   ],
+   "avalanche": null
+  },
+  "val-di-fassa": {
+   "elev": 2300,
+   "forecast": [
+    {
+     "date": "2026-11-17",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0.6,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 61.5,
+      "icon2i": 57.7,
+      "ecmwf": null,
+      "gfs": 25.5,
+      "mf": 68.4
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "SW",
+      "mf": "SW"
+     }
+    },
+    {
+     "date": "2026-11-18",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 1.2,
+      "gfs": 0,
+      "mf": 2.2
+     },
+     "wind": {
+      "icon": 60.8,
+      "icon2i": 60.2,
+      "ecmwf": null,
+      "gfs": 44.6,
+      "mf": 54.1
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-19",
+     "freeride": 2.8,
+     "base": 15.9,
+     "models": {
+      "icon": 14.5,
+      "icon2i": 2.3,
+      "ecmwf": 2.4,
+      "gfs": 8.7,
+      "mf": 2.8
+     },
+     "wind": {
+      "icon": 58,
+      "icon2i": 54.6,
+      "ecmwf": null,
+      "gfs": 16.7,
+      "mf": 48.8
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "SW",
+      "icon2i": "W",
+      "gfs": "CALM",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-20",
+     "freeride": 0.1,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.3,
+      "gfs": 0,
+      "mf": 0.2
+     },
+     "wind": {
+      "icon": 42,
+      "ecmwf": null,
+      "gfs": 20.8,
+      "mf": 47.9
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "CALM",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-21",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.5,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 33.5,
+      "ecmwf": null,
+      "gfs": 14.2
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-22",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 1.3,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 30.6,
+      "ecmwf": null,
+      "gfs": 15
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-23",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 33.2,
+      "ecmwf": null,
+      "gfs": 12.4
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    }
+   ],
+   "stations": [
+    {
+     "id": "Sellajoch - Passo Sella",
+     "name": "Sellajoch - Passo Sella",
+     "elev": 2110,
+     "km": 4.9,
+     "hs": 5,
+     "d24": 0,
+     "d48": 0,
+     "d72": -1,
+     "date": "2026-11-17T10:00:00+01:00"
+    },
+    {
+     "id": "SEIS2",
+     "name": "Seiser Alm Zallinger - Alpe di Siusi Zallinger",
+     "elev": 2055,
+     "km": 7.8,
+     "hs": 8,
+     "d24": -1.2,
+     "d48": -0.9,
+     "d72": -1.1,
+     "date": "2026-11-17T12:10:00+01:00"
+    },
+    {
+     "id": "Ciampedie",
+     "name": "Ciampedie",
+     "elev": 1960,
+     "km": 9.5,
+     "hs": 6,
+     "d24": -1,
+     "d48": 1,
+     "d72": -1,
+     "date": "2026-11-17T11:00:00+01:00"
+    }
+   ],
+   "avalanche": null
+  },
+  "cadore": {
+   "elev": 2100,
+   "forecast": [
+    {
+     "date": "2026-11-17",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 65,
+      "icon2i": 56.5,
+      "ecmwf": null,
+      "gfs": 19.2,
+      "mf": 69.7
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "CALM",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-18",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 0.2,
+      "gfs": 0,
+      "mf": 0.3
+     },
+     "wind": {
+      "icon": 69.7,
+      "icon2i": 58.3,
+      "ecmwf": null,
+      "gfs": 31.4,
+      "mf": 56.2
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-19",
+     "freeride": 6.3,
+     "base": 12.6,
+     "models": {
+      "icon": 12.1,
+      "icon2i": 3,
+      "ecmwf": 1.4,
+      "gfs": 7.5,
+      "mf": 6.3
+     },
+     "wind": {
+      "icon": 64.3,
+      "icon2i": 57.7,
+      "ecmwf": null,
+      "gfs": 21.2,
+      "mf": 76.8
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "CALM",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-20",
+     "freeride": 0.1,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.1,
+      "gfs": 0,
+      "mf": 0.5
+     },
+     "wind": {
+      "icon": 36.4,
+      "ecmwf": null,
+      "gfs": 22.3,
+      "mf": 39.2
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "CALM",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-21",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.3,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 49.2,
+      "ecmwf": null,
+      "gfs": 19
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-22",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.6,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 28.6,
+      "ecmwf": null,
+      "gfs": 19.8
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-23",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 41.7,
+      "ecmwf": null,
+      "gfs": 19.7
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    }
+   ],
+   "stations": [
+    {
+     "id": "Dürrensteinhütte - Rifugio Vallandro",
+     "name": "Dürrensteinhütte - Rifugio Vallandro",
+     "elev": 2107,
+     "km": 11,
+     "hs": 7,
+     "d24": -1,
+     "d48": -1,
+     "d72": -0.5,
+     "date": "2026-11-17T10:00:00+01:00"
+    },
+    {
+     "id": "SROT2",
+     "name": "Rotwandwiesen - Prati di Croda Rossa",
+     "elev": 1910,
+     "km": 13.8,
+     "hs": 1,
+     "d24": -1.5,
+     "d48": -0.8,
+     "d72": 0.5,
+     "date": "2026-11-17T12:00:00+01:00"
+    }
+   ],
+   "avalanche": null
+  },
+  "marmolada": {
+   "elev": 3000,
+   "forecast": [
+    {
+     "date": "2026-11-17",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 1.5,
+      "ecmwf": 0.7,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 65.7,
+      "icon2i": 50.9,
+      "ecmwf": null,
+      "gfs": 25.5,
+      "mf": 80.1
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "SW",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-18",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 1.4,
+      "gfs": 0,
+      "mf": 8.3
+     },
+     "wind": {
+      "icon": 61.5,
+      "icon2i": 61.4,
+      "ecmwf": null,
+      "gfs": 44.6,
+      "mf": 60.2
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-19",
+     "freeride": 4.1,
+     "base": 21.5,
+     "models": {
+      "icon": 19.5,
+      "icon2i": 3,
+      "ecmwf": 3.4,
+      "gfs": 12,
+      "mf": 4.1
+     },
+     "wind": {
+      "icon": 42,
+      "icon2i": 50.9,
+      "ecmwf": null,
+      "gfs": 16.7,
+      "mf": 48.8
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "CALM",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-20",
+     "freeride": 0.1,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.3,
+      "gfs": 0,
+      "mf": 0.3
+     },
+     "wind": {
+      "icon": 44.3,
+      "ecmwf": null,
+      "gfs": 20.8,
+      "mf": 47.9
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "CALM",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-21",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.6,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 37.4,
+      "ecmwf": null,
+      "gfs": 14.2
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-22",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 1.6,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 33.2,
+      "ecmwf": null,
+      "gfs": 15
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-23",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 30.3,
+      "ecmwf": null,
+      "gfs": 12.4
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    }
+   ],
+   "stations": [
+    {
+     "id": "Sellajoch - Passo Sella",
+     "name": "Sellajoch - Passo Sella",
+     "elev": 2110,
+     "km": 11.7,
+     "hs": 5,
+     "d24": 0,
+     "d48": 0,
+     "d72": -1,
+     "date": "2026-11-17T10:00:00+01:00"
+    },
+    {
+     "id": "PVAL2",
+     "name": "Passo Valles",
+     "elev": 2032,
+     "km": 11.8,
+     "hs": 0,
+     "d24": 0,
+     "d48": 0,
+     "d72": 0,
+     "date": "2026-11-17T12:00:00+01:00"
+    },
+    {
+     "id": "PIZL2",
+     "name": "Piz la Ila - Piz la Ila",
+     "elev": 2050,
+     "km": 14.7,
+     "hs": 6.4,
+     "d24": 1.8,
+     "d48": 3.2,
+     "d72": -0.7,
+     "date": "2026-11-17T12:00:00+01:00"
+    }
+   ],
+   "avalanche": null
+  },
+  "sella": {
+   "elev": 2900,
+   "forecast": [
+    {
+     "date": "2026-11-17",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 2.8,
+      "ecmwf": 0.7,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 57,
+      "icon2i": 56.5,
+      "ecmwf": null,
+      "gfs": 25.5,
+      "mf": 75.6
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "SW",
+      "mf": "SW"
+     }
+    },
+    {
+     "date": "2026-11-18",
+     "freeride": 0.1,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 1.4,
+      "gfs": 0.1,
+      "mf": 3.1
+     },
+     "wind": {
+      "icon": 54.6,
+      "icon2i": 59.6,
+      "ecmwf": null,
+      "gfs": 44.6,
+      "mf": 47.6
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-19",
+     "freeride": 4,
+     "base": 18.8,
+     "models": {
+      "icon": 17.3,
+      "icon2i": 3.5,
+      "ecmwf": 3.4,
+      "gfs": 8.1,
+      "mf": 4
+     },
+     "wind": {
+      "icon": 56.3,
+      "icon2i": 62.7,
+      "ecmwf": null,
+      "gfs": 16.7,
+      "mf": 51.4
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "SW",
+      "icon2i": "W",
+      "gfs": "CALM",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-20",
+     "freeride": 0.1,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.3,
+      "gfs": 0,
+      "mf": 0.3
+     },
+     "wind": {
+      "icon": 42,
+      "ecmwf": null,
+      "gfs": 20.8,
+      "mf": 47.9
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "CALM",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-21",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.6,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 33.5,
+      "ecmwf": null,
+      "gfs": 14.2
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-22",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 1.6,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 30.6,
+      "ecmwf": null,
+      "gfs": 15
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-23",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 37.8,
+      "ecmwf": null,
+      "gfs": 12.4
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    }
+   ],
+   "stations": [
+    {
+     "id": "Sellajoch - Passo Sella",
+     "name": "Sellajoch - Passo Sella",
+     "elev": 2110,
+     "km": 5.1,
+     "hs": 5,
+     "d24": 0,
+     "d48": 0,
+     "d72": -1,
+     "date": "2026-11-17T10:00:00+01:00"
+    },
+    {
+     "id": "PIZL2",
+     "name": "Piz la Ila - Piz la Ila",
+     "elev": 2050,
+     "km": 8.3,
+     "hs": 6.4,
+     "d24": 1.8,
+     "d48": 3.2,
+     "d72": -0.7,
+     "date": "2026-11-17T12:00:00+01:00"
+    },
+    {
+     "id": "SEIS2",
+     "name": "Seiser Alm Zallinger - Alpe di Siusi Zallinger",
+     "elev": 2055,
+     "km": 10.8,
+     "hs": 8,
+     "d24": -1.2,
+     "d48": -0.9,
+     "d72": -1.1,
+     "date": "2026-11-17T12:10:00+01:00"
+    }
+   ],
+   "avalanche": null
+  },
+  "pordoi": {
+   "elev": 2700,
+   "forecast": [
+    {
+     "date": "2026-11-17",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 2.5,
+      "ecmwf": 0.6,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 57,
+      "icon2i": 56.5,
+      "ecmwf": null,
+      "gfs": 25.5,
+      "mf": 72.5
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "SW",
+      "mf": "SW"
+     }
+    },
+    {
+     "date": "2026-11-18",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 1.4,
+      "gfs": 0,
+      "mf": 1
+     },
+     "wind": {
+      "icon": 54.6,
+      "icon2i": 59.6,
+      "ecmwf": null,
+      "gfs": 44.6,
+      "mf": 50.2
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-19",
+     "freeride": 3.5,
+     "base": 18.8,
+     "models": {
+      "icon": 17.3,
+      "icon2i": 3,
+      "ecmwf": 2.9,
+      "gfs": 12,
+      "mf": 3.5
+     },
+     "wind": {
+      "icon": 56.3,
+      "icon2i": 62.7,
+      "ecmwf": null,
+      "gfs": 16.7,
+      "mf": 49.8
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "SW",
+      "icon2i": "W",
+      "gfs": "CALM",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-20",
+     "freeride": 0.1,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.3,
+      "gfs": 0,
+      "mf": 0.2
+     },
+     "wind": {
+      "icon": 42,
+      "ecmwf": null,
+      "gfs": 20.8,
+      "mf": 47.9
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "CALM",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-21",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.6,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 33.5,
+      "ecmwf": null,
+      "gfs": 14.2
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-22",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 1.6,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 30.6,
+      "ecmwf": null,
+      "gfs": 15
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-23",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 33.2,
+      "ecmwf": null,
+      "gfs": 12.4
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    }
+   ],
+   "stations": [
+    {
+     "id": "Sellajoch - Passo Sella",
+     "name": "Sellajoch - Passo Sella",
+     "elev": 2110,
+     "km": 4.4,
+     "hs": 5,
+     "d24": 0,
+     "d48": 0,
+     "d72": -1,
+     "date": "2026-11-17T10:00:00+01:00"
+    },
+    {
+     "id": "SEIS2",
+     "name": "Seiser Alm Zallinger - Alpe di Siusi Zallinger",
+     "elev": 2055,
+     "km": 9.6,
+     "hs": 8,
+     "d24": -1.2,
+     "d48": -0.9,
+     "d72": -1.1,
+     "date": "2026-11-17T12:10:00+01:00"
+    },
+    {
+     "id": "PIZL2",
+     "name": "Piz la Ila - Piz la Ila",
+     "elev": 2050,
+     "km": 11,
+     "hs": 6.4,
+     "d24": 1.8,
+     "d48": 3.2,
+     "d72": -0.7,
+     "date": "2026-11-17T12:00:00+01:00"
+    }
+   ],
+   "avalanche": null
+  },
+  "san-martino": {
+   "elev": 2600,
+   "forecast": [
+    {
+     "date": "2026-11-17",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 0.1,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 68.3,
+      "icon2i": 64.6,
+      "ecmwf": null,
+      "gfs": 41,
+      "mf": 77.3
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "SW",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-18",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 0.1,
+      "gfs": 0,
+      "mf": 3.2
+     },
+     "wind": {
+      "icon": 69,
+      "icon2i": 66.4,
+      "ecmwf": null,
+      "gfs": 45.3,
+      "mf": 57.1
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-19",
+     "freeride": 6.3,
+     "base": 18,
+     "models": {
+      "icon": 13.7,
+      "icon2i": 1.3,
+      "ecmwf": 4.5,
+      "gfs": 13.5,
+      "mf": 6.3
+     },
+     "wind": {
+      "icon": 77.7,
+      "icon2i": 60.2,
+      "ecmwf": null,
+      "gfs": 28,
+      "mf": 51.6
+     },
+     "regime": "SW",
+     "regimes": {
+      "icon": "SW",
+      "icon2i": "W",
+      "gfs": "CALM",
+      "mf": "SW"
+     }
+    },
+    {
+     "date": "2026-11-20",
+     "freeride": 0.1,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.4,
+      "gfs": 0,
+      "mf": 0.2
+     },
+     "wind": {
+      "icon": 45,
+      "ecmwf": null,
+      "gfs": 23.9,
+      "mf": 41.8
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-21",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.8,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 42.7,
+      "ecmwf": null,
+      "gfs": 17.8
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-22",
+     "freeride": 0.4,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 1.6,
+      "gfs": 0.4,
+      "mf": null
+     },
+     "wind": {
+      "icon": 32.6,
+      "ecmwf": null,
+      "gfs": 15.7
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-23",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 33.6,
+      "ecmwf": null,
+      "gfs": 16.7
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    }
+   ],
+   "stations": [
+    {
+     "id": "PROL2",
+     "name": "Passo Rolle",
+     "elev": 2012,
+     "km": 4.1,
+     "hs": 2.5,
+     "d24": -0.5,
+     "d48": -1.3,
+     "d72": -0.5,
+     "date": "2026-11-17T12:00:00+01:00"
+    },
+    {
+     "id": "SMAR2",
+     "name": "San Martino di Castrozza",
+     "elev": 1470,
+     "km": 1.1,
+     "hs": 2,
+     "d24": 1.6,
+     "d48": 1.4,
+     "d72": 1,
+     "date": "2026-11-17T12:00:00+01:00"
+    },
+    {
+     "id": "PVAL2",
+     "name": "Passo Valles",
+     "elev": 2032,
+     "km": 8.2,
+     "hs": 0,
+     "d24": 0,
+     "d48": 0,
+     "d72": 0,
+     "date": "2026-11-17T12:00:00+01:00"
+    }
+   ],
+   "avalanche": null
+  },
+  "val-zoldana": {
+   "elev": 2000,
+   "forecast": [
+    {
+     "date": "2026-11-17",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 70.1,
+      "icon2i": 64.6,
+      "ecmwf": null,
+      "gfs": 24.3,
+      "mf": 70.5
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "SW",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-18",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 0.1,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 73,
+      "icon2i": 74.5,
+      "ecmwf": null,
+      "gfs": 36,
+      "mf": 55.9
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-19",
+     "freeride": 4.6,
+     "base": 12.1,
+     "models": {
+      "icon": 9.6,
+      "icon2i": 0,
+      "ecmwf": 2.4,
+      "gfs": 4.6,
+      "mf": 7.8
+     },
+     "wind": {
+      "icon": 54.1,
+      "icon2i": 53.4,
+      "ecmwf": null,
+      "gfs": 19.4,
+      "mf": 60.2
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "SW",
+      "icon2i": "W",
+      "gfs": "CALM",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-20",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 42,
+      "ecmwf": null,
+      "gfs": 19.7,
+      "mf": 35.2
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "CALM",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-21",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 55.2,
+      "ecmwf": null,
+      "gfs": 16.8
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-22",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.7,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 37.2,
+      "ecmwf": null,
+      "gfs": 14.2
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-23",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 40.2,
+      "ecmwf": null,
+      "gfs": 15
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    }
+   ],
+   "stations": [],
+   "avalanche": null
+  },
+  "arabba": {
+   "elev": 2450,
+   "forecast": [
+    {
+     "date": "2026-11-17",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0.9,
+      "ecmwf": 0.5,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 74.9,
+      "icon2i": 61.4,
+      "ecmwf": null,
+      "gfs": 24.3,
+      "mf": 74.4
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "SW",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-18",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 1.3,
+      "gfs": 0,
+      "mf": 1.2
+     },
+     "wind": {
+      "icon": 67.1,
+      "icon2i": 58.3,
+      "ecmwf": null,
+      "gfs": 36,
+      "mf": 50.5
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-19",
+     "freeride": 2.9,
+     "base": 16.3,
+     "models": {
+      "icon": 14.9,
+      "icon2i": 2.6,
+      "ecmwf": 2.9,
+      "gfs": 10.1,
+      "mf": 2.2
+     },
+     "wind": {
+      "icon": 56.2,
+      "icon2i": 65.8,
+      "ecmwf": null,
+      "gfs": 19.4,
+      "mf": 57.8
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "SW",
+      "icon2i": "W",
+      "gfs": "CALM",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-20",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.3,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 41.5,
+      "ecmwf": null,
+      "gfs": 19.7,
+      "mf": 51.6
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "CALM",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-21",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.5,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 38.8,
+      "ecmwf": null,
+      "gfs": 16.8
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-22",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 1.4,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 28.1,
+      "ecmwf": null,
+      "gfs": 14.2
+     },
+     "regime": "CALM",
+     "regimes": {
+      "icon": "CALM",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-23",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 37.8,
+      "ecmwf": null,
+      "gfs": 15
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    }
+   ],
+   "stations": [
+    {
+     "id": "PIZL2",
+     "name": "Piz la Ila - Piz la Ila",
+     "elev": 2050,
+     "km": 8.5,
+     "hs": 6.4,
+     "d24": 1.8,
+     "d48": 3.2,
+     "d72": -0.7,
+     "date": "2026-11-17T12:00:00+01:00"
+    },
+    {
+     "id": "Sellajoch - Passo Sella",
+     "name": "Sellajoch - Passo Sella",
+     "elev": 2110,
+     "km": 9.3,
+     "hs": 5,
+     "d24": 0,
+     "d48": 0,
+     "d72": -1,
+     "date": "2026-11-17T10:00:00+01:00"
+    },
+    {
+     "id": "KREU1",
+     "name": "Kreuzkofeljoch - Passo Poma",
+     "elev": 2297,
+     "km": 17.2,
+     "hs": 10.2,
+     "d24": -2.5,
+     "d48": -3.4,
+     "d72": -3.3,
+     "date": "2026-11-17T12:00:00+01:00"
+    }
+   ],
+   "avalanche": null
+  },
+  "lagazuoi": {
+   "elev": 2650,
+   "forecast": [
+    {
+     "date": "2026-11-17",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0.8,
+      "ecmwf": 0.9,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 61.9,
+      "icon2i": 59.6,
+      "ecmwf": null,
+      "gfs": 24.3,
+      "mf": 67
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "SW",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-18",
+     "freeride": 0.1,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 0.5,
+      "gfs": 0.1,
+      "mf": 2.1
+     },
+     "wind": {
+      "icon": 68.9,
+      "icon2i": 59.6,
+      "ecmwf": null,
+      "gfs": 36,
+      "mf": 45.9
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-19",
+     "freeride": 3.1,
+     "base": 17.3,
+     "models": {
+      "icon": 13.5,
+      "icon2i": 2.7,
+      "ecmwf": 3.1,
+      "gfs": 9.5,
+      "mf": 2.3
+     },
+     "wind": {
+      "icon": 46,
+      "icon2i": 58.3,
+      "ecmwf": null,
+      "gfs": 19.4,
+      "mf": 59.5
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "CALM",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-20",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.3,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 33.5,
+      "ecmwf": null,
+      "gfs": 19.7,
+      "mf": 45.8
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "CALM",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-21",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.5,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 48.3,
+      "ecmwf": null,
+      "gfs": 16.8
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-22",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.8,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 33.5,
+      "ecmwf": null,
+      "gfs": 14.2
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-23",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 43.9,
+      "ecmwf": null,
+      "gfs": 15
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    }
+   ],
+   "stations": [
+    {
+     "id": "PIZL2",
+     "name": "Piz la Ila - Piz la Ila",
+     "elev": 2050,
+     "km": 9.2,
+     "hs": 6.4,
+     "d24": 1.8,
+     "d48": 3.2,
+     "d72": -0.7,
+     "date": "2026-11-17T12:00:00+01:00"
+    },
+    {
+     "id": "KREU1",
+     "name": "Kreuzkofeljoch - Passo Poma",
+     "elev": 2297,
+     "km": 19.6,
+     "hs": 10.2,
+     "d24": -2.5,
+     "d48": -3.4,
+     "d72": -3.3,
+     "date": "2026-11-17T12:00:00+01:00"
+    },
+    {
+     "id": "Sellajoch - Passo Sella",
+     "name": "Sellajoch - Passo Sella",
+     "elev": 2110,
+     "km": 18.9,
+     "hs": 5,
+     "d24": 0,
+     "d48": 0,
+     "d72": -1,
+     "date": "2026-11-17T10:00:00+01:00"
+    }
+   ],
+   "avalanche": null
+  },
+  "giau": {
+   "elev": 2300,
+   "forecast": [
+    {
+     "date": "2026-11-17",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 0.1,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 67,
+      "icon2i": 60.2,
+      "ecmwf": null,
+      "gfs": 24.3,
+      "mf": 76.1
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "SW",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-18",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 0.3,
+      "gfs": 0,
+      "mf": 1.3
+     },
+     "wind": {
+      "icon": 68.9,
+      "icon2i": 60.8,
+      "ecmwf": null,
+      "gfs": 36,
+      "mf": 50.3
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-19",
+     "freeride": 2.9,
+     "base": 14.8,
+     "models": {
+      "icon": 13.2,
+      "icon2i": 1.4,
+      "ecmwf": 2.9,
+      "gfs": 10,
+      "mf": 1.3
+     },
+     "wind": {
+      "icon": 51.9,
+      "icon2i": 65.8,
+      "ecmwf": null,
+      "gfs": 19.4,
+      "mf": 59.5
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "SW",
+      "icon2i": "W",
+      "gfs": "CALM",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-20",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.3,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 37.4,
+      "ecmwf": null,
+      "gfs": 19.7,
+      "mf": 45.8
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "CALM",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-21",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.4,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 58.1,
+      "ecmwf": null,
+      "gfs": 16.8
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-22",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.7,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 35.4,
+      "ecmwf": null,
+      "gfs": 14.2
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-23",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 43.9,
+      "ecmwf": null,
+      "gfs": 15
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    }
+   ],
+   "stations": [
+    {
+     "id": "PIZL2",
+     "name": "Piz la Ila - Piz la Ila",
+     "elev": 2050,
+     "km": 14.6,
+     "hs": 6.4,
+     "d24": 1.8,
+     "d48": 3.2,
+     "d72": -0.7,
+     "date": "2026-11-17T12:00:00+01:00"
+    }
+   ],
+   "avalanche": null
+  },
+  "civetta": {
+   "elev": 2100,
+   "forecast": [
+    {
+     "date": "2026-11-17",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 72.9,
+      "icon2i": 63.3,
+      "ecmwf": null,
+      "gfs": 24.3,
+      "mf": 70.3
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "SW",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-18",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 0.9,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 68.4,
+      "icon2i": 73.2,
+      "ecmwf": null,
+      "gfs": 36,
+      "mf": 55.4
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-19",
+     "freeride": 1.5,
+     "base": 14.9,
+     "models": {
+      "icon": 10.7,
+      "icon2i": 0.6,
+      "ecmwf": 1.4,
+      "gfs": 9.9,
+      "mf": 1.5
+     },
+     "wind": {
+      "icon": 51,
+      "icon2i": 54,
+      "ecmwf": null,
+      "gfs": 19.4,
+      "mf": 59.5
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "SW",
+      "icon2i": "W",
+      "gfs": "CALM",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-20",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 42,
+      "ecmwf": null,
+      "gfs": 19.7,
+      "mf": 45.8
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "CALM",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-21",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 55,
+      "ecmwf": null,
+      "gfs": 16.8
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-22",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.7,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 34.2,
+      "ecmwf": null,
+      "gfs": 14.2
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-23",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 40.8,
+      "ecmwf": null,
+      "gfs": 15
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    }
+   ],
+   "stations": [
+    {
+     "id": "PVAL2",
+     "name": "Passo Valles",
+     "elev": 2032,
+     "km": 18.9,
+     "hs": 0,
+     "d24": 0,
+     "d48": 0,
+     "d72": 0,
+     "date": "2026-11-17T12:00:00+01:00"
+    }
+   ],
+   "avalanche": null
+  },
+  "san-pellegrino": {
+   "elev": 2300,
+   "forecast": [
+    {
+     "date": "2026-11-17",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 0.2,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 73,
+      "icon2i": 70.1,
+      "ecmwf": null,
+      "gfs": 25.5,
+      "mf": 74.6
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "SW",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-18",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 0.4,
+      "gfs": 0,
+      "mf": 4.4
+     },
+     "wind": {
+      "icon": 63.1,
+      "icon2i": 65.8,
+      "ecmwf": null,
+      "gfs": 44.6,
+      "mf": 53.8
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-19",
+     "freeride": 3.9,
+     "base": 17.5,
+     "models": {
+      "icon": 15.8,
+      "icon2i": 2.3,
+      "ecmwf": 3.9,
+      "gfs": 11.6,
+      "mf": 3.5
+     },
+     "wind": {
+      "icon": 55.5,
+      "icon2i": 61.4,
+      "ecmwf": null,
+      "gfs": 16.7,
+      "mf": 49.7
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "CALM",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-20",
+     "freeride": 0.1,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.1,
+      "gfs": 0,
+      "mf": 0.3
+     },
+     "wind": {
+      "icon": 46.7,
+      "ecmwf": null,
+      "gfs": 20.8,
+      "mf": 44.2
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "CALM",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-21",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.3,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 40.3,
+      "ecmwf": null,
+      "gfs": 14.2
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-22",
+     "freeride": 0.4,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 1.3,
+      "gfs": 0.4,
+      "mf": null
+     },
+     "wind": {
+      "icon": 37.1,
+      "ecmwf": null,
+      "gfs": 15
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-23",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 33.2,
+      "ecmwf": null,
+      "gfs": 12.4
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    }
+   ],
+   "stations": [
+    {
+     "id": "PVAL2",
+     "name": "Passo Valles",
+     "elev": 2032,
+     "km": 4.7,
+     "hs": 0,
+     "d24": 0,
+     "d48": 0,
+     "d72": 0,
+     "date": "2026-11-17T12:00:00+01:00"
+    },
+    {
+     "id": "PROL2",
+     "name": "Passo Rolle",
+     "elev": 2012,
+     "km": 9.1,
+     "hs": 2.5,
+     "d24": -0.5,
+     "d48": -1.3,
+     "d72": -0.5,
+     "date": "2026-11-17T12:00:00+01:00"
+    },
+    {
+     "id": "Ciampedie",
+     "name": "Ciampedie",
+     "elev": 1960,
+     "km": 11.6,
+     "hs": 6,
+     "d24": -1,
+     "d48": 1,
+     "d72": -1,
+     "date": "2026-11-17T11:00:00+01:00"
+    }
+   ],
+   "avalanche": null
+  },
+  "tre-cime": {
+   "elev": 2200,
+   "forecast": [
+    {
+     "date": "2026-11-17",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 0.1,
+      "gfs": 0.3,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 54.2,
+      "icon2i": 63.9,
+      "ecmwf": null,
+      "gfs": 23.2,
+      "mf": 66.4
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "SW",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-18",
+     "freeride": 0.1,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 0.4,
+      "gfs": 0.1,
+      "mf": 0.2
+     },
+     "wind": {
+      "icon": 62.1,
+      "icon2i": 59,
+      "ecmwf": null,
+      "gfs": 46.1,
+      "mf": 50.6
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-19",
+     "freeride": 5.9,
+     "base": 12.7,
+     "models": {
+      "icon": 12.9,
+      "icon2i": 3.2,
+      "ecmwf": 2.8,
+      "gfs": 8.1,
+      "mf": 5.9
+     },
+     "wind": {
+      "icon": 58.1,
+      "icon2i": 52.8,
+      "ecmwf": null,
+      "gfs": 24.2,
+      "mf": 55.7
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "CALM",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-20",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": 2.3
+     },
+     "wind": {
+      "icon": 32.8,
+      "ecmwf": null,
+      "gfs": 27.9,
+      "mf": 38.7
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-21",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 43.7,
+      "ecmwf": null,
+      "gfs": 17.2
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-22",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.7,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 34.1,
+      "ecmwf": null,
+      "gfs": 19.8
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-23",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 42.2,
+      "ecmwf": null,
+      "gfs": 17
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    }
+   ],
+   "stations": [
+    {
+     "id": "SROT2",
+     "name": "Rotwandwiesen - Prati di Croda Rossa",
+     "elev": 1910,
+     "km": 2.4,
+     "hs": 1,
+     "d24": -1.5,
+     "d48": -0.8,
+     "d72": 0.5,
+     "date": "2026-11-17T12:00:00+01:00"
+    },
+    {
+     "id": "Leckfeldalm",
+     "name": "Leckfeldalm",
+     "elev": 1920,
+     "km": 8.8,
+     "hs": 1,
+     "d24": 0,
+     "d48": 0,
+     "d72": 0,
+     "date": "2026-11-17T12:00:00+01:00"
+    },
+    {
+     "id": "Dürrensteinhütte - Rifugio Vallandro",
+     "name": "Dürrensteinhütte - Rifugio Vallandro",
+     "elev": 2107,
+     "km": 11.1,
+     "hs": 7,
+     "d24": -1,
+     "d48": -1,
+     "d72": -0.5,
+     "date": "2026-11-17T10:00:00+01:00"
+    }
+   ],
+   "avalanche": null
+  },
+  "plan-de-corones": {
+   "elev": 2200,
+   "forecast": [
+    {
+     "date": "2026-11-17",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0.3,
+      "ecmwf": 0.3,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 70.2,
+      "icon2i": 62.7,
+      "ecmwf": null,
+      "gfs": 25.8,
+      "mf": 67.7
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "SW",
+      "mf": "SW"
+     }
+    },
+    {
+     "date": "2026-11-18",
+     "freeride": 0.4,
+     "base": 0.1,
+     "models": {
+      "icon": 0.1,
+      "icon2i": 0.4,
+      "ecmwf": 0.9,
+      "gfs": 0,
+      "mf": 0.8
+     },
+     "wind": {
+      "icon": 65.6,
+      "icon2i": 59,
+      "ecmwf": null,
+      "gfs": 43.6,
+      "mf": 54.2
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-19",
+     "freeride": 5.5,
+     "base": 11.3,
+     "models": {
+      "icon": 10,
+      "icon2i": 5.4,
+      "ecmwf": 2.6,
+      "gfs": 5.5,
+      "mf": 5.8
+     },
+     "wind": {
+      "icon": 58.8,
+      "icon2i": 47.2,
+      "ecmwf": null,
+      "gfs": 21.9,
+      "mf": 44.3
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "CALM",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-20",
+     "freeride": 0.1,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.1,
+      "gfs": 0,
+      "mf": 3.9
+     },
+     "wind": {
+      "icon": 39.5,
+      "ecmwf": null,
+      "gfs": 27.3,
+      "mf": 38
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-21",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.3,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 46.9,
+      "ecmwf": null,
+      "gfs": 19.5
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-22",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.7,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 36.9,
+      "ecmwf": null,
+      "gfs": 24.1
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-23",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 41.6,
+      "ecmwf": null,
+      "gfs": 19.7
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    }
+   ],
+   "stations": [
+    {
+     "id": "Maurerberg - Monte Muro",
+     "name": "Maurerberg - Monte Muro",
+     "elev": 2125,
+     "km": 13.6,
+     "hs": 9,
+     "d24": 0.6,
+     "d48": 0.5,
+     "d72": 0.4,
+     "date": "2026-11-17T11:00:00+01:00"
+    },
+    {
+     "id": "KREU1",
+     "name": "Kreuzkofeljoch - Passo Poma",
+     "elev": 2297,
+     "km": 17,
+     "hs": 10.2,
+     "d24": -2.5,
+     "d48": -3.4,
+     "d72": -3.3,
+     "date": "2026-11-17T12:00:00+01:00"
+    },
+    {
+     "id": "Dürrensteinhütte - Rifugio Vallandro",
+     "name": "Dürrensteinhütte - Rifugio Vallandro",
+     "elev": 2107,
+     "km": 17.2,
+     "hs": 7,
+     "d24": -1,
+     "d48": -1,
+     "d72": -0.5,
+     "date": "2026-11-17T10:00:00+01:00"
+    }
+   ],
+   "avalanche": null
+  },
+  "alpe-di-siusi": {
+   "elev": 2200,
+   "forecast": [
+    {
+     "date": "2026-11-17",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 0.3,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 61.2,
+      "icon2i": 63.9,
+      "ecmwf": null,
+      "gfs": 25.5,
+      "mf": 67.5
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "SW",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-18",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 0.8,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 64.8,
+      "icon2i": 62.1,
+      "ecmwf": null,
+      "gfs": 44.6,
+      "mf": 55.9
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-19",
+     "freeride": 2.8,
+     "base": 14.2,
+     "models": {
+      "icon": 10.9,
+      "icon2i": 1.5,
+      "ecmwf": 1.3,
+      "gfs": 2.8,
+      "mf": 4.5
+     },
+     "wind": {
+      "icon": 55.4,
+      "icon2i": 52.1,
+      "ecmwf": null,
+      "gfs": 16.7,
+      "mf": 52.1
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "SW",
+      "icon2i": "W",
+      "gfs": "CALM",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-20",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": 0.1
+     },
+     "wind": {
+      "icon": 45.4,
+      "ecmwf": null,
+      "gfs": 20.8,
+      "mf": 45.4
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "CALM",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-21",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 39.3,
+      "ecmwf": null,
+      "gfs": 14.2
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-22",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.7,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 28.9,
+      "ecmwf": null,
+      "gfs": 15
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-23",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 32.2,
+      "ecmwf": null,
+      "gfs": 12.4
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    }
+   ],
+   "stations": [
+    {
+     "id": "SEIS2",
+     "name": "Seiser Alm Zallinger - Alpe di Siusi Zallinger",
+     "elev": 2055,
+     "km": 5.5,
+     "hs": 8,
+     "d24": -1.2,
+     "d48": -0.9,
+     "d72": -1.1,
+     "date": "2026-11-17T12:10:00+01:00"
+    },
+    {
+     "id": "Fermeda Hütte - Rifugio Fermeda",
+     "name": "Fermeda Hütte - Rifugio Fermeda",
+     "elev": 2090,
+     "km": 9.9,
+     "hs": 2,
+     "d24": 0.3,
+     "d48": 1,
+     "d72": -1.8,
+     "date": "2026-11-17T11:00:00+01:00"
+    },
+    {
+     "id": "Sellajoch - Passo Sella",
+     "name": "Sellajoch - Passo Sella",
+     "elev": 2110,
+     "km": 10.6,
+     "hs": 5,
+     "d24": 0,
+     "d48": 0,
+     "d72": -1,
+     "date": "2026-11-17T10:00:00+01:00"
+    }
+   ],
+   "avalanche": null
+  },
+  "latemar": {
+   "elev": 2300,
+   "forecast": [
+    {
+     "date": "2026-11-17",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 63.1,
+      "icon2i": 57.7,
+      "ecmwf": null,
+      "gfs": 48.2,
+      "mf": 68.8
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "SW",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-18",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 0.3,
+      "gfs": 0,
+      "mf": 1.6
+     },
+     "wind": {
+      "icon": 67.2,
+      "icon2i": 66.4,
+      "ecmwf": null,
+      "gfs": 43.6,
+      "mf": 64.1
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-19",
+     "freeride": 4.3,
+     "base": 15.7,
+     "models": {
+      "icon": 13,
+      "icon2i": 1.1,
+      "ecmwf": 0.2,
+      "gfs": 5.8,
+      "mf": 4.3
+     },
+     "wind": {
+      "icon": 60.3,
+      "icon2i": 64.6,
+      "ecmwf": null,
+      "gfs": 29.8,
+      "mf": 50.8
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "SW",
+      "icon2i": "W",
+      "gfs": "CALM",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-20",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": 10
+     },
+     "wind": {
+      "icon": 39.3,
+      "ecmwf": null,
+      "gfs": 27.3,
+      "mf": 38.5
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-21",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 40.1,
+      "ecmwf": null,
+      "gfs": 26.9
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "N"
+     }
+    },
+    {
+     "date": "2026-11-22",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 1,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 29.2,
+      "ecmwf": null,
+      "gfs": 22.4
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-23",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 32.2,
+      "ecmwf": null,
+      "gfs": 18.1
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    }
+   ],
+   "stations": [
+    {
+     "id": "OABS2",
+     "name": "Obereggen Absam - Obereggen Absam",
+     "elev": 2125,
+     "km": 0.9,
+     "hs": 3.4,
+     "d24": 3.2,
+     "d48": 2,
+     "d72": 2.3,
+     "date": "2026-11-17T12:00:00+01:00"
+    },
+    {
+     "id": "Pampeago",
+     "name": "Pampeago",
+     "elev": 2200,
+     "km": 4.7,
+     "hs": -1,
+     "d24": 0,
+     "d48": 0,
+     "d72": 0,
+     "date": "2026-11-17T11:00:00+01:00"
+    },
+    {
+     "id": "KARE1",
+     "name": "Karerpass - Passo Costalunga",
+     "elev": 1715,
+     "km": 6.4,
+     "hs": 2,
+     "d24": 0,
+     "d48": 0,
+     "d72": 0,
+     "date": "2026-11-17T12:00:00+01:00"
+    }
+   ],
+   "avalanche": null
+  },
+  "plose": {
+   "elev": 2350,
+   "forecast": [
+    {
+     "date": "2026-11-17",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0.9,
+      "ecmwf": 0.1,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 64,
+      "icon2i": 66.4,
+      "ecmwf": null,
+      "gfs": 26.1,
+      "mf": 75.7
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "SW",
+      "mf": "SW"
+     }
+    },
+    {
+     "date": "2026-11-18",
+     "freeride": 0.1,
+     "base": 0.2,
+     "models": {
+      "icon": 0.2,
+      "icon2i": 0.1,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": 1.8
+     },
+     "wind": {
+      "icon": 70.2,
+      "icon2i": 62.1,
+      "ecmwf": null,
+      "gfs": 43.6,
+      "mf": 58.6
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-19",
+     "freeride": 4.6,
+     "base": 11.5,
+     "models": {
+      "icon": 10.6,
+      "icon2i": 4.6,
+      "ecmwf": 1.8,
+      "gfs": 2.4,
+      "mf": 5
+     },
+     "wind": {
+      "icon": 48.2,
+      "icon2i": 52.1,
+      "ecmwf": null,
+      "gfs": 20.7,
+      "mf": 48.9
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "CALM",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-20",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.1,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 35.5,
+      "ecmwf": null,
+      "gfs": 27.5,
+      "mf": 53.7
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "CALM",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-21",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.3,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 40.8,
+      "ecmwf": null,
+      "gfs": 20.3
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-22",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.7,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 29.4,
+      "ecmwf": null,
+      "gfs": 22.2
+     },
+     "regime": "CALM",
+     "regimes": {
+      "icon": "CALM",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-23",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 32.3,
+      "ecmwf": null,
+      "gfs": 17.5
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    }
+   ],
+   "stations": [
+    {
+     "id": "Maurerberg - Monte Muro",
+     "name": "Maurerberg - Monte Muro",
+     "elev": 2125,
+     "km": 8.1,
+     "hs": 9,
+     "d24": 0.6,
+     "d48": 0.5,
+     "d72": 0.4,
+     "date": "2026-11-17T11:00:00+01:00"
+    },
+    {
+     "id": "KREU1",
+     "name": "Kreuzkofeljoch - Passo Poma",
+     "elev": 2297,
+     "km": 9.9,
+     "hs": 10.2,
+     "d24": -2.5,
+     "d48": -3.4,
+     "d72": -3.3,
+     "date": "2026-11-17T12:00:00+01:00"
+    },
+    {
+     "id": "Fermeda Hütte - Rifugio Fermeda",
+     "name": "Fermeda Hütte - Rifugio Fermeda",
+     "elev": 2090,
+     "km": 12.3,
+     "hs": 2,
+     "d24": 0.3,
+     "d48": 1,
+     "d72": -1.8,
+     "date": "2026-11-17T11:00:00+01:00"
+    }
+   ],
+   "avalanche": null
+  },
+  "brenta": {
+   "elev": 2400,
+   "forecast": [
+    {
+     "date": "2026-11-17",
+     "freeride": 0,
+     "base": 0.1,
+     "models": {
+      "icon": 0.1,
+      "icon2i": 0,
+      "ecmwf": 0.5,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 62.7,
+      "icon2i": 57.1,
+      "ecmwf": null,
+      "gfs": 22.6,
+      "mf": 60.2
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "SW",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-18",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 1.7,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 65.1,
+      "icon2i": 71.4,
+      "ecmwf": null,
+      "gfs": 43,
+      "mf": 49
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-19",
+     "freeride": 4.2,
+     "base": 16.5,
+     "models": {
+      "icon": 14.6,
+      "icon2i": 0.8,
+      "ecmwf": 4.2,
+      "gfs": 10.2,
+      "mf": 2.1
+     },
+     "wind": {
+      "icon": 67.3,
+      "icon2i": 54.6,
+      "ecmwf": null,
+      "gfs": 18,
+      "mf": 48.5
+     },
+     "regime": "SW",
+     "regimes": {
+      "icon": "SW",
+      "icon2i": "W",
+      "gfs": "CALM",
+      "mf": "SW"
+     }
+    },
+    {
+     "date": "2026-11-20",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.5,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 34.8,
+      "ecmwf": null,
+      "gfs": 14.9,
+      "mf": 41.9
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "CALM",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-21",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.8,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 34.6,
+      "ecmwf": null,
+      "gfs": 12.7
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-22",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 1.4,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 20.5,
+      "ecmwf": null,
+      "gfs": 13.7
+     },
+     "regime": "CALM",
+     "regimes": {
+      "icon": "CALM",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-23",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 16.4,
+      "ecmwf": null,
+      "gfs": 13.4
+     },
+     "regime": "CALM",
+     "regimes": {
+      "icon": "CALM",
+      "gfs": "CALM"
+     }
+    }
+   ],
+   "stations": [
+    {
+     "id": "MGRO2",
+     "name": "Monte Groste' (Rifugio Graffer)",
+     "elev": 2262,
+     "km": 2.6,
+     "hs": 4.5,
+     "d24": -0.5,
+     "d48": -1,
+     "d72": -1.1,
+     "date": "2026-11-17T12:00:00+01:00"
+    },
+    {
+     "id": "Passo Grostè",
+     "name": "Passo Grostè",
+     "elev": 2530,
+     "km": 3.9,
+     "hs": 6,
+     "d24": -2,
+     "d48": -1,
+     "d72": -1,
+     "date": "2026-11-17T11:00:00+01:00"
+    },
+    {
+     "id": "PRAD2",
+     "name": "Pradalago (Rifugio Viviani)",
+     "elev": 2084,
+     "km": 4.2,
+     "hs": 0,
+     "d24": -0.2,
+     "d48": -1.2,
+     "d72": -0.3,
+     "date": "2026-11-17T12:00:00+01:00"
+    }
+   ],
+   "avalanche": null
+  },
+  "sappada": {
+   "elev": 2000,
+   "forecast": [
+    {
+     "date": "2026-11-17",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0.1,
+      "ecmwf": 0.1,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 73,
+      "icon2i": 73.2,
+      "ecmwf": null,
+      "gfs": 38.3,
+      "mf": 70.3
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "SW",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-18",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": 0.1
+     },
+     "wind": {
+      "icon": 65.2,
+      "icon2i": 63.9,
+      "ecmwf": null,
+      "gfs": 53.1,
+      "mf": 54.2
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-19",
+     "freeride": 4.2,
+     "base": 12.9,
+     "models": {
+      "icon": 10.5,
+      "icon2i": 1.9,
+      "ecmwf": 0.8,
+      "gfs": 4.2,
+      "mf": 5
+     },
+     "wind": {
+      "icon": 60.1,
+      "icon2i": 57.1,
+      "ecmwf": null,
+      "gfs": 36.5,
+      "mf": 61.4
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "CALM",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-20",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": 1.1
+     },
+     "wind": {
+      "icon": 43.3,
+      "ecmwf": null,
+      "gfs": 30.4,
+      "mf": 46
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-21",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 49.7,
+      "ecmwf": null,
+      "gfs": 24
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "W"
+     }
+    },
+    {
+     "date": "2026-11-22",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.3,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 36.1,
+      "ecmwf": null,
+      "gfs": 27.7
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-23",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 42.1,
+      "ecmwf": null,
+      "gfs": 27.3
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "N"
+     }
+    }
+   ],
+   "stations": [
+    {
+     "id": "Porzehütte",
+     "name": "Porzehütte",
+     "elev": 1935,
+     "km": 13.1,
+     "hs": 0,
+     "d24": 0,
+     "d48": 0,
+     "d72": 0,
+     "date": "2026-11-17T12:00:00+01:00"
+    },
+    {
+     "id": "Obertilliach",
+     "name": "Obertilliach",
+     "elev": 1400,
+     "km": 15.3,
+     "hs": -1,
+     "d24": 0,
+     "d48": 0,
+     "d72": 0,
+     "date": "2026-11-17T12:00:00+01:00"
+    }
+   ],
+   "avalanche": null
+  },
+  "forni-di-sopra": {
+   "elev": 2000,
+   "forecast": [
+    {
+     "date": "2026-11-17",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 76.3,
+      "icon2i": 69.5,
+      "ecmwf": null,
+      "gfs": 27,
+      "mf": 84.2
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "SW",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-18",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 74.4,
+      "icon2i": 63.3,
+      "ecmwf": null,
+      "gfs": 46,
+      "mf": 56.5
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-19",
+     "freeride": 4.7,
+     "base": 14.9,
+     "models": {
+      "icon": 13.3,
+      "icon2i": 0.7,
+      "ecmwf": 0.3,
+      "gfs": 4.7,
+      "mf": 6
+     },
+     "wind": {
+      "icon": 62.2,
+      "icon2i": 56.5,
+      "ecmwf": null,
+      "gfs": 29.5,
+      "mf": 67.4
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "CALM",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-20",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": 0.8
+     },
+     "wind": {
+      "icon": 40.6,
+      "ecmwf": null,
+      "gfs": 29.2,
+      "mf": 38.6
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-21",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 50.5,
+      "ecmwf": null,
+      "gfs": 22
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-22",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.7,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 38.7,
+      "ecmwf": null,
+      "gfs": 25.3
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-23",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 47.3,
+      "ecmwf": null,
+      "gfs": 23.8
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    }
+   ],
+   "stations": [],
+   "avalanche": null
+  },
+  "piancavallo": {
+   "elev": 1900,
+   "forecast": [
+    {
+     "date": "2026-11-17",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 97.6,
+      "icon2i": 90,
+      "ecmwf": null,
+      "gfs": 63.1,
+      "mf": 96.8
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-18",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 83.4,
+      "icon2i": 86.3,
+      "ecmwf": null,
+      "gfs": 67.2,
+      "mf": 75.9
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-19",
+     "freeride": 0.1,
+     "base": 4.6,
+     "models": {
+      "icon": 4,
+      "icon2i": 0,
+      "ecmwf": 0,
+      "gfs": 0.1,
+      "mf": 0.5
+     },
+     "wind": {
+      "icon": 63.4,
+      "icon2i": 65.8,
+      "ecmwf": null,
+      "gfs": 38.9,
+      "mf": 57.7
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "SW",
+      "icon2i": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-20",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 44.2,
+      "ecmwf": null,
+      "gfs": 31.7,
+      "mf": 55.1
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-21",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 45.3,
+      "ecmwf": null,
+      "gfs": 28.1
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    },
+    {
+     "date": "2026-11-22",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 50,
+      "ecmwf": null,
+      "gfs": 30.8
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "W"
+     }
+    },
+    {
+     "date": "2026-11-23",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 45.7,
+      "ecmwf": null,
+      "gfs": 20.6
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    }
+   ],
+   "stations": [],
+   "avalanche": null
+  },
+  "zoncolan": {
+   "elev": 1900,
+   "forecast": [
+    {
+     "date": "2026-11-17",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 78.1,
+      "icon2i": 74.5,
+      "ecmwf": null,
+      "gfs": 53.3,
+      "mf": 80.3
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "SW",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-18",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 76.4,
+      "icon2i": 65.2,
+      "ecmwf": null,
+      "gfs": 52.9,
+      "mf": 56.2
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-19",
+     "freeride": 2.4,
+     "base": 11.9,
+     "models": {
+      "icon": 4.3,
+      "icon2i": 0,
+      "ecmwf": 0,
+      "gfs": 2.4,
+      "mf": 6.9
+     },
+     "wind": {
+      "icon": 62.4,
+      "icon2i": 60.8,
+      "ecmwf": null,
+      "gfs": 36.5,
+      "mf": 60.1
+     },
+     "regime": "SW",
+     "regimes": {
+      "icon": "SW",
+      "icon2i": "W",
+      "gfs": "SW",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-20",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": 0.5
+     },
+     "wind": {
+      "icon": 50.4,
+      "ecmwf": null,
+      "gfs": 33.6,
+      "mf": 47.2
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-21",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 50.4,
+      "ecmwf": null,
+      "gfs": 27.7
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "W"
+     }
+    },
+    {
+     "date": "2026-11-22",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0.3,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 44.3,
+      "ecmwf": null,
+      "gfs": 27.7
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "W"
+     }
+    },
+    {
+     "date": "2026-11-23",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 42.2,
+      "ecmwf": null,
+      "gfs": 24.8
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "N"
+     }
+    }
+   ],
+   "stations": [],
+   "avalanche": null
+  },
+  "pramollo": {
+   "elev": 1950,
+   "forecast": [
+    {
+     "date": "2026-11-17",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 94,
+      "icon2i": 86.9,
+      "ecmwf": null,
+      "gfs": 67.2,
+      "mf": 94.8
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "SW",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-18",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 79,
+      "icon2i": 60.8,
+      "ecmwf": null,
+      "gfs": 57.1,
+      "mf": 63.9
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-19",
+     "freeride": 0.2,
+     "base": 19,
+     "models": {
+      "icon": 15.6,
+      "icon2i": 0,
+      "ecmwf": 0,
+      "gfs": 0.3,
+      "mf": 0.2
+     },
+     "wind": {
+      "icon": 66.4,
+      "icon2i": 83.2,
+      "ecmwf": null,
+      "gfs": 51.4,
+      "mf": 60.8
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "SW",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-20",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": 0.1
+     },
+     "wind": {
+      "icon": 54.4,
+      "ecmwf": null,
+      "gfs": 39.1,
+      "mf": 42.8
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-21",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 37.4,
+      "ecmwf": null,
+      "gfs": 29.1
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "W"
+     }
+    },
+    {
+     "date": "2026-11-22",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 46.1,
+      "ecmwf": null,
+      "gfs": 38.5
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "SW"
+     }
+    },
+    {
+     "date": "2026-11-23",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 46.2,
+      "ecmwf": null,
+      "gfs": 25.3
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    }
+   ],
+   "stations": [],
+   "avalanche": null
+  },
+  "sella-nevea": {
+   "elev": 2100,
+   "forecast": [
+    {
+     "date": "2026-11-17",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 102.5,
+      "icon2i": 91.2,
+      "ecmwf": null,
+      "gfs": 110.3,
+      "mf": 95.3
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-18",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": 0.5
+     },
+     "wind": {
+      "icon": 72.5,
+      "icon2i": 65.2,
+      "ecmwf": null,
+      "gfs": 68.3,
+      "mf": 68
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-19",
+     "freeride": 1.8,
+     "base": 19.9,
+     "models": {
+      "icon": 9,
+      "icon2i": 1.8,
+      "ecmwf": 0,
+      "gfs": 1.3,
+      "mf": 16
+     },
+     "wind": {
+      "icon": 65.8,
+      "icon2i": 73.2,
+      "ecmwf": null,
+      "gfs": 53.6,
+      "mf": 65.6
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "W",
+      "mf": "SW"
+     }
+    },
+    {
+     "date": "2026-11-20",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 53.1,
+      "ecmwf": null,
+      "gfs": 40.6,
+      "mf": 50.1
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-21",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 42.9,
+      "ecmwf": null,
+      "gfs": 42.2
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "W"
+     }
+    },
+    {
+     "date": "2026-11-22",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 51.3,
+      "ecmwf": null,
+      "gfs": 58
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "W"
+     }
+    },
+    {
+     "date": "2026-11-23",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 53.6,
+      "ecmwf": null,
+      "gfs": 29.6
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "W"
+     }
+    }
+   ],
+   "stations": [],
+   "avalanche": null
+  },
+  "tarvisio": {
+   "elev": 1750,
+   "forecast": [
+    {
+     "date": "2026-11-17",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 96.8,
+      "icon2i": 94.3,
+      "ecmwf": null,
+      "gfs": 85.5,
+      "mf": 100.1
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "SW",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-18",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": 0,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 75.1,
+      "icon2i": 63.9,
+      "ecmwf": null,
+      "gfs": 57.7,
+      "mf": 67.5
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-19",
+     "freeride": 1.8,
+     "base": 27.5,
+     "models": {
+      "icon": 15.5,
+      "icon2i": 0,
+      "ecmwf": 0,
+      "gfs": 13.6,
+      "mf": 1.8
+     },
+     "wind": {
+      "icon": 62.9,
+      "icon2i": 81.3,
+      "ecmwf": null,
+      "gfs": 50.6,
+      "mf": 64
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "icon2i": "W",
+      "gfs": "CALM",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-20",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": 0
+     },
+     "wind": {
+      "icon": 60,
+      "ecmwf": null,
+      "gfs": 39.8,
+      "mf": 50.1
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "W",
+      "mf": "W"
+     }
+    },
+    {
+     "date": "2026-11-21",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 43.5,
+      "ecmwf": null,
+      "gfs": 32.9
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "W"
+     }
+    },
+    {
+     "date": "2026-11-22",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 51.5,
+      "ecmwf": null,
+      "gfs": 39.9
+     },
+     "regime": "W",
+     "regimes": {
+      "icon": "W",
+      "gfs": "SW"
+     }
+    },
+    {
+     "date": "2026-11-23",
+     "freeride": 0,
+     "base": 0,
+     "models": {
+      "icon": 0,
+      "icon2i": null,
+      "ecmwf": 0,
+      "gfs": 0,
+      "mf": null
+     },
+     "wind": {
+      "icon": 55.3,
+      "ecmwf": null,
+      "gfs": 22.2
+     },
+     "regime": "N",
+     "regimes": {
+      "icon": "N",
+      "gfs": "CALM"
+     }
+    }
+   ],
+   "stations": [],
+   "avalanche": null
+  }
+ }
+}
