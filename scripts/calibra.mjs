@@ -18,7 +18,7 @@ import { correctedSnow, classify } from "../js/modelli.js";
 import { calibra } from "../js/calibrazione.js";
 
 const OUT = process.env.ARCHIVIO_DIR || "archivio";
-const BZ = "http://daten.buergernetz.bz.it/services/meteo/v1";
+const BZ = "https://geoservices.buergernetz.bz.it/services/meteo/v1";   // indirizzo nuovo (il vecchio daten.buergernetz.bz.it è stato dismesso)
 const PREV = "https://previous-runs-api.open-meteo.com/v1/forecast";
 const HIST = "https://historical-forecast-api.open-meteo.com/v1/forecast";
 const MAX_STAZIONI = 14, MAX_KM = 15, QUOTA_MIN = 1400;
@@ -59,7 +59,7 @@ async function getJson(url, tentativi = 4){
     try{
       const r = await fetch(url);
       if(r.ok) return await r.json();
-      last = new Error(`HTTP ${r.status}: ${(await r.text()).slice(0, 200)}`);
+      last = new Error(`HTTP ${r.status} da ${new URL(url).host}: ${(await r.text()).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 160)}`);
       if(r.status === 429){ log("  troppe richieste, aspetto 65 s"); await sleep(65e3); continue; }
       if(r.status < 500) throw last;
     }catch(e){
