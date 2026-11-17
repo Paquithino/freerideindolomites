@@ -20,6 +20,7 @@ import { loadAvalanche, avForSpot } from "../js/valanghe.js";
 import { loadStations, stationsFor } from "../js/stazioni.js";
 import { METODO } from "../js/calibrazione.js";
 import { loadQuote, demoQuote } from "../js/quote.js";
+import { controllaWebcam } from "./controlla-webcam.mjs";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const DEMO = process.argv.includes("--demo");
@@ -115,6 +116,9 @@ async function main(){
       }else log("Open-Meteo non risponde e non c'è un giro recente da riusare");
     }
   }
+  // webcam: controllo ogni ora (se fallisce del tutto, il sito le mostra comunque)
+  let camCheck = null;
+  if(!DEMO){ try{ camCheck = await controllaWebcam(log); }catch(e){ log("webcam ERRORE", e.message); } }
   log("modelli ricevuti:", Object.keys(state.ens || {}).join(", ") || "nessuno",
       "| stazioni:", (state.stations || []).length,
       state.stationsNet ? `(Euregio ${state.stationsNet.euregio}, ARPAV ${state.stationsNet.arpav}${state.stationsNet.arpavErr ? " – errore ARPAV: " + state.stationsNet.arpavErr : ""})` : "",
@@ -128,6 +132,7 @@ async function main(){
     wx, ens: state.ens, quote: state.quote, av: state.av, avDate: state.avDate, avErr: state.avErr, stations: state.stations,
     sources: {meteo: "Open-Meteo.com (CC BY 4.0)", stazioni: "Meteo Alto Adige, Meteotrentino via avalanche.report (CC BY 4.0); ARPAV Veneto (CC BY 4.0)", valanghe: "Bollettini EAWS/AINEVA"}
   });
+  if(camCheck) snapshot.camCheck = camCheck;
   snapshot.cal = state.cal;   // fuori dall'arrotondamento: i fattori servono con due decimali
   await mkdir(dirname(OUT), {recursive: true});
   const txt = JSON.stringify(snapshot);

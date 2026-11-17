@@ -458,7 +458,7 @@ async function loadSnapshot(){
     if(!r.ok) return false;
     const j = unpackTimes(await r.json());
     if(!j.generated || Date.now() - new Date(j.generated).getTime() > SNAPSHOT_MAX_AGE) return false;
-    state.wx = j.wx || {}; state.ens = j.ens || {}; state.ensMemo = {}; state.cal = j.cal || null; state.quote = j.quote || null;
+    state.wx = j.wx || {}; state.ens = j.ens || {}; state.ensMemo = {}; state.cal = j.cal || null; state.quote = j.quote || null; state.camCheck = j.camCheck || null;
     state.av = j.av || {}; state.avDate = j.avDate || {}; state.avErr = !!j.avErr;
     state.stations = j.stations || []; state.stationsDate = j.generated;
     state.updated = new Date(j.generated); state.source = "automazione"; state.demoSnap = !!j.demo;
