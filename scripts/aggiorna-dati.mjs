@@ -8,7 +8,7 @@
       modelli e neve misurata, per calibrare la "Previsione FreeRide"
    Opzioni:  --demo  usa dati dimostrativi (per provare senza internet)
    ========================================================= */
-import { mkdir, writeFile, access } from "node:fs/promises";
+import { mkdir, writeFile, access, readFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -52,8 +52,22 @@ function slimWx(d){
 
 const roundOnly = obj => JSON.parse(JSON.stringify(obj, (k, v) => typeof v === "number" ? Math.round(v * 10) / 10 : v));
 
+/* calibrazione dei modelli (scritta da scripts/calibra.mjs nel ramo "dati"): fattori e pesi */
+async function caricaCalibrazione(){
+  try{
+    const c = JSON.parse(await readFile(resolve(ARCH_DIR, "calibrazione.json"), "utf8"));
+    const models = {};
+    for(const id in c.models){ const m = c.models[id]; models[id] = {ok: m.ok, n: m.n, factor: m.factor, weight: m.weight}; }
+    const v = c.verifica && c.verifica[1];
+    state.cal = {generated: c.generated, stagioni: c.stagioni, stazioni: (c.stazioni || []).length, models,
+      verifica: v ? {n: v.calibrato.n, prima: v.grezzo.mae, dopo: v.calibrato.mae} : null};
+    log("calibrazione:", Object.entries(models).map(([k, m]) => `${k} ×${m.factor} peso ${m.weight.toFixed(2)}${m.ok ? "" : " (neutro)"}`).join(", "));
+  }catch(e){ log("calibrazione: non presente, modelli non corretti"); }
+}
+
 async function main(){
   const t0 = Date.now();
+  await caricaCalibrazione();
   if(DEMO){
     log("modalità dimostrativa");
     demoWeather(); demoModels(); state.stations = []; state.av = {};
@@ -75,10 +89,13 @@ async function main(){
     wx, ens: state.ens, av: state.av, avDate: state.avDate, avErr: state.avErr, stations: state.stations,
     sources: {meteo: "Open-Meteo.com (CC BY 4.0)", stazioni: "Meteo Alto Adige, Meteotrentino via avalanche.report (CC BY 4.0); ARPAV Veneto (CC BY 4.0)", valanghe: "Bollettini EAWS/AINEVA"}
   });
+  snapshot.cal = state.cal;   // fuori dall'arrotondamento: i fattori servono con due decimali
   await mkdir(dirname(OUT), {recursive: true});
   const txt = JSON.stringify(snapshot);
   await writeFile(OUT, txt);
   log(`scritto ${OUT.replace(ROOT + "/", "")} (${(txt.length / 1024).toFixed(0)} KB)`);
+  // copia della calibrazione per il sito quando scarica i dati da solo
+  if(state.cal) await writeFile(resolve(dirname(OUT), "calibrazione.json"), JSON.stringify(state.cal));
 
   /* ---------- archivio giornaliero (una volta al giorno) ---------- */
   const today = romeNowISO().slice(0, 10);
@@ -105,7 +122,9 @@ async function main(){
       };
     }
     await mkdir(ARCH_DIR, {recursive: true});
-    await writeFile(archFile, JSON.stringify(roundOnly({date: today, generated: new Date().toISOString(), demo: DEMO, models: MODELS.map(m => m.id), spots}), null, 1));
+    await writeFile(archFile, JSON.stringify(roundOnly({date: today, generated: new Date().toISOString(), demo: DEMO, models: MODELS.map(m => m.id),
+      // i cm dei modelli sono già moltiplicati per questi fattori (dividere per riavere i valori grezzi)
+      calFactors: state.cal ? Object.fromEntries(Object.entries(state.cal.models).map(([k, m]) => [k, m.ok ? m.factor : 1])) : null, spots}), null, 1));
     log("scritto archivio:", archFile.replace(ROOT + "/", ""));
   }
   log(`fatto in ${((Date.now() - t0) / 1000).toFixed(1)} s`);

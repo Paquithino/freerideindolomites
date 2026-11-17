@@ -90,6 +90,16 @@ npm run dati:demo   # stessa cosa con dati dimostrativi, senza internet
 ```
 Se `public/dati/ultimo.json` manca o ha più di 3 ore, il sito scarica i dati direttamente (comodo in sviluppo).
 
+## Calibrazione dei modelli
+
+`npm run calibra` (o il workflow **Calibra i modelli** nella scheda Actions, che parte anche il 1° di ogni mese) confronta ciò che ogni modello prevedeva 1, 2 e 3 giorni prima (Open-Meteo Previous Runs API, archivio da gennaio 2024) con la neve misurata dalle stazioni nivometriche dell'Alto Adige (open data Provincia di Bolzano, CC0). Scrive nel ramo `dati`:
+
+- `calibrazione.json` – fattore di correzione e peso di ogni modello, verifica inverno per inverno, effetto dei regimi dei venti;
+- `calibrazione.md` – resoconto leggibile;
+- `calibrazione-giornate.json` – tutte le giornate usate (per analisi future).
+
+L'aggiornamento orario legge `calibrazione.json`, moltiplica i cm di ogni modello per il suo fattore e calcola la Previsione FreeRide come mediana pesata. Codice: `js/calibrazione.js` (calcoli) e `scripts/calibra.mjs` (download).
+
 ## Pubblicazione (una volta sola)
 1. Carica il progetto su GitHub (VS Code → Controllo del codice sorgente → Pubblica / Sincronizza).
 2. Repository **pubblico** (con GitHub gratuito Pages e Actions illimitate funzionano solo così).

@@ -11,7 +11,8 @@
     "worker:dev": "wrangler dev --config worker/wrangler.toml",
     "worker:deploy": "wrangler deploy --config worker/wrangler.toml",
     "dati": "node scripts/aggiorna-dati.mjs",
-    "dati:demo": "node scripts/aggiorna-dati.mjs --demo"
+    "dati:demo": "node scripts/aggiorna-dati.mjs --demo",
+    "calibra": "node scripts/calibra.mjs"
   },
   "devDependencies": {
     "vite": "^6.3.0",

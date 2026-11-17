@@ -22,14 +22,19 @@
   </div>
   <div class="sec"><h4>Previsione FreeRide</h4>
     <p class="note">La neve prevista è la <b>mediana</b> di più modelli meteo (ICON tedesco, ICON-2I italiano, ECMWF europeo, GFS americano, Météo-France), con sotto la <b>forbice</b> tra il valore più basso e quello più alto. Forbice stretta = modelli d'accordo = previsione più affidabile.</p>
-    <p class="note">I centimetri sono ricalcolati con un <b>rapporto neve/acqua che dipende dalla temperatura</b>: vicino a 0 °C 1 mm d'acqua dà circa 0,7 cm di neve pesante, sotto i −8 °C fino a 1,5 cm di neve leggera. Per ora tutti i modelli pesano uguale; con i dati delle stazioni impareremo quali sbagliano meno in ogni zona.</p>
+    <p class="note">I centimetri sono ricalcolati con un <b>rapporto neve/acqua che dipende dalla temperatura</b>: vicino a 0 °C 1 mm d'acqua dà circa 0,7 cm di neve pesante, sotto i −8 °C fino a 1,5 cm di neve leggera. Quando è disponibile la calibrazione, la mediana diventa <b>pesata</b>: i modelli che negli inverni passati hanno sbagliato meno contano di più.</p>
+  </div>
+  <div class="sec" id="calibrazione"><h4>Calibrazione dei modelli</h4>
+    <p class="note">Ogni modello ha le sue abitudini: c'è chi tende a gonfiare le nevicate e chi le sottostima. Per scoprirlo confrontiamo, per gli inverni dal 2024 in poi, <b>ciò che ogni modello prevedeva 1, 2 e 3 giorni prima</b> (archivio Open-Meteo) con la <b>neve misurata dalle stazioni nivometriche</b> dell'Alto Adige vicine agli spot (open data della Provincia di Bolzano).</p>
+    <p class="note">Neve misurata = aumento dell'altezza neve tra le 8:00 di un giorno e le 8:00 del giorno dopo: è la neve che "resta", un po' meno di quella caduta per via dell'assestamento. Da qui ogni modello riceve un <b>fattore</b> (es. ×0,8 = i suoi cm vengono ridotti del 20%) e un <b>peso</b> nella Previsione FreeRide. Per essere onesti verifichiamo il risultato <b>inverno per inverno</b>: i fattori calcolati sugli altri inverni vengono messi alla prova su quello escluso.</p>
+    <p class="note">Limiti: per ora le stazioni sono solo in Alto Adige, quindi la calibrazione vale meglio per Gardena, Badia, Sella e Pusteria che per Cadore, Civetta o il Friuli. Con le stazioni del Veneto e i dati di questo inverno diventerà più precisa zona per zona.</p>
   </div>
   <div class="sec"><h4>Venti in quota</h4>
     <p class="note">Per ogni giorno il sito riconosce il flusso dominante a circa 3.000 m, pesato sulle ore con precipitazione:</p>
     <p class="note">🌊 <b>Scirocco</b> (da sud-est) e 🌧 <b>Libeccio</b> (da sud-ovest): l'aria umida sbatte contro i versanti sud (stau). Nevica molto su Dolomiti meridionali, Cadore, Prealpi e Friuli, ma spesso neve pesante e quota neve alta.<br>
     ❄️ <b>Nordstau</b> (da nord): neve sulla cresta di confine (Pusteria, Aurina, a volte Gardena e Badia), a sud föhn e sereno.<br>
     🌬 <b>Bora / grecale</b> (da nord-est): aria fredda e secca; in montagna in genere poca neve, qualcosa verso Tarvisio e Giulie.</p>
-    <p class="note">Nella scheda di ogni spot il bordo verde indica un flusso favorevole per quello spot, giallo un flusso sfavorevole (sottovento). Sono ipotesi da letteratura ed esperienza, che verificheremo con i dati delle stazioni.</p>
+    <p class="note">Nella scheda di ogni spot il bordo verde indica un flusso favorevole per quello spot, giallo un flusso sfavorevole (sottovento). Sono ipotesi da letteratura ed esperienza: la calibrazione misura anche quanto i modelli sbagliano con ogni regime, così possiamo verificarle con i numeri.</p>
   </div>
   <div class="sec"><h4>Pianifica</h4>
     <p class="note">La tabella mostra la neve prevista giorno per giorno per ogni spot, fino a 10 giorni. L'affidabilità è <b>alta</b> fino a 3 giorni, <b>media</b> fino a 6 e <b>bassa</b> oltre: usa i giorni lontani per capire se "si muove qualcosa", non per decidere dove andare. Le "giornate migliori" sono i giorni con almeno 10 cm freschi, meglio se con sole.</p>

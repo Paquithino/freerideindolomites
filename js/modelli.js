@@ -8,6 +8,7 @@
 import { SPOTS, MODELS, FORECAST_DAYS, WORKER_URL, FLOW_EXPOSURE, REGIMES } from "./config.js";
 import { state, fetchRetry } from "./state.js";
 import { romeNowISO } from "./meteo.js";
+import { calOf, weightedMedian } from "./calibrazione.js";
 
 /* ---------- rapporto neve/acqua ----------
    Open-Meteo calcola la neve con un rapporto fisso (0,7 cm per mm d'acqua).
@@ -40,6 +41,8 @@ function query(model){
   }).toString();
 }
 async function fetchModel(m){
+  // fattore di correzione della calibrazione (1 se non c'è ancora)
+  const k = calOf(state.cal, m.id).factor;
   for(const name of m.names){
     const q = query(name);
     const url = WORKER_URL ? `${WORKER_URL}/api/meteo?${q}` : `https://api.open-meteo.com/v1/forecast?${q}`;
@@ -52,7 +55,7 @@ async function fetchModel(m){
       SPOTS.forEach((s, i) => {
         const H = data[i] && data[i].hourly; if(!H) return;
         correctHourly(H);
-        out[s.id] = {time: H.time, snow: H.snow_c, w7: H.wind_speed_700hPa || null, d7: H.wind_direction_700hPa || null, g: H.wind_gusts_10m || null};
+        out[s.id] = {time: H.time, snow: k === 1 ? H.snow_c : H.snow_c.map(v => v == null ? null : v * k), w7: H.wind_speed_700hPa || null, d7: H.wind_direction_700hPa || null, g: H.wind_gusts_10m || null};
       });
       if(Object.keys(out).length) return out;
     }catch(e){}
@@ -88,6 +91,12 @@ function windowSum(series, from, hours){
   return n >= hours * 0.85 ? s : null;
 }
 const stats = vals => { const v = vals.filter(x => x != null); return v.length ? {med: median(v), min: Math.min(...v), max: Math.max(...v), n: v.length} : null; };
+/* come stats, ma la mediana è pesata con i pesi della calibrazione (chi sbaglia meno conta di più) */
+const wstats = byModel => {
+  const st = stats(Object.values(byModel)); if(!st) return null;
+  if(state.cal) st.med = weightedMedian(Object.entries(byModel).map(([mid, v]) => ({v, w: calOf(state.cal, mid).weight})));
+  return st;
+};
 
 /* Vento per giorno per un modello: massimo in quota, raffica massima, regime (pesato sulle ore con neve) */
 function dailyWind(series){
@@ -132,11 +141,11 @@ export function ensembleFor(spot){
     // regime per consenso: quello indicato dal maggior numero di modelli
     const cnt = {}; Object.values(reg).forEach(k => { if(k) cnt[k] = (cnt[k] || 0) + 1; });
     const top = Object.keys(cnt).sort((a, b) => cnt[b] - cnt[a])[0];
-    days[d] = {...(stats(Object.values(models)) || {}), models,
+    days[d] = {...(wstats(models) || {}), models,
       wind: {w7: stats(Object.values(w)), g: stats(Object.values(g)), models: w, regimes: reg},
       regime: top ? {key: top, count: cnt[top], n: Object.values(reg).filter(Boolean).length} : null};
   }
-  const res = {days, n24: stats(Object.values(sums.n24)), n72: stats(Object.values(sums.n72)), n7d: stats(Object.values(sums.n7d)), models: Object.keys(per)};
+  const res = {days, n24: wstats(sums.n24), n72: wstats(sums.n72), n7d: wstats(sums.n7d), models: Object.keys(per)};
   state.ensMemo[spot.id] = res;
   return res;
 }

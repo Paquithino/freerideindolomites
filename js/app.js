@@ -233,7 +233,7 @@ function windModelsHTML(e, dates){
   if(!dates.some(d => e.days[d].wind && e.days[d].wind.w7)) return "";
   const wc = v => v == null ? `<td class="z">n.d.</td>` : `<td class="${v >= 50 ? "wb" : v >= 30 ? "ww" : ""}">${r0(v)}</td>`;
   const rows = MODELS.filter(m => e.models.includes(m.id)).map(m =>
-    `<tr><td class="l">${esc(m.label)}</td>${dates.map(d => { const w = e.days[d].wind; const k = w && w.regimes[m.id];
+    `<tr><td class="l">${esc(m.label)}${calTag(m.id)}</td>${dates.map(d => { const w = e.days[d].wind; const k = w && w.regimes[m.id];
       return w && w.models[m.id] != null ? `<td class="${w.models[m.id] >= 50 ? "wb" : w.models[m.id] >= 30 ? "ww" : ""}">${r0(w.models[m.id])}<span>${k ? regimeLabel(k).icon : ""}</span></td>` : `<td class="z">n.d.</td>`; }).join("")}</tr>`).join("");
   return `<h5 class="subh">Vento in quota (~3.000 m) · massimo del giorno, km/h</h5>
     <div class="st-wrap"><table class="mdl wind">
@@ -252,16 +252,32 @@ function modelsHTML(spot){
   const dates = Object.keys(e.days).filter(d => d >= today).slice(0, 6);
   const cell = v => v == null ? `<td class="z">n.d.</td>` : `<td class="${v >= 1 ? "s" : "z"}" ${v >= 1 ? `style="--sc:${snowColor(v) || "#bae6fd"}"` : ""}>${v >= 0.5 ? r0(v) : "–"}</td>`;
   const rows = MODELS.filter(m => e.models.includes(m.id)).map(m =>
-    `<tr><td class="l">${esc(m.label)}</td>${dates.map(d => cell(e.days[d].models[m.id])).join("")}</tr>`).join("");
+    `<tr><td class="l">${esc(m.label)}${calTag(m.id)}</td>${dates.map(d => cell(e.days[d].models[m.id])).join("")}</tr>`).join("");
   const ag = agreement(e.n72);
   return `<div class="st-wrap"><table class="mdl">
     <thead><tr><th class="l">cm di neve</th>${dates.map((d, i) => `<th>${i === 0 ? "Oggi" : dayName(d)}<br>${dayNum(d)}</th>`).join("")}</tr></thead>
     <tbody>${rows}
-      <tr class="fr"><td class="l"><b>Previsione FreeRide</b><span>mediana · forbice</span></td>${dates.map(d => { const x = e.days[d]; return x && x.n ? `<td><b>${x.med >= 0.5 ? r0(x.med) : "–"}</b>${x.n >= 2 && x.max - x.min >= 1 ? `<span>${r0(x.min)}–${r0(x.max)}</span>` : ""}</td>` : `<td class="z">n.d.</td>`; }).join("")}</tr>
+      <tr class="fr"><td class="l"><b>Previsione FreeRide</b><span>${state.cal ? "mediana pesata" : "mediana"} · forbice</span></td>${dates.map(d => { const x = e.days[d]; return x && x.n ? `<td><b>${x.med >= 0.5 ? r0(x.med) : "–"}</b>${x.n >= 2 && x.max - x.min >= 1 ? `<span>${r0(x.min)}–${r0(x.max)}</span>` : ""}</td>` : `<td class="z">n.d.</td>`; }).join("")}</tr>
     </tbody></table></div>
     ${ag ? `<p class="small" style="margin:8px 0 0"><span class="agr agr-${ag.lvl}">● ${ag.txt}</span> sulle prossime 72 ore (${r0(e.n72.min)}–${r0(e.n72.max)} cm).</p>` : ""}
     ${windModelsHTML(e, dates)}
-    <p class="small" style="margin:6px 0 0">Tutti i modelli usano lo stesso rapporto neve/acqua variabile con la temperatura. Per ora pesano tutti uguale: con i dati delle stazioni impareremo quali sbagliano meno in ogni zona.</p>`;
+    <p class="small" style="margin:6px 0 0">${calNote()}</p>`;
+}
+/* fattore e peso della calibrazione accanto al nome del modello */
+function calTag(mid){
+  const m = state.cal && state.cal.models && state.cal.models[mid];
+  if(!m || !m.ok) return "";
+  const f = v => (Math.round(v * 100) / 100).toLocaleString("it-IT");
+  return `<span>×${f(m.factor)} · peso ${f(m.weight)}</span>`;
+}
+function calNote(){
+  const base = "Tutti i modelli usano lo stesso rapporto neve/acqua variabile con la temperatura.";
+  const c = state.cal;
+  if(!c) return base + " Per ora pesano tutti uguale: la calibrazione sulle stazioni non è ancora disponibile.";
+  const v = c.verifica;
+  return base + ` I cm sono corretti con la <b>calibrazione</b> su ${c.stazioni || "alcune"} stazioni dell'Alto Adige negli inverni ${(c.stagioni || []).join(", ")}: ×fattore = correzione dei cm, peso = quanto conta il modello nella Previsione FreeRide (chi ha sbagliato meno conta di più).`
+    + (v && v.prima != null ? ` Su ${v.n} giornate di prova l'errore medio a 1 giorno è passato da ${r1(v.prima)} a ${r1(v.dopo)} cm.` : "")
+    + ` <a href="./html/info.html#calibrazione">Come funziona</a>`;
 }
 
 function sfHTML(spot){
@@ -381,7 +397,7 @@ async function loadSnapshot(){
     if(!r.ok) return false;
     const j = unpackTimes(await r.json());
     if(!j.generated || Date.now() - new Date(j.generated).getTime() > SNAPSHOT_MAX_AGE) return false;
-    state.wx = j.wx || {}; state.ens = j.ens || {}; state.ensMemo = {};
+    state.wx = j.wx || {}; state.ens = j.ens || {}; state.ensMemo = {}; state.cal = j.cal || null;
     state.av = j.av || {}; state.avDate = j.avDate || {}; state.avErr = !!j.avErr;
     state.stations = j.stations || []; state.stationsDate = j.generated;
     state.updated = new Date(j.generated); state.source = "automazione"; state.demoSnap = !!j.demo;
@@ -397,6 +413,8 @@ async function loadAll(){
     state.loading = false; $("#refresh").classList.remove("spin"); rerender(); return;
   }
   state.source = "diretto";
+  // la calibrazione serve prima di scaricare i modelli (per applicare i fattori)
+  try{ const r = await fetch("./dati/calibrazione.json", {cache: "no-store"}); if(r.ok) state.cal = await r.json(); }catch(e){}
   const [w] = await Promise.allSettled([loadWeather(), loadAvalanche(), loadStations(), loadModels()]);
   if(w.status === "rejected"){
     const cache = LS.get("fr_wx_cache", null);

@@ -1,0 +1,51 @@
+# =========================================================
+# Calibrazione dei modelli sugli inverni passati
+#   confronta le previsioni passate (Open-Meteo) con la neve misurata
+#   dalle stazioni e salva calibrazione.json nel ramo "dati".
+#   Parte a mano (Run workflow) e il 1° di ogni mese; dura circa 10-15 minuti.
+#   Dal giro orario successivo il sito usa i nuovi fattori.
+# =========================================================
+name: Calibra i modelli
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 3 1 * *"      # il 1° del mese alle 3:23 UTC
+permissions:
+  contents: write
+concurrency:
+  group: aggiorna-sito        # non si sovrappone all'aggiornamento orario
+  cancel-in-progress: false
+jobs:
+  calibra:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Prepara la cartella dell'archivio (ramo "dati")
+        run: |
+          if git ls-remote --exit-code --heads origin dati >/dev/null 2>&1; then
+            git fetch --depth=1 origin dati:dati
+            git worktree add archivio dati
+          else
+            git worktree add --orphan -b dati archivio
+          fi
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Calcola la calibrazione
+        env:
+          ARCHIVIO_DIR: archivio
+        run: node scripts/calibra.mjs
+
+      - name: Salva nel ramo dati
+        run: |
+          cd archivio
+          git add -A
+          if git diff --cached --quiet; then echo "Nessuna novità"; exit 0; fi
+          git -c user.name="freeride-bot" -c user.email="freeride-bot@users.noreply.github.com" commit -q -m "Calibrazione $(date -u +%F)"
+          git push origin dati
