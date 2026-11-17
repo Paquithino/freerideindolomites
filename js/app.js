@@ -448,7 +448,10 @@ async function loadAll(){
   state.loading = true; $("#refresh").classList.add("spin"); rerender();
   if(await loadSnapshot()){
     state.demo = state.demoSnap; state.wxErr = false;
-    state.loading = false; $("#refresh").classList.remove("spin"); rerender(); return;
+    state.loading = false; $("#refresh").classList.remove("spin"); rerender();
+    // se il file del robot non ha la neve per quota (es. Open-Meteo non rispondeva), la chiediamo dal telefono
+    if(!state.quote && !state.demo) loadQuote().then(rerender, () => {});
+    return;
   }
   state.source = "diretto";
   // la calibrazione serve prima di scaricare i modelli (per applicare i fattori)

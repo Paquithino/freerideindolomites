@@ -102,15 +102,16 @@ async function main(){
     const res = await Promise.allSettled([loadWeather(), modelliRiusati ? Promise.resolve() : loadModels(), loadAvalanche(), loadStations(), loadQuote()]);
     const names = ["meteo", modelliRiusati ? "modelli (riusati, si aggiornano ogni 3 ore)" : "modelli", "valanghe", "stazioni", "quote"];
     res.forEach((r, i) => log(names[i].padEnd(9), r.status === "fulfilled" ? "ok" : "ERRORE " + (r.reason && r.reason.message)));
-    const meteoOk = !!state.wx[SPOTS[0].id], modelliOk = Object.keys(state.ens || {}).length > 0;
-    if(!meteoOk || !modelliOk){
+    const meteoOk = !!state.wx[SPOTS[0].id], modelliOk = Object.keys(state.ens || {}).length > 0, quoteOk = !!state.quote;
+    if(!meteoOk || !modelliOk || !quoteOk){
       const prev = await ultimoPubblicato();
       const eta = prev ? Math.round((Date.now() - new Date(prev.generated).getTime()) / 60000) : null;
       if(prev && eta < 24 * 60){
         if(!meteoOk){ state.wx = prev.wx; riuso = prev.generated; }
         if(!modelliOk && prev.ens){ state.ens = prev.ens; state.ensMemo = {}; }
         if(!(state.stations || []).length && prev.stations) state.stations = prev.stations;
-        log(`Open-Meteo non risponde: riuso ${!meteoOk ? "meteo e " : ""}${!modelliOk ? "modelli" : ""} dell'ultimo giro riuscito (${eta} minuti fa)`);
+        if(!quoteOk && prev.quote) state.quote = prev.quote;
+        log(`Open-Meteo non risponde: riuso ${[!meteoOk && "meteo", !modelliOk && "modelli", !quoteOk && prev.quote && "quote"].filter(Boolean).join(", ")} dell'ultimo giro riuscito (${eta} minuti fa)`);
       }else log("Open-Meteo non risponde e non c'è un giro recente da riusare");
     }
   }
