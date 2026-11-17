@@ -9,11 +9,13 @@
    questi dati arrivano nel sito tramite l'automazione oraria (GitHub Actions).
    ========================================================= */
 
+import { fetchRetry } from "./state.js";
+
 export const ARPAV_BASE = "https://meteo.arpa.veneto.it/meteo/dati_meteo/xml/";
 
 /* i file sono in ISO-8859-1: leggiamo i byte e li decodifichiamo noi */
 async function getText(url){
-  const r = await fetch(url);
+  const r = await fetchRetry(url, {}, 2);
   if(!r.ok) throw new Error(`HTTP ${r.status} ${url}`);
   return new TextDecoder("latin1").decode(await r.arrayBuffer());
 }

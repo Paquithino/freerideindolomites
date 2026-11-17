@@ -6,7 +6,7 @@
    - regime dei venti in quota (scirocco, nordstau, bora…) ed esposizione degli spot
    ========================================================= */
 import { SPOTS, MODELS, FORECAST_DAYS, WORKER_URL, FLOW_EXPOSURE, REGIMES } from "./config.js";
-import { state } from "./state.js";
+import { state, fetchRetry } from "./state.js";
 import { romeNowISO } from "./meteo.js";
 
 /* ---------- rapporto neve/acqua ----------
@@ -44,7 +44,7 @@ async function fetchModel(m){
     const q = query(name);
     const url = WORKER_URL ? `${WORKER_URL}/api/meteo?${q}` : `https://api.open-meteo.com/v1/forecast?${q}`;
     try{
-      const r = await fetch(url);
+      const r = await fetchRetry(url);
       if(!r.ok) continue;
       let data = await r.json();
       if(!Array.isArray(data)) data = [data];

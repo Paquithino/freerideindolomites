@@ -61,12 +61,12 @@ async function main(){
     const res = await Promise.allSettled([loadWeather(), loadModels(), loadAvalanche(), loadStations()]);
     const names = ["meteo", "modelli", "valanghe", "stazioni"];
     res.forEach((r, i) => log(names[i].padEnd(9), r.status === "fulfilled" ? "ok" : "ERRORE " + (r.reason && r.reason.message)));
-    if(res[0].status !== "fulfilled") throw new Error("Meteo non disponibile: non aggiorno il file per non pubblicare dati vuoti");
   }
   log("modelli ricevuti:", Object.keys(state.ens || {}).join(", ") || "nessuno",
       "| stazioni:", (state.stations || []).length,
       state.stationsNet ? `(Euregio ${state.stationsNet.euregio}, ARPAV ${state.stationsNet.arpav}${state.stationsNet.arpavErr ? " – errore ARPAV: " + state.stationsNet.arpavErr : ""})` : "",
       "| bollettini:", Object.keys(state.av || {}).join(", ") || "nessuno");
+  if(!DEMO && !state.wx[SPOTS[0].id]) throw new Error("Meteo non disponibile: non aggiorno il file per non pubblicare dati vuoti");
 
   /* ---------- file per il sito ---------- */
   const wx = {}; for(const s of SPOTS) wx[s.id] = slimWx(state.wx[s.id]);

@@ -12,6 +12,24 @@ export const r1 = v => v == null || isNaN(v) ? "–" : (Math.round(v * 10) / 10)
 export const scoreColor = s => s >= 7 ? "#22d3ee" : s >= 5 ? "#4ade80" : s >= 3 ? "#fbbf24" : "#94a3b8";
 export const snowColor = cm => cm < 1 ? null : cm < 5 ? "#bae6fd" : cm < 10 ? "#7dd3fc" : cm < 20 ? "#38bdf8" : cm < 35 ? "#a78bfa" : "#e879f9";
 
+/* fetch con nuovi tentativi: errori di rete, 429 (troppe richieste) e 5xx (server)
+   capitano ogni tanto e di solito passano dopo pochi secondi */
+export async function fetchRetry(url, opt = {}, tries = 3){
+  let last;
+  for(let i = 0; i < tries; i++){
+    if(i) await new Promise(r => setTimeout(r, [0, 3000, 10000][i] || 10000));
+    try{
+      const r = await fetch(url, opt);
+      if(r.ok || (r.status < 500 && r.status !== 429)) return r;
+      last = new Error("HTTP " + r.status);
+    }catch(e){
+      // in Node il motivo vero sta in e.cause (es. ECONNRESET, timeout)
+      last = new Error(e.message + (e.cause ? " (" + (e.cause.code || e.cause.message || e.cause) + ")" : ""));
+    }
+  }
+  throw last;
+}
+
 export const state = {
   wx:{}, av:{}, avDate:{}, avErr:false, wxErr:false, demo:false, loading:false,
   area: LS.get("fr_area", "Tutti"), sort: LS.get("fr_sort", "powder"),

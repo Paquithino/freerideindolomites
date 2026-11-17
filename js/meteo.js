@@ -1,5 +1,5 @@
 import { SPOTS, FORECAST_DAYS, WORKER_URL } from "./config.js";
-import { state, LS } from "./state.js";
+import { state, LS, fetchRetry } from "./state.js";
 import { correctHourly, ensembleFor, dayRegime } from "./modelli.js";
 
 /* =========================================================
@@ -27,8 +27,8 @@ export function wxQuery(){
 }
 export async function loadWeather(){
   const url = WORKER_URL ? `${WORKER_URL}/api/meteo?${wxQuery()}` : `https://api.open-meteo.com/v1/forecast?${wxQuery()}`;
-  const res = await fetch(url);
-  if(!res.ok) throw new Error("Meteo " + res.status);
+  const res = await fetchRetry(url);
+  if(!res.ok) throw new Error("Meteo HTTP " + res.status);
   let data = await res.json();
   if(!Array.isArray(data)) data = [data];
   SPOTS.forEach((s, i) => { state.wx[s.id] = data[i]; if(data[i]) correctHourly(data[i].hourly); });
