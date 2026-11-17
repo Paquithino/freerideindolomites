@@ -1,0 +1,289 @@
+{
+ "generated": "2026-11-17T14:04:08.734Z",
+ "models": {
+  "icon": {
+   "ok": true,
+   "n": 902,
+   "factor": 0.6,
+   "mae": 3.630753880266081,
+   "maeGrezzo": 4.149977827051009,
+   "weight": 0.9306715707791379,
+   "perAnticipo": {
+    "1": {
+     "n": 920,
+     "factor": 0.58,
+     "mae": 3.27484673913043
+    },
+    "2": {
+     "n": 866,
+     "factor": 0.7,
+     "mae": 3.590844110854499
+    },
+    "3": {
+     "n": 920,
+     "factor": 0.5,
+     "mae": 3.963423913043474
+    }
+   }
+  },
+  "icon2i": {
+   "ok": true,
+   "n": 239,
+   "factor": 0.56,
+   "mae": 3.098786592178769,
+   "maeGrezzo": 3.977472067039106,
+   "weight": 1.0904395370072475,
+   "perAnticipo": {
+    "1": {
+     "n": 366,
+     "factor": 0.54,
+     "mae": 2.995128961748638
+    },
+    "2": {
+     "n": 350,
+     "factor": 0.6,
+     "mae": 3.193617142857142
+    },
+    "3": {
+     "n": 0,
+     "factor": 1,
+     "mae": null
+    }
+   }
+  },
+  "ecmwf": {
+   "ok": true,
+   "n": 359,
+   "factor": 0.54,
+   "mae": 3.03914378478664,
+   "maeGrezzo": 3.8149072356215155,
+   "weight": 1.1118392732105977,
+   "perAnticipo": {
+    "1": {
+     "n": 348,
+     "factor": 0.56,
+     "mae": 2.8648942528735644
+    },
+    "2": {
+     "n": 357,
+     "factor": 0.52,
+     "mae": 2.977571988795519
+    },
+    "3": {
+     "n": 373,
+     "factor": 0.62,
+     "mae": 3.2374841823056304
+    }
+   }
+  },
+  "gfs": {
+   "ok": true,
+   "n": 632,
+   "factor": 0.58,
+   "mae": 3.4970590717299546,
+   "maeGrezzo": 3.930253164556964,
+   "weight": 0.9662517411203212,
+   "perAnticipo": {
+    "1": {
+     "n": 622,
+     "factor": 0.66,
+     "mae": 3.264433440514468
+    },
+    "2": {
+     "n": 636,
+     "factor": 0.54,
+     "mae": 3.568821383647805
+    },
+    "3": {
+     "n": 638,
+     "factor": 0.5,
+     "mae": 3.6121473354231957
+    }
+   }
+  },
+  "mf": {
+   "ok": true,
+   "n": 951,
+   "factor": 0.52,
+   "mae": 3.7511627189908983,
+   "maeGrezzo": 4.359733707077793,
+   "weight": 0.9007978778826956,
+   "perAnticipo": {
+    "1": {
+     "n": 844,
+     "factor": 0.72,
+     "mae": 3.492836966824644
+    },
+    "2": {
+     "n": 997,
+     "factor": 0.56,
+     "mae": 3.5103213640922686
+    },
+    "3": {
+     "n": 1013,
+     "factor": 0.5,
+     "mae": 4.054975320829216
+    }
+   }
+  }
+ },
+ "verifica": {
+  "1": {
+   "grezzo": {
+    "n": 835,
+    "mae": 3.614790419161679,
+    "bias": -0.20856287425149678,
+    "nevicateGrosse": 147,
+    "prese": 131,
+    "falsiAllarmi": 9
+   },
+   "calibrato": {
+    "n": 832,
+    "mae": 3.4649454326923075,
+    "bias": -1.478430048076923,
+    "nevicateGrosse": 147,
+    "prese": 115,
+    "falsiAllarmi": 5
+   }
+  },
+  "2": {
+   "grezzo": {
+    "n": 856,
+    "mae": 3.6313200934579446,
+    "bias": -0.9743107476635513,
+    "nevicateGrosse": 147,
+    "prese": 104,
+    "falsiAllarmi": 4
+   },
+   "calibrato": {
+    "n": 833,
+    "mae": 3.6927865546218506,
+    "bias": -1.9853570228091237,
+    "nevicateGrosse": 147,
+    "prese": 87,
+    "falsiAllarmi": 1
+   }
+  },
+  "3": {
+   "grezzo": {
+    "n": 838,
+    "mae": 4.389653937947495,
+    "bias": -1.6167422434367538,
+    "nevicateGrosse": 147,
+    "prese": 79,
+    "falsiAllarmi": 13
+   },
+   "calibrato": {
+    "n": 877,
+    "mae": 4.5195306727480045,
+    "bias": -1.651250171037628,
+    "nevicateGrosse": 147,
+    "prese": 58,
+    "falsiAllarmi": 14
+   }
+  }
+ },
+ "regimi": {
+  "N": {
+   "giorni": 79,
+   "misurata": 407.3999999999999,
+   "prevista": 406.2900000000001,
+   "rapporto": 1.0027320386915746
+  },
+  "SW": {
+   "giorni": 300,
+   "misurata": 1309.4,
+   "prevista": 1357.0200000000002,
+   "rapporto": 0.9649084022343074
+  },
+  "SE": {
+   "giorni": 128,
+   "misurata": 1363.5999999999997,
+   "prevista": 1230.62,
+   "rapporto": 1.1080593521964537
+  },
+  "CALM": {
+   "giorni": 227,
+   "misurata": 876.1000000000001,
+   "prevista": 808.2600000000004,
+   "rapporto": 1.0839333877712614
+  },
+  "NE": {
+   "giorni": 36,
+   "misurata": 89.49999999999999,
+   "prevista": 144.72,
+   "rapporto": 0.6184355997788833
+  },
+  "W": {
+   "giorni": 65,
+   "misurata": 166.09999999999997,
+   "prevista": 91.04,
+   "rapporto": 1.824472759226713
+  }
+ },
+ "stagioni": [
+  "2023-24",
+  "2024-25",
+  "2025-26",
+  "2026-27"
+ ],
+ "stazioni": [
+  {
+   "code": "78480SF",
+   "name": "Nova Ponente Obereggen",
+   "alt": 2125,
+   "lat": 46.3636,
+   "lon": 11.5467,
+   "km": 0.8779087546141439
+  },
+  {
+   "code": "61690SF",
+   "name": "Badia Piz La Ila",
+   "alt": 2050,
+   "lat": 46.565,
+   "lon": 11.9036,
+   "km": 1.1790778782467586
+  },
+  {
+   "code": "91180SF",
+   "name": "Sesto Prati di Croda Rossa",
+   "alt": 1910,
+   "lat": 46.6636,
+   "lon": 12.3704,
+   "km": 2.354211667136873
+  },
+  {
+   "code": "74200MS",
+   "name": "Alpe di Siusi Zallinger",
+   "alt": 2055,
+   "lat": 46.5119,
+   "lon": 11.6888,
+   "km": 5.477173405312802
+  },
+  {
+   "code": "78110MS",
+   "name": "Passo di Costalunga",
+   "alt": 1715,
+   "lat": 46.4092,
+   "lon": 11.6017,
+   "km": 6.433750312992548
+  },
+  {
+   "code": "62270SF",
+   "name": "Longiarù Passo Poma",
+   "alt": 2297,
+   "lat": 46.6377,
+   "lon": 11.8122,
+   "km": 9.332338245135055
+  },
+  {
+   "code": "42830SF",
+   "name": "Braies Alpe Cavallo",
+   "alt": 2340,
+   "lat": 46.6712,
+   "lon": 12.1115,
+   "km": 10.087445197816852
+  }
+ ],
+ "fonti": "Altezza neve: Provincia autonoma di Bolzano, open data meteo (CC0). Previsioni passate e vento: Open-Meteo.com Previous Runs e Historical Forecast API (CC BY 4.0)."
+}
