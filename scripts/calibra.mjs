@@ -2,8 +2,9 @@
    CALIBRAZIONE SUGLI INVERNI PASSATI
    Uso:  node scripts/calibra.mjs          (scrive in ARCHIVIO_DIR, default "archivio")
    Cosa fa:
-     1. sceglie le stazioni nivometriche della Provincia di Bolzano (open data CC0)
-        vicine agli spot dolomitici e sopra i 1.400 m
+     1. sceglie le stazioni nivometriche vicine agli spot dolomitici e sopra i 1.400 m:
+        - Alto Adige: open data Provincia di Bolzano (CC0), altezza neve alle 8:00
+        - Veneto: ARPAV (CC BY 4.0), altezza neve media giornaliera dal servizio "dati storici"
      2. scarica l'altezza neve misurata negli inverni passati
      3. scarica da Open-Meteo "Previous Runs" ciò che ogni modello prevedeva
         1, 2 e 3 giorni prima, alla posizione e alla quota di ogni stazione
@@ -16,11 +17,14 @@ import { join } from "node:path";
 import { SPOTS, MODELS } from "../js/config.js";
 import { correctedSnow, classify } from "../js/modelli.js";
 import { calibra } from "../js/calibrazione.js";
+import { parseElenco } from "../js/stazioni-arpav.js";
 
 const OUT = process.env.ARCHIVIO_DIR || "archivio";
 const BZ = "https://geoservices.buergernetz.bz.it/services/meteo/v1";   // indirizzo nuovo (il vecchio daten.buergernetz.bz.it è stato dismesso)
 const PREV = "https://previous-runs-api.open-meteo.com/v1/forecast";
 const HIST = "https://historical-forecast-api.open-meteo.com/v1/forecast";
+const ARPAV_XML = "https://meteo.arpa.veneto.it/meteo/dati_meteo/xml/";
+const ARPAV_STORICI = "https://api.arpa.veneto.it/REST/v1/meteo_storici_tabella";
 const MAX_STAZIONI = 14, MAX_KM = 15, QUOTA_MIN = 1400;
 const PAUSA_OPENMETEO = 20e3;   // 20 s tra una richiesta e l'altra: restiamo ben sotto i limiti al minuto
 
@@ -126,10 +130,120 @@ async function neveAlle8(code, from, to){
   return hs;
 }
 
+const memoAnni = {};
+/* ---------- 1b-2b. Veneto: stazioni ARPAV e altezza neve media giornaliera ---------- */
+async function getTextLatin1(url){
+  const r = await fetch(url, {signal: AbortSignal.timeout(60e3)});
+  if(!r.ok) throw new Error(`HTTP ${r.status} da ${new URL(url).host}`);
+  return new TextDecoder("latin1").decode(await r.arrayBuffer());
+}
+async function scegliStazioniVeneto(){
+  const elenco = parseElenco(await getTextLatin1(ARPAV_XML + "stazioni_neve.xml"));
+  const dolomiti = SPOTS.filter(s => s.area !== "Friuli VG");
+  const vicine = elenco.filter(s => s.elev >= QUOTA_MIN)
+    .map(s => ({...s, km: Math.min(...dolomiti.map(p => distKm(p.lat, p.lon, s.lat, s.lon)))}))
+    .filter(s => s.km <= MAX_KM).sort((a, b) => a.km - b.km);
+  log(`stazioni Veneto candidate: ${vicine.length}`);
+  const out = [];
+  for(const s of vicine){
+    if(out.length >= MAX_STAZIONI) break;
+    try{
+      // il codice del sensore "altezza neve" (LIVNEVE) sta nel file in tempo reale della stazione
+      const xml = await getTextLatin1(ARPAV_XML + s.code);
+      const b = (xml.match(/<SENSORE>[\s\S]*?<\/SENSORE>/g) || []).find(x => /<TYPE>\s*LIVNEVE\s*<\/TYPE>/.test(x));
+      const id = b && (b.match(/<ID>\s*(\d+)\s*<\/ID>/) || [])[1];
+      if(id) out.push({code: "ARPAV-" + s.id, name: s.name, alt: s.elev, lat: s.lat, lon: s.lon, km: s.km, sensore: id});
+    }catch(e){ log(`  ${s.name}: ${e.message}`); }
+    await sleep(200);
+  }
+  return out;
+}
+/* stazioni ARPAV in quota con pluviometro (precipitazione) e temperatura, vicine agli spot */
+async function scegliPluviometriVeneto(){
+  let elenco = [];
+  try{ elenco = parseElenco(await getTextLatin1(ARPAV_XML + "stazioni.xml")); }catch(e){ log("  elenco stazioni ARPAV:", e.message); }
+  const dolomiti = SPOTS.filter(s => s.area !== "Friuli VG");
+  const vicine = elenco.filter(s => s.elev >= QUOTA_MIN)
+    .map(s => ({...s, km: Math.min(...dolomiti.map(p => distKm(p.lat, p.lon, s.lat, s.lon)))}))
+    .filter(s => s.km <= MAX_KM).sort((a, b) => a.km - b.km);
+  log(`pluviometri Veneto candidati: ${vicine.length}`);
+  const out = [];
+  for(const s of vicine){
+    if(out.length >= MAX_STAZIONI) break;
+    try{
+      const xml = await getTextLatin1(ARPAV_XML + s.code);
+      const sens = (xml.match(/<SENSORE>[\s\S]*?<\/SENSORE>/g) || []);
+      const idOf = t => { const b = sens.find(x => new RegExp(`<TYPE>\\s*${t}\\s*</TYPE>`).test(x)); return b && (b.match(/<ID>\s*(\d+)\s*<\/ID>/) || [])[1]; };
+      const prec = idOf("PREC"), temp = idOf("TEMP");
+      if(prec) out.push({code: "ARPAV-" + s.id, name: s.name, alt: s.elev, lat: s.lat, lon: s.lon, km: s.km, prec, temp});
+    }catch(e){ log(`  ${s.name}: ${e.message}`); }
+    await sleep(200);
+  }
+  return out;
+}
+
+/* serie giornaliera di un sensore ARPAV dal servizio dati storici (un file per sensore e per anno):
+   valore semplice (precipitazione) oppure MEDIO (temperatura, altezza neve) */
+async function serieArpav(codseq, from, to, controllo){
+  const out = {};
+  for(let y = +from.slice(0, 4); y <= +addDays(to, 1).slice(0, 4); y++){
+    const key = codseq + "-" + y;
+    if(!memoAnni[key]){
+      try{
+        const j = await getJson(`${ARPAV_STORICI}?codseq=${codseq}&anno=${y}`, 3);
+        const rec = (j && j.data) || [];
+        if(rec.length && controllo && !rec.some(controllo)) throw new Error(`il sensore ${codseq} non è quello atteso (${rec[0].nome_sensore})`);
+        const m = {};
+        for(const r of rec){
+          let v = r.valore; try{ v = typeof v === "string" && v.trim().startsWith("{") ? JSON.parse(v) : v; }catch(e){}
+          const x = v && typeof v === "object" ? (v.MEDIO ?? v.MEDIA ?? null) : parseFloat(v);
+          if(x != null && isFinite(x)) m[String(r.dataora).slice(0, 10)] = +x;
+        }
+        memoAnni[key] = m;
+      }catch(e){ log(`  ARPAV ${codseq} ${y}: ${e.message}`); memoAnni[key] = {}; }
+      await sleep(200);
+    }
+    Object.assign(out, memoAnni[key]);
+  }
+  return out;
+}
+
+/* altezza neve media di ogni giorno (cm) dal servizio dati storici ARPAV: un file per sensore e per anno */
+async function neveGiornalieraVeneto(sensore, from, to){
+  const hs = {};
+  for(let y = +from.slice(0, 4); y <= +addDays(to, 1).slice(0, 4); y++){
+    const key = sensore + "-" + y;
+    if(!memoAnni[key]){
+      try{
+        const j = await getJson(`${ARPAV_STORICI}?codseq=${sensore}&anno=${y}`, 3);
+        const rec = (j && j.data) || [];
+        // controllo che sia davvero l'altezza neve (e non un altro sensore)
+        if(rec.length && !rec.some(r => /neve/i.test(r.nome_sensore || "") || /NEVE|HS/i.test(r.tipo || ""))){
+          throw new Error(`il sensore ${sensore} non è l'altezza neve (${rec[0].nome_sensore})`);
+        }
+        const m = {};
+        for(const r of rec){
+          let v = r.valore; try{ v = typeof v === "string" ? JSON.parse(v) : v; }catch(e){}
+          const x = v && typeof v === "object" ? (v.MEDIO ?? v.MEDIA ?? null) : parseFloat(v);
+          if(x != null && isFinite(x) && x >= 0 && x < 800) m[String(r.dataora).slice(0, 10)] = +x;
+        }
+        memoAnni[key] = m;
+      }catch(e){ log(`  ARPAV ${sensore} ${y}: ${e.message}`); memoAnni[key] = {}; }
+      await sleep(200);
+    }
+    Object.assign(hs, memoAnni[key]);
+  }
+  const out = {};
+  for(const g of giorni(from, addDays(to, 1))) out[g] = hs[g] ?? null;
+  return out;
+}
+
 /* ---------- 3. previsioni passate dei modelli ---------- */
 const LEADS = [1, 2, 3];
-async function previsioni(stazioni, modello, st){
-  const hourly = LEADS.flatMap(L => [`snowfall_previous_day${L}`, `temperature_2m_previous_day${L}`]).join(",");
+async function previsioni(stazioni, modello, st, ora = 8, pioggia = false){
+  // neve (cm, ricalcolata con il nostro rapporto neve/acqua) oppure precipitazione (mm d'acqua)
+  const VAR = pioggia ? "precipitation" : "snowfall";
+  const hourly = LEADS.flatMap(L => [`${VAR}_previous_day${L}`, `temperature_2m_previous_day${L}`]).join(",");
   for(const name of modello.names){
     const q = new URLSearchParams({
       latitude: stazioni.map(s => s.lat).join(","), longitude: stazioni.map(s => s.lon).join(","),
@@ -144,14 +258,15 @@ async function previsioni(stazioni, modello, st){
       return data.map(d => {
         const H = d.hourly || {}, out = {};
         for(const L of LEADS){
-          const sf = H[`snowfall_previous_day${L}`], tt = H[`temperature_2m_previous_day${L}`];
+          const sf = H[`${VAR}_previous_day${L}`], tt = H[`temperature_2m_previous_day${L}`];
           if(!sf) continue;
           const acc = {};
           (H.time || []).forEach((t, i) => {
             // il valore delle 9:00 è la neve caduta tra le 8 e le 9: appartiene alla finestra che parte alle 8
+            // (per il Veneto la finestra va da mezzogiorno a mezzogiorno: ora = 12)
             const k = toMin(t.slice(0, 16)) - 60;
-            const g = new Date((k - 8 * 60) * 60000).toISOString().slice(0, 10);
-            const v = correctedSnow(sf[i], tt ? tt[i] : null);
+            const g = new Date((k - ora * 60) * 60000).toISOString().slice(0, 10);
+            const v = pioggia ? sf[i] : correctedSnow(sf[i], tt ? tt[i] : null);
             const a = acc[g] = acc[g] || {s: 0, n: 0};
             if(v != null){ a.s += v; a.n++; }
           });
@@ -168,7 +283,7 @@ async function previsioni(stazioni, modello, st){
 }
 
 /* ---------- 4. regime dei venti (vento a 700 hPa, pesato sulle ore con precipitazione) ---------- */
-async function regimi(stazioni, st){
+async function regimi(stazioni, st, ora = 8){
   const q = new URLSearchParams({
     latitude: stazioni.map(s => s.lat).join(","), longitude: stazioni.map(s => s.lon).join(","),
     hourly: "precipitation,wind_speed_700hPa,wind_direction_700hPa", models: "icon_seamless",
@@ -181,7 +296,7 @@ async function regimi(stazioni, st){
     return data.map(d => {
       const H = d.hourly || {}, acc = {}, out = {};
       (H.time || []).forEach((t, i) => {
-        const k = toMin(t.slice(0, 16)) - 60, g = new Date((k - 8 * 60) * 60000).toISOString().slice(0, 10);
+        const k = toMin(t.slice(0, 16)) - 60, g = new Date((k - ora * 60) * 60000).toISOString().slice(0, 10);
         const sp = H.wind_speed_700hPa[i], dr = H.wind_direction_700hPa[i]; if(sp == null || dr == null) return;
         const p = H.precipitation[i] || 0, w = 0.05 + p, rad = dr * Math.PI / 180;
         const a = acc[g] = acc[g] || {u: 0, v: 0, w: 0};
@@ -194,12 +309,19 @@ async function regimi(stazioni, st){
   }catch(e){ log(`  regimi ${st.id}: ${e.message}`); return null; }
 }
 
+/* risultati di una sola zona: nevicate grosse per modello e regimi dei venti */
+function zona(righe){
+  if(righe.length < 100) return {giornate: righe.length};
+  const c = calibra(righe, MODELS.map(m => m.id));
+  return {giornate: righe.length, grosse: Object.fromEntries(Object.entries(c.models).map(([k, m]) => [k, m.grosse])), regimi: c.regimi, verifica1: c.verifica[1]};
+}
+
 /* ---------- resoconto leggibile ---------- */
 const f1 = v => v == null ? "–" : (Math.round(v * 10) / 10).toLocaleString("it-IT");
 const f2 = v => v == null ? "–" : (Math.round(v * 100) / 100).toLocaleString("it-IT");
 function resoconto(res, staz, righe){
   const lab = id => (MODELS.find(m => m.id === id) || {}).label || id;
-  let md = `# Calibrazione dei modelli\n\nGenerata il ${res.generated.slice(0, 10)} su ${staz.length} stazioni nivometriche dell'Alto Adige (open data Provincia di Bolzano, CC0) e ${righe.length} giornate negli inverni ${res.stagioni.join(", ")}.\n\n`;
+  let md = `# Calibrazione dei modelli\n\nGenerata il ${res.generated.slice(0, 10)} su ${staz.length} stazioni nivometriche (Alto Adige: open data Provincia di Bolzano, CC0; Veneto: ARPAV, CC BY 4.0) e ${righe.length} giornate negli inverni ${res.stagioni.join(", ")}.\n\n`;
   md += `Neve misurata = aumento dell'altezza neve tra le 8:00 di un giorno e le 8:00 del giorno dopo (la neve che "resta", al netto dell'assestamento). Contano le giornate con almeno 1 cm misurato o previsto.\n\n`;
   md += `## Modelli\n\n| Modello | Giornate con neve | Nevicate ≥5 cm | Fattore relativo | Errore medio (cm) | Peso |\n|---|---|---|---|---|---|\n`;
   for(const id in res.models){ const m = res.models[id];
@@ -213,7 +335,25 @@ function resoconto(res, staz, righe){
     md += `| ${L} giorno/i | ${v.calibrato.n} | ${f1(v.grezzo.mae)} → ${f1(v.calibrato.mae)} cm | ${v.grezzo.prese} → ${v.calibrato.prese} su ${v.calibrato.nevicateGrosse} | ${f2(v.grezzo.grosseRapporto)} → ${f2(v.calibrato.grosseRapporto)} | ${v.grezzo.falsiAllarmi} → ${v.calibrato.falsiAllarmi} |\n`; }
   md += `\n## Regimi dei venti (stazioni dell'Alto Adige)\n\nRapporto tra neve misurata e prevista (mediana dei modelli, 1 giorno prima): sopra 1 i modelli sottostimano.\n\n| Regime | Giornate | Misurata (cm) | Prevista (cm) | Rapporto |\n|---|---|---|---|---|\n`;
   for(const k in res.regimi){ const g = res.regimi[k]; md += `| ${k} | ${g.giorni} | ${Math.round(g.misurata)} | ${Math.round(g.prevista)} | ${f2(g.rapporto)} |\n`; }
-  md += `\n## Stazioni usate\n\n${staz.map(s => `- ${s.name} (${s.code}), ${s.alt} m, ${f1(s.km)} km dallo spot più vicino`).join("\n")}\n`;
+  for(const id in (res.perZona || {})){ const z = res.perZona[id];
+    md += `\n## Zona: ${z.nome} (${z.giornate} giornate)\n\n`;
+    if(!z.grosse){ md += "Troppe poche giornate per un'analisi separata.\n"; continue; }
+    md += `Nevicate di almeno 10 cm: neve prevista rispetto a quella misurata.\n\n| Modello | 1 giorno | 2 giorni | 3 giorni |\n|---|---|---|---|\n`;
+    for(const mid in z.grosse){ const g = z.grosse[mid]; md += `| ${lab(mid)} | ${[1, 2, 3].map(L => g[L].n ? `${f2(g[L].rapporto)} (${g[L].n})` : "–").join(" | ")} |\n`; }
+    md += `\nRegimi dei venti (rapporto misurata / prevista, 1 giorno prima):\n\n| Regime | Giornate | Misurata (cm) | Prevista (cm) | Rapporto |\n|---|---|---|---|---|\n`;
+    for(const k in z.regimi){ const g = z.regimi[k]; md += `| ${k} | ${g.giorni} | ${Math.round(g.misurata)} | ${Math.round(g.prevista)} | ${f2(g.rapporto)} |\n`; }
+  }
+  const pv = res.pioggiaVeneto;
+  if(pv) for(const [k, z] of [["tutte le giornate", pv.tutte], ["solo giornate fredde (temperatura media ≤ 0 °C, precipitazione nevosa)", pv.fredde]]){
+    md += `\n## Veneto – precipitazione, ${k} (${z.giornate} giornate)\n\nMillimetri d'acqua previsti rispetto a quelli misurati dai pluviometri ARPAV in quota (giorno 0 → 24). Attenzione: con neve e vento i pluviometri catturano meno di quanto cade, quindi i valori assoluti tendono a far sembrare i modelli "generosi"; il confronto tra modelli e tra regimi resta valido.\n\n`;
+    if(!z.grosse){ md += "Troppe poche giornate.\n"; continue; }
+    md += `Giornate con almeno 10 mm misurati:\n\n| Modello | 1 giorno | 2 giorni | 3 giorni |\n|---|---|---|---|\n`;
+    for(const mid in z.grosse){ const g = z.grosse[mid]; md += `| ${lab(mid)} | ${[1, 2, 3].map(L => g[L].n ? `${f2(g[L].rapporto)} (${g[L].n})` : "–").join(" | ")} |\n`; }
+    md += `\nRegimi dei venti (mm misurati / previsti, 1 giorno prima):\n\n| Regime | Giornate | Misurata (mm) | Prevista (mm) | Rapporto |\n|---|---|---|---|---|\n`;
+    for(const r in z.regimi){ const g = z.regimi[r]; md += `| ${r} | ${g.giorni} | ${Math.round(g.misurata)} | ${Math.round(g.prevista)} | ${f2(g.rapporto)} |\n`; }
+  }
+  md += `\n## Stazioni usate\n\n${staz.map(s => `- ${s.rete ? s.rete + " – " : ""}${s.name} (${s.code}), ${s.alt} m, ${f1(s.km)} km dallo spot più vicino`).join("\n")}\n`;
+  md += `\nAlto Adige: altezza neve alle 8:00, finestra di confronto 8:00 → 8:00. Veneto: altezza neve media giornaliera (dati storici ARPAV), finestra 12:00 → 12:00.\n`;
   return md;
 }
 
@@ -222,68 +362,106 @@ async function main(){
   const t0 = Date.now();
   const st = stagioni();
   log("inverni:", st.map(s => `${s.id} (${s.from} → ${s.to})`).join(", "));
-  const staz = await scegliStazioni();
-  if(!staz.length) throw new Error("Nessuna stazione con sensore neve trovata: il servizio della Provincia di Bolzano potrebbe essere cambiato");
-  log("stazioni:", staz.map(s => `${s.name} ${s.alt} m`).join(", "));
+  // le due reti di stazioni: Alto Adige (altezza neve alle 8:00) e Veneto (media giornaliera, finestra 12 → 12)
+  const reti = [];
+  try{
+    const bz = await scegliStazioni();
+    if(bz.length){ reti.push({id: "bz", nome: "Alto Adige", staz: bz, ora: 8, cache: s => `${s.id}.json`,
+      oss: (x, s) => neveAlle8(x.code, s.from, s.to)}); log("stazioni Alto Adige:", bz.map(s => `${s.name} ${s.alt} m`).join(", ")); }
+  }catch(e){ log("Alto Adige non disponibile:", e.message); }
+  try{
+    const ve = await scegliStazioniVeneto();
+    if(ve.length){ reti.push({id: "ve", nome: "Veneto", staz: ve, ora: 12, cache: s => `${s.id}-veneto.json`,
+      oss: (x, s) => neveGiornalieraVeneto(x.sensore, s.from, s.to)}); log("stazioni Veneto:", ve.map(s => `${s.name} ${s.alt} m`).join(", ")); }
+  }catch(e){ log("Veneto non disponibile:", e.message); }
+  // Veneto, piano B: lo storico dell'altezza neve ARPAV non è pubblicato, la precipitazione sì.
+  // Confrontiamo i mm d'acqua previsti con quelli misurati (giorno solare 0 → 24): non entra nei
+  // fattori della neve, serve per capire quale modello va meglio sul versante sud e con quale vento.
+  try{
+    const vp = await scegliPluviometriVeneto();
+    if(vp.length){ reti.push({id: "vep", nome: "Veneto (precipitazione)", pioggia: true, staz: vp, ora: 0, cache: s => `${s.id}-veneto-pioggia.json`,
+      oss: async (x, s) => {
+        const mm = await serieArpav(x.prec, s.from, s.to, r => r.tipo === "PREC" || /precipit/i.test(r.nome_sensore || ""));
+        const tm = x.temp ? await serieArpav(x.temp, s.from, s.to) : {};
+        return {mm, tm};
+      }}); log("pluviometri Veneto:", vp.map(s => `${s.name} ${s.alt} m`).join(", ")); }
+  }catch(e){ log("pluviometri Veneto non disponibili:", e.message); }
+  if(!reti.length) throw new Error("Nessuna stazione con sensore neve trovata: i servizi dati potrebbero essere cambiati");
 
   const righe = [];
   const CACHE = join(OUT, "calibrazione-cache");
   mkdirSync(CACHE, {recursive: true});
-  const codici = staz.map(x => x.code).join(",");
   const oggi = new Date().toISOString().slice(0, 10);
-  for(const s of st){
+  for(const s of st) for(const rete of reti){
+    const staz = rete.staz, codici = staz.map(x => x.code).join(",");
     // gli inverni conclusi non cambiano più: se li abbiamo già calcolati con le stesse stazioni, li riusiamo
-    const cf = join(CACHE, `${s.id}.json`);
+    const cf = join(CACHE, rete.cache(s));
     if(!s.inCorso && existsSync(cf)){
       try{
         const c = JSON.parse(readFileSync(cf, "utf8"));
-        if(c.stazioni === codici){ righe.push(...c.righe); log(`— inverno ${s.id}: già calcolato, riuso ${c.righe.length} giornate`); continue; }
+        if(c.stazioni === codici){ righe.push(...c.righe.map(r => ({rete: rete.id, ...r}))); log(`— ${rete.nome} ${s.id}: già calcolato, riuso ${c.righe.length} giornate`); continue; }
       }catch(e){}
     }
-    log(`— inverno ${s.id}`);
+    log(`— ${rete.nome}, inverno ${s.id}`);
     const nPrima = righe.length;
     const oss = new Array(staz.length);
     let fatte = 0; const tS = Date.now();
     for(let i = 0; i < staz.length; i += 4){
       await Promise.all(staz.slice(i, i + 4).map(async (x, j) => {
-        oss[i + j] = await neveAlle8(x.code, s.from, s.to);
+        oss[i + j] = await rete.oss(x, s);
         log(`  neve misurata ${++fatte}/${staz.length}: ${x.name}`);
       }));
     }
-    log(`  neve misurata scaricata in ${Math.round((Date.now() - tS) / 1000)} s`);
-    log(`  neve misurata: ${oss.filter(o => Object.values(o).some(v => v != null)).length}/${staz.length} stazioni con dati`);
+    const conDati = oss.filter(o => Object.values(rete.pioggia ? o.mm : o).some(v => v != null)).length;
+    log(`  neve misurata: ${conDati}/${staz.length} stazioni con dati (${Math.round((Date.now() - tS) / 1000)} s)`);
+    if(!conDati){ log("  nessun dato misurato: salto le previsioni di questo inverno"); continue; }
     const prev = {};
     for(const m of MODELS){
       const tM = Date.now();
-      const p = await previsioni(staz, m, s);
+      const p = await previsioni(staz, m, s, rete.ora, !!rete.pioggia);
       if(p){ prev[m.id] = p; log(`  ${m.id}: ok (${Math.round((Date.now() - tM) / 1000)} s)`); }
     }
     const tR = Date.now();
-    const reg = await regimi(staz, s);
+    const reg = await regimi(staz, s, rete.ora);
     log(`  regimi dei venti: ${reg ? "ok" : "non disponibili"} (${Math.round((Date.now() - tR) / 1000)} s)`);
     staz.forEach((x, i) => {
       for(const g of giorni(s.from, s.to)){
-        const h0 = oss[i][g], h1 = oss[i][addDays(g, 1)];
-        const obs = h0 == null || h1 == null ? null : (h1 - h0 > 150 ? null : Math.max(0, h1 - h0));
-        if(obs == null) continue;
+        let obs, tm = null;
+        if(rete.pioggia){
+          obs = oss[i].mm[g]; tm = oss[i].tm[g] ?? null;
+          if(obs == null || obs < 0 || obs > 300) continue;
+        }else{
+          const h0 = oss[i][g], h1 = oss[i][addDays(g, 1)];
+          obs = h0 == null || h1 == null ? null : (h1 - h0 > 150 ? null : Math.max(0, h1 - h0));
+          if(obs == null) continue;
+        }
         const fc = {};
         for(const mid in prev){ const v = prev[mid][i] && prev[mid][i][g]; if(v) fc[mid] = v; }
         if(!Object.keys(fc).length) continue;
-        righe.push({date: g, station: x.code, season: s.id, obs, regime: reg && reg[i] ? reg[i][g] || null : null, fc});
+        righe.push({rete: rete.id, date: g, station: x.code, season: s.id, obs, ...(tm != null ? {tm} : {}), regime: reg && reg[i] ? reg[i][g] || null : null, fc});
       }
     });
     log(`  giornate valide finora: ${righe.length}`);
     // salvo subito l'inverno appena calcolato (solo se concluso): se il giro si interrompe, il prossimo riparte da qui
-    if(!s.inCorso && s.to < oggi && righe.length > nPrima) writeFileSync(cf, JSON.stringify({stazioni: codici, righe: righe.slice(nPrima)}));
+    if(!s.inCorso && s.to < oggi && righe.length > nPrima){
+      writeFileSync(cf, JSON.stringify({stazioni: codici, righe: righe.slice(nPrima).map(({rete: _r, ...r}) => r)}));
+    }
   }
+  const staz = reti.flatMap(r => r.staz.map(x => ({...x, rete: r.nome})));
+  const righePioggia = righe.filter(r => r.rete === "vep");
+  righe.splice(0, righe.length, ...righe.filter(r => r.rete !== "vep"));
   if(righe.length < 50) throw new Error(`Troppe poche giornate valide (${righe.length}): non scrivo la calibrazione`);
 
   const res = {generated: new Date().toISOString(), ...calibra(righe, MODELS.map(m => m.id)),
-    stazioni: staz.map(({code, name, alt, lat, lon, km}) => ({code, name, alt, lat, lon, km})),
-    fonti: "Altezza neve: Provincia autonoma di Bolzano, open data meteo (CC0). Previsioni passate e vento: Open-Meteo.com Previous Runs e Historical Forecast API (CC BY 4.0)."};
+    stazioni: staz.map(({code, name, alt, lat, lon, km, rete}) => ({code, name, alt, lat, lon, km, rete})),
+    perZona: Object.fromEntries(reti.filter(r => !r.pioggia).map(r => [r.id, {nome: r.nome, ...zona(righe.filter(x => x.rete === r.id))}])),
+    // Veneto: precipitazione (mm), tutte le giornate e solo quelle fredde (temperatura media ≤ 0 °C: precipitazione nevosa in quota)
+    pioggiaVeneto: righePioggia.length ? {tutte: zona(righePioggia), fredde: zona(righePioggia.filter(r => r.tm != null && r.tm <= 0))} : null,
+    fonti: "Altezza neve: Provincia autonoma di Bolzano, open data meteo (CC0); ARPA Veneto, dati storici (CC BY 4.0). Previsioni passate e vento: Open-Meteo.com Previous Runs e Historical Forecast API (CC BY 4.0)."};
   mkdirSync(OUT, {recursive: true});
   writeFileSync(join(OUT, "calibrazione.json"), JSON.stringify(res, null, 1));
   writeFileSync(join(OUT, "calibrazione.md"), resoconto(res, staz, righe));
+  if(righePioggia.length) writeFileSync(join(OUT, "calibrazione-pioggia-veneto.json"), JSON.stringify(righePioggia));
   const r1 = x => Math.round(x * 10) / 10;
   writeFileSync(join(OUT, "calibrazione-giornate.json"), JSON.stringify(righe.map(r => ({...r, obs: r1(r.obs),
     fc: Object.fromEntries(Object.entries(r.fc).map(([k, v]) => [k, Object.fromEntries(Object.entries(v).map(([L, x]) => [L, r1(x)]))]))}))));
