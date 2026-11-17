@@ -1,10 +1,12 @@
 /* =========================================================
-   NEVE MISURATA — stazioni automatiche Alto Adige e Trentino
-   Fonte: rete stazioni Euregio pubblicata da avalanche.report (CC BY 4.0)
+   NEVE MISURATA — stazioni automatiche
+   Fonti: rete stazioni Euregio pubblicata da avalanche.report (CC BY 4.0) per Alto Adige e Trentino,
+          stazioni nivometriche ARPAV (CC BY 4.0) per il Veneto — vedi stazioni-arpav.js
    Campi usati: HS = altezza neve (cm), HSD24/48/72 = variazione altezza neve (cm),
                 LT = temperatura aria (°C), LWD-Region = zona del bollettino valanghe
    ========================================================= */
-import { WORKER_URL, STATIONS_MAX_KM, STATIONS_PER_SPOT } from "./config.js";
+import { WORKER_URL, STATIONS_MAX_KM, STATIONS_PER_SPOT, SPOTS } from "./config.js";
+import { loadArpav } from "./stazioni-arpav.js";
 import { state, esc, r0 } from "./state.js";
 
 const BASE = "https://static.avalanche.report/weather_stations/";
@@ -41,6 +43,18 @@ function normalize(geo){
   return out;
 }
 
+async function loadEuregio(){
+  for(const u of candidateUrls()){
+    try{
+      const r = await fetch(u);
+      if(!r.ok) continue;
+      const list = normalize(await r.json());
+      if(list.length) return list;
+    }catch(e){}
+  }
+  return [];
+}
+
 export async function loadStations(){
   if(WORKER_URL){
     try{
@@ -48,15 +62,15 @@ export async function loadStations(){
       if(r.ok){ const j = await r.json(); state.stations = j.stations || []; state.stationsDate = j.updated || null; return; }
     }catch(e){}
   }
-  for(const u of candidateUrls()){
-    try{
-      const r = await fetch(u);
-      if(!r.ok) continue;
-      const list = normalize(await r.json());
-      if(list.length){ state.stations = list; state.stationsDate = new Date().toISOString(); return; }
-    }catch(e){}
-  }
-  state.stations = [];
+  // le due reti in parallelo: se una non risponde, teniamo l'altra
+  const [eu, ve] = await Promise.allSettled([loadEuregio(), loadArpav(SPOTS, STATIONS_MAX_KM, distKm)]);
+  state.stationsNet = {
+    euregio: eu.status === "fulfilled" ? eu.value.length : 0,
+    arpav: ve.status === "fulfilled" ? ve.value.length : 0,
+    arpavErr: ve.status === "rejected" ? String(ve.reason && ve.reason.message || ve.reason) : null
+  };
+  state.stations = [...(eu.status === "fulfilled" ? eu.value : []), ...(ve.status === "fulfilled" ? ve.value : [])];
+  state.stationsDate = state.stations.length ? new Date().toISOString() : null;
 }
 
 function distKm(a, b, c, d){
@@ -86,11 +100,20 @@ const ago = iso => {
   return min < 90 ? `${Math.max(min, 0)} min fa` : `${Math.round(min / 60)} h fa`;
 };
 
+function credits(st){
+  const c = [];
+  if(st.some(s => s.operator !== "ARPAV")) c.push("Meteo Alto Adige e Meteotrentino via avalanche.report");
+  if(st.some(s => s.operator === "ARPAV")) c.push("ARPAV Veneto (dati in tempo reale non validati, CC BY 4.0)");
+  return c.join("; ");
+}
+
 export function stationsHTML(spot){
   const st = stationsFor(spot);
   if(!st.length){
     return `<p class="note" style="margin:0">${state.stations && state.stations.length
-      ? `Nessuna stazione nivometrica Euregio entro ${STATIONS_MAX_KM} km. Per Veneto e Friuli le stazioni ARPAV e FVG verranno aggiunte più avanti.`
+      ? (spot.area === "Friuli VG"
+        ? `Nessuna stazione con dati aperti entro ${STATIONS_MAX_KM} km. Le stazioni del Friuli Venezia Giulia verranno aggiunte appena disponibili.`
+        : `Nessuna stazione nivometrica entro ${STATIONS_MAX_KM} km.`)
       : "Dati delle stazioni non disponibili al momento."}</p>`;
   }
   return `<div class="st-wrap"><table class="st">
@@ -102,5 +125,5 @@ export function stationsHTML(spot){
       <td class="${(s.d48 || 0) >= 1 ? "up" : ""}">${delta(s.d48)}</td>
       <td class="${(s.d72 || 0) >= 1 ? "up" : ""}">${delta(s.d72)}</td>
       <td class="t">${s.lt != null ? r0(s.lt) + "°" : "–"}</td></tr>`).join("")}</tbody></table></div>
-    <p class="small" style="margin:8px 0 0">Misure delle stazioni automatiche (Meteo Alto Adige, Meteotrentino) via avalanche.report. Δ = variazione dell'altezza neve: con nevicate in corso è la neve nuova, dopo può calare per assestamento.</p>`;
+    <p class="small" style="margin:8px 0 0">Misure delle stazioni automatiche: ${credits(st)}. Δ = variazione dell'altezza neve: con nevicate in corso è la neve nuova, dopo può calare per assestamento.</p>`;
 }

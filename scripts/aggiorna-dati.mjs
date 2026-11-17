@@ -65,6 +65,7 @@ async function main(){
   }
   log("modelli ricevuti:", Object.keys(state.ens || {}).join(", ") || "nessuno",
       "| stazioni:", (state.stations || []).length,
+      state.stationsNet ? `(Euregio ${state.stationsNet.euregio}, ARPAV ${state.stationsNet.arpav}${state.stationsNet.arpavErr ? " – errore ARPAV: " + state.stationsNet.arpavErr : ""})` : "",
       "| bollettini:", Object.keys(state.av || {}).join(", ") || "nessuno");
 
   /* ---------- file per il sito ---------- */
@@ -72,7 +73,7 @@ async function main(){
   const snapshot = round({
     generated: new Date().toISOString(), demo: DEMO,
     wx, ens: state.ens, av: state.av, avDate: state.avDate, avErr: state.avErr, stations: state.stations,
-    sources: {meteo: "Open-Meteo.com (CC BY 4.0)", stazioni: "Meteo Alto Adige, Meteotrentino via avalanche.report (CC BY 4.0)", valanghe: "Bollettini EAWS/AINEVA"}
+    sources: {meteo: "Open-Meteo.com (CC BY 4.0)", stazioni: "Meteo Alto Adige, Meteotrentino via avalanche.report (CC BY 4.0); ARPAV Veneto (CC BY 4.0)", valanghe: "Bollettini EAWS/AINEVA"}
   });
   await mkdir(dirname(OUT), {recursive: true});
   const txt = JSON.stringify(snapshot);

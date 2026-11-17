@@ -64,7 +64,7 @@ Per aggiungerne uno copia un blocco `{id:..., name:..., ...}` in `js/config.js` 
 |---|---|---|
 | Meteo in quota, neve oraria e 10 giorni | Open-Meteo (CC BY 4.0) | API pubblica, senza chiave |
 | Previsione FreeRide | Open-Meteo, modelli separati: ICON (DWD), ICON-2I (ItaliaMeteo), ECMWF, GFS, Météo-France (`js/modelli.js`) | mediana + forbice min–max, rapporto neve/acqua variabile con la temperatura, regime dei venti a 700 hPa |
-| Neve misurata | Stazioni automatiche Meteo Alto Adige e Meteotrentino, via avalanche.report (`weather_stations/stations.geojson`) | 3 stazioni più vicine per spot (entro 20 km, pesando il dislivello) |
+| Neve misurata | Stazioni automatiche Meteo Alto Adige e Meteotrentino, via avalanche.report (`weather_stations/stations.geojson`); stazioni nivometriche ARPAV Veneto, file XML in tempo reale (`meteo.arpa.veneto.it/meteo/dati_meteo/xml/`, CC BY 4.0, solo tramite automazione) | 3 stazioni più vicine per spot (entro 20 km, pesando il dislivello) |
 | Previsione neve "di riferimento" | snow-forecast.com | widget gratuito (campo `sfWidget`); le loro condizioni consentono il link solo alla home page |
 | Valanghe | Bollettini ufficiali AINEVA (Veneto) e servizi provinciali Alto Adige/Trentino (membri AINEVA, pubblicati con Euregio), FVG | file EAWS da static.avalanche.report |
 | Webcam | Panomax, feratel, realcam, meteocam (immagini usate da fassa.com e altabadia.org) | immagine diretta o tramite worker |
