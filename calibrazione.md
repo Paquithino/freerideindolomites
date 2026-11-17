@@ -6,25 +6,37 @@ Neve misurata = aumento dell'altezza neve tra le 8:00 di un giorno e le 8:00 del
 
 ## Modelli
 
-| Modello | Giornate | Fattore | Errore medio (cm) | Peso | Fattore a 1 / 2 / 3 giorni |
+| Modello | Giornate con neve | Nevicate ≥5 cm | Fattore relativo | Errore medio (cm) | Peso |
 |---|---|---|---|---|---|
-| ICON · DWD (Germania) | 902 | ×0,6 | 3,6 | 0,93 | ×0,58 / ×0,7 / ×0,5 |
-| ICON-2I · ItaliaMeteo | 239 | ×0,56 | 3,1 | 1,09 | ×0,54 / ×0,6 / ×1 |
-| ECMWF (Europa) | 359 | ×0,54 | 3 | 1,11 | ×0,56 / ×0,52 / ×0,62 |
-| GFS · NOAA (USA) | 632 | ×0,58 | 3,5 | 0,97 | ×0,66 / ×0,54 / ×0,5 |
-| Météo-France | 951 | ×0,52 | 3,8 | 0,9 | ×0,72 / ×0,56 / ×0,5 |
+| ICON · DWD (Germania) | 902 | 405 | ×1,05 | 4,3 | 0,94 |
+| ICON-2I · ItaliaMeteo | 239 | 92 | ×0,88 | 3,6 | 1,11 |
+| ECMWF (Europa) | 359 | 131 | ×0,95 | 3,7 | 1,09 |
+| GFS · NOAA (USA) | 632 | 256 | ×1,09 | 4,1 | 0,97 |
+| Météo-France | 951 | 417 | ×1,04 | 4,5 | 0,9 |
 
-Fattore < 1: il modello tende a prevedere più neve di quella misurata. Peso > 1: sbaglia meno della media.
+Fattore relativo: corregge le differenze tra modelli (la media è 1). Peso > 1: sbaglia meno della media. Scala comune non applicata: ×0,91 (la neve misurata come aumento dell'altezza neve è sempre un po' meno di quella caduta).
+
+## Nevicate di almeno 10 cm
+
+Quanta neve prevedeva ogni modello rispetto a quella misurata (1 = giusto, 0,7 = il 30% in meno).
+
+| Modello | 1 giorno prima | 2 giorni prima | 3 giorni prima |
+|---|---|---|---|
+| ICON · DWD (Germania) | 0,92 (147) | 0,59 (147) | 0,55 (147) |
+| ICON-2I · ItaliaMeteo | 1,04 (57) | 0,78 (57) | – |
+| ECMWF (Europa) | 0,91 (47) | 0,82 (50) | 0,58 (50) |
+| GFS · NOAA (USA) | 0,75 (92) | 0,57 (90) | 0,51 (90) |
+| Météo-France | 0,71 (147) | 0,63 (147) | 0,54 (147) |
 
 ## Verifica fuori campione
 
-Per ogni inverno i fattori sono calcolati sugli altri inverni e messi alla prova su quello.
+Per ogni inverno i fattori sono calcolati sugli altri inverni e messi alla prova su quello. "Prima" = mediana semplice dei modelli, "dopo" = Previsione FreeRide calibrata.
 
-| Anticipo | Giornate | Errore medio prima | Errore medio dopo | Nevicate ≥10 cm prese (prima → dopo) | Falsi allarmi (prima → dopo) |
+| Anticipo | Giornate | Errore medio prima → dopo | Nevicate ≥10 cm prese | Neve prevista nelle nevicate ≥10 cm | Falsi allarmi |
 |---|---|---|---|---|---|
-| 1 giorno/i | 832 | 3,6 cm | 3,5 cm | 131/147 → 115/147 | 9 → 5 |
-| 2 giorno/i | 833 | 3,6 cm | 3,7 cm | 104/147 → 87/147 | 4 → 1 |
-| 3 giorno/i | 877 | 4,4 cm | 4,5 cm | 79/147 → 58/147 | 13 → 14 |
+| 1 giorno/i | 896 | 3,6 → 4 cm | 131 → 134 su 147 | 0,69 → 0,91 | 9 → 26 |
+| 2 giorno/i | 900 | 3,6 → 3,7 cm | 104 → 120 su 147 | 0,54 → 0,65 | 4 → 23 |
+| 3 giorno/i | 958 | 4,4 → 4,5 cm | 79 → 98 su 147 | 0,38 → 0,53 | 13 → 27 |
 
 ## Regimi dei venti (stazioni dell'Alto Adige)
 
