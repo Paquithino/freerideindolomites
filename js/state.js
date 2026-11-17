@@ -35,7 +35,7 @@ export const state = {
   quote: null,
   wx:{}, av:{}, avDate:{}, avErr:false, wxErr:false, demo:false, loading:false,
   area: LS.get("fr_area", "Tutti"), sort: LS.get("fr_sort", "powder"),
-  fav: new Set(LS.get("fr_fav", [])), view: LS.get("fr_view", "tabella"), dir: -1, camArea: "Tutti", planArea: "Tutti", planMode: LS.get("fr_pvmode", "giorno"), updated: null,
+  fav: new Set(LS.get("fr_fav", [])), view: LS.get("fr_view", "tabella"), modo: LS.get("fr_modo", null), dir: -1, camArea: "Tutti", planArea: "Tutti", planMode: LS.get("fr_pvmode", "giorno"), updated: null,
   stations: [], stationsDate: null,
   ens: {}, ensMemo: {}
 };

@@ -444,3 +444,52 @@ details.avb[open] .avb-hl,details.avb[open] .avb-pr{display:none}
 @media (min-width:960px){.avb-body{max-width:none}.avb-body > *{max-width:820px}}
 .cam .ferma{white-space:nowrap;font-size:11px;color:var(--d3);margin-left:4px}
 a.play{display:grid;place-items:center;text-decoration:none}
+
+/* ---------- versione semplice ---------- */
+.modo{margin-top:12px}
+.modo-q{margin:0 0 6px;font-size:15px;font-weight:700}
+.modo-seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.modo-seg button{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:9px 10px;color:var(--tx);cursor:pointer;text-align:left;font:inherit}
+.modo-seg button b{display:block;font-size:14px}
+.modo-seg button span{font-size:11.5px;color:var(--tx2)}
+.modo-seg button.on{border-color:var(--ice);background:#0e2a3d}
+body.semplice .sortsel,body.semplice .spot-aside,body.semplice #updated{display:none}
+body.semplice .spot-layout{display:block}
+.sg-hero{grid-column:1/-1;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.sg-hero h3{margin:0 0 6px;font-size:13px;text-transform:uppercase;letter-spacing:.5px;color:var(--tx3)}
+.sg-hero p{margin:6px 0 0;font-size:15px;line-height:1.4}
+body.semplice .hero{display:block}
+.card.sg{border-left:5px solid var(--line)}
+.sg-top{display:flex;gap:10px;align-items:flex-start}
+.sg-top h3{margin:0;font-size:17px}
+.sg-g{font-size:15px;font-weight:700;margin-top:2px}
+.sg-g.sg-big{font-size:21px;margin:0}
+.sg-g span{font-size:1.15em}
+.sg-sub{margin:4px 0 0;color:var(--tx2);font-size:14px}
+.sg-top .star{margin-top:1px}
+.card.gv-top,.sec.gv-top{border-left-color:var(--powder)}
+.card.gv-ok,.sec.gv-ok{border-left-color:var(--ice)}
+.card.gv-bad,.sec.gv-bad{border-left-color:var(--bad)}
+.sec.sg{border-left:5px solid var(--line)}
+.sg-n{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
+.sg-n > div{background:var(--bg2);border-radius:10px;padding:8px 6px;text-align:center}
+.sg-n b{display:block;font-size:22px;line-height:1.1;min-height:28px}
+.sg-n b small{font-size:12px;font-weight:600;color:var(--tx2)}
+.sg-n b .dsq{width:28px;height:28px;font-size:15px;line-height:1;vertical-align:top}
+.sg-n > div > span{display:block;font-size:11.5px;color:var(--tx2);margin-top:3px;line-height:1.2}
+.sg-w{margin:8px 0 0;font-size:13px;color:var(--warn)}
+.sg-days{display:grid;gap:4px}
+.sg-d{background:var(--bg2);border-radius:10px;padding:8px 2px;text-align:center;display:flex;flex-direction:column;gap:2px;min-width:0}
+.sg-d > span{font-size:12px;color:var(--tx2);text-transform:capitalize}
+.sg-d i{font-style:normal;font-size:22px}
+.sg-d b{font-size:14px;color:var(--tx3)}
+.sg-d b.neve{color:var(--powder);font-size:15px}
+.sg-d em{font-style:normal;font-size:11.5px;color:var(--tx2)}
+.sg-best{margin:10px 0 0;font-size:14px}
+.sg-tutti{display:block;width:100%;margin:6px 0 10px;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ice);font:inherit;font-weight:700;cursor:pointer}
+@media (min-width:960px){
+  .modo-seg{max-width:440px}
+  body.semplice #list{grid-template-columns:repeat(auto-fill,minmax(320px,1fr))}
+  .sg-hero{max-width:none}
+}
+body.semplice .o-now{order:1}body.semplice .o-plan{order:2}body.semplice .o-av{order:3}body.semplice .o-cam{order:4}

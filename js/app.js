@@ -43,6 +43,65 @@ function renderHero(){
     <div class="k"><span>In arrivo 72h</span><b>${r0(nxt[1].n72)} cm</b><em>${esc(nxt[0].name)}</em></div>
     <div class="k"><span>Indice Powder</span><b>${r1(best[1].score)}</b><em>${esc(best[0].name)}</em></div>`;
 }
+/* ---------- versione semplice ----------
+   Per chi vuole solo sapere "com'è la neve e si può andare": un giudizio a parole,
+   tre numeri grandi, i prossimi giorni a icone. Niente modelli, forbici, tabelle. */
+const semplice = () => state.modo === "semplice";
+function giudizio(m, av){
+  const lv = av ? av.level : 0;
+  if(lv >= 4) return {ico: "⛔", txt: "Pericolo valanghe forte", sub: "Fuoripista sconsigliato: resta sulle piste battute.", cls: "bad"};
+  let g;
+  if(m.p48 >= 20) g = {ico: "❄️", txt: "Neve fresca abbondante", sub: `${r0(m.p48)} cm caduti negli ultimi 2 giorni.`, cls: "top"};
+  else if(m.n72 >= 20) g = {ico: "🌨", txt: "Bella nevicata in arrivo", sub: `Circa ${r0(m.n72)} cm nei prossimi 3 giorni.`, cls: "top"};
+  else if(m.p48 >= 5) g = {ico: "🌤", txt: "Un po' di neve fresca", sub: `${r0(m.p48)} cm negli ultimi 2 giorni.`, cls: "ok"};
+  else if(m.n72 >= 5) g = {ico: "🌥", txt: "Un po' di neve in arrivo", sub: `Circa ${r0(m.n72)} cm nei prossimi 3 giorni.`, cls: "ok"};
+  else g = {ico: "😐", txt: "Niente neve nuova", sub: "Neve vecchia, nessuna nevicata in vista nei prossimi 3 giorni.", cls: "meh"};
+  const avvisi = [];
+  if(lv === 3) avvisi.push("⚠️ Pericolo valanghe marcato: serve esperienza.");
+  if((m.w7 || 0) >= 50) avvisi.push("💨 Vento forte in quota.");
+  if(m.temp > 3) avvisi.push("🌡 Fa caldo: neve pesante o bagnata.");
+  return {...g, avvisi};
+}
+function modoHTML(){
+  const nuovo = !state.modo;
+  return `${nuovo ? `<p class="modo-q">Come preferisci vedere il sito?</p>` : ""}
+    <div class="modo-seg" role="group" aria-label="Versione del sito">
+      <button data-modo="semplice" class="${semplice() ? "on" : ""}"><b>✨ Semplice</b><span>Solo l'essenziale</span></button>
+      <button data-modo="completa" class="${!semplice() && !nuovo ? "on" : ""}"><b>📊 Completa</b><span>Tutti i dati</span></button>
+    </div>`;
+}
+function giorniSemplici(s, n = 5){
+  const p = dailyPlan(s).slice(0, n);
+  return `<div class="sg-days" style="grid-template-columns:repeat(${p.length},1fr)">${p.map((d, k) => `<div class="sg-d">
+    <span>${k === 0 ? "Oggi" : k === 1 ? "Domani" : dayName(d.date)}</span><i>${wmo(d.code)[0]}</i>
+    <b class="${d.snow >= 0.5 ? "neve" : ""}">${d.snow >= 0.5 ? r0(d.snow) + " cm" : "–"}</b><em>${r0(d.tmax)}°</em></div>`).join("")}</div>`;
+}
+function cardSemplice(s){
+  const m = metrics(s), av = avForSpot(s), fav = state.fav.has(s.id);
+  if(!m) return `<div class="card sg" data-spot="${s.id}"><h3>${esc(s.name)}</h3><p class="note">Dati non disponibili</p></div>`;
+  const g = giudizio(m, av);
+  return `<div class="card sg gv-${g.cls}" data-spot="${s.id}">
+    <div class="sg-top"><button class="star ${fav ? "on" : ""}" data-fav="${s.id}" aria-label="Preferito">${fav ? "★" : "☆"}</button>
+      <div style="min-width:0;flex:1"><h3>${esc(s.name)}</h3><div class="sg-g"><span>${g.ico}</span> ${esc(g.txt)}</div></div></div>
+    <div class="sg-n">
+      <div><b>${r0(m.p48)}<small> cm</small></b><span>neve fresca</span></div>
+      <div><b>${m.n72 >= 0.5 ? "+" + r0(m.n72) : "0"}<small> cm</small></b><span>in arrivo 3 gg</span></div>
+      <div><b>${av ? dsq(av.level) : "–"}</b><span>${av ? "valanghe " + (DNAME[av.level] || "").toLowerCase() : "valanghe n.d."}</span></div>
+    </div>
+    ${g.avvisi.length ? `<p class="sg-w">${g.avvisi.map(esc).join(" ")}</p>` : ""}
+  </div>`;
+}
+function heroSemplice(){
+  const ms = SPOTS.map(s => [s, metrics(s)]).filter(x => x[1]);
+  if(!ms.length) return "";
+  const top = ms.reduce((a, b) => b[1].p48 > a[1].p48 ? b : a), nxt = ms.reduce((a, b) => b[1].n72 > a[1].n72 ? b : a);
+  const righe = [];
+  righe.push(top[1].p48 >= 5 ? `❄️ Più neve fresca a <b>${esc(nomeCorto(top[0]))}</b>: ${r0(top[1].p48)} cm` : "❄️ Nessuna nevicata importante negli ultimi 2 giorni");
+  righe.push(nxt[1].n72 >= 5 ? `🌨 In arrivo soprattutto a <b>${esc(nomeCorto(nxt[0]))}</b>: circa ${r0(nxt[1].n72)} cm in 3 giorni` : "🌨 Nessuna nevicata in vista nei prossimi 3 giorni");
+  const avs = SPOTS.map(s => avForSpot(s)).filter(Boolean);
+  if(avs.length){ const mx = Math.max(...avs.map(a => a.level)); righe.push(`${dsq(mx)} Pericolo valanghe fino a <b>${(DNAME[mx] || "").toLowerCase()}</b>`); }
+  return `<div class="sg-hero"><h3>In breve</h3>${righe.map(r => `<p>${r}</p>`).join("")}</div>`;
+}
 const chipsHTML = (list, cur, attr) => list.map(a => `<button class="chip ${a === cur ? "on" : ""}" ${attr}="${esc(a)}">${esc(a)}</button>`).join("");
 function filterArea(arr, area){
   if(area === "★ Preferiti") return arr.filter(s => state.fav.has(s.id));
@@ -137,15 +196,16 @@ function renderAside(){
 }
 
 function renderList(){
+  $("#modo").innerHTML = modoHTML();
   $("#areaChips").innerHTML = chipsHTML(AREAS, state.area, "data-area");
   $("#sort").value = state.sort;
   if(state.loading && !Object.keys(state.wx).length){ $("#list").innerHTML = '<div class="skeleton"></div>'.repeat(5); return; }
-  const arr = sortedSpots(), table = isDesktop() && state.view === "tabella";
+  const arr = sortedSpots(), table = isDesktop() && state.view === "tabella" && !semplice();
   document.querySelectorAll("[data-view]").forEach(b => b.classList.toggle("on", b.dataset.view === state.view));
   $("#list").classList.toggle("as-table", table);
   $("#list").innerHTML = !arr.length ? `<div class="note" style="padding:20px 4px">Nessuno spot qui. Tocca ☆ su uno spot per aggiungerlo ai preferiti.</div>`
-    : table ? tableHTML(arr) : arr.map(cardHTML).join("");
-  renderHero();
+    : table ? tableHTML(arr) : arr.map(semplice() ? cardSemplice : cardHTML).join("");
+  if(semplice()) $("#hero").innerHTML = heroSemplice(); else renderHero();
   renderAside();
   const sf = $("#sideFoot");
   if(sf) sf.textContent = state.updated ? `Dati aggiornati alle ${state.updated.toLocaleTimeString("it-IT", {hour:"2-digit", minute:"2-digit"})}` : "";
@@ -332,6 +392,26 @@ function renderDetail(id){
       <div class="zones">⛰ ${esc(s.zones)}</div></div>
       <button class="star ${fav ? "on" : ""}" data-fav="${s.id}" style="font-size:26px">${fav ? "★" : "☆"}</button></div>`;
   let main = "", side = "";
+  if(semplice()){
+    const av = avForSpot(s);
+    if(m){
+      const g = giudizio(m, av);
+      main += `<div class="sec sg gv-${g.cls} o-now"><div class="sg-g sg-big"><span>${g.ico}</span> ${esc(g.txt)}</div><p class="sg-sub">${esc(g.sub)}</p>
+        ${g.avvisi.length ? `<p class="sg-w">${g.avvisi.map(esc).join(" ")}</p>` : ""}
+        <div class="sg-n">
+          <div><b>${r0(m.p48)}<small> cm</small></b><span>neve fresca 2 gg</span></div>
+          <div><b>${m.n72 >= 0.5 ? "+" + r0(m.n72) : "0"}<small> cm</small></b><span>in arrivo 3 gg</span></div>
+          <div><b>${r0(m.temp)}°</b><span>adesso a ${s.elev.toLocaleString("it-IT")} m</span></div>
+        </div></div>`;
+      main += sec("o-plan", "Prossimi giorni", `${giorniSemplici(s)}${best ? `<p class="sg-best">🎯 Giorno migliore: <b>${giornoLungo(best.date)}</b>, circa ${r0(best.fresh)} cm di neve fresca</p>` : ""}`);
+    }else main += `<div class="sec note o-now">Dati meteo non disponibili.</div>`;
+    side += sec("o-av", "Pericolo valanghe", avBlockHTML(s));
+    side += sec("o-cam", "Webcam", camsHTML(s));
+    $("#v-detail").innerHTML = `${head}<div class="dgrid"><div class="dcol dmain">${main}</div><div class="dcol dside">${side}</div></div>
+      <button class="sg-tutti" data-modo="completa">📊 Vedi tutti i dati di questo spot</button>
+      <div class="disc">Indicazioni automatiche. Prima di uscire leggi il bollettino valanghe, osserva il terreno e porta ARTVA, pala e sonda.</div>`;
+    return;
+  }
   if(!m){ main += `<div class="sec note o-now">Dati meteo non disponibili.</div>`; }
   else{
     main += sec("o-now", `Adesso · ${wmo(m.code)[0]} ${wmo(m.code)[1]}`, `
@@ -421,7 +501,7 @@ function route(){
   document.querySelectorAll(".view").forEach(v => v.classList.toggle("on", v.id === view));
   document.querySelectorAll("nav.tabs a").forEach(a => a.classList.toggle("on", a.dataset.tab === tab));
 }
-const rerender = () => { renderBanner(); route(); };
+const rerender = () => { document.body.classList.toggle("semplice", semplice()); renderBanner(); route(); };
 
 document.addEventListener("click", e => {
   const f = e.target.closest("[data-fav]");
@@ -431,6 +511,8 @@ document.addEventListener("click", e => {
   if(c){ location.hash = "#spot-" + c.dataset.spot; return; }
   const sc = e.target.closest("[data-sortcol]");
   if(sc){ const k = sc.dataset.sortcol; state.dir = state.sort === k ? -state.dir : (k === "name" || k === "danger" ? -1 : -1); state.sort = k; LS.set("fr_sort", k); renderList(); return; }
+  const md = e.target.closest("[data-modo]");
+  if(md){ state.modo = md.dataset.modo; LS.set("fr_modo", state.modo); rerender(); return; }
   const vw = e.target.closest("[data-view]");
   if(vw){ state.view = vw.dataset.view; LS.set("fr_view", state.view); renderList(); return; }
   const a = e.target.closest("[data-area]");
