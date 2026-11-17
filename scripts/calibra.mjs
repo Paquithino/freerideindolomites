@@ -201,12 +201,16 @@ function resoconto(res, staz, righe){
   const lab = id => (MODELS.find(m => m.id === id) || {}).label || id;
   let md = `# Calibrazione dei modelli\n\nGenerata il ${res.generated.slice(0, 10)} su ${staz.length} stazioni nivometriche dell'Alto Adige (open data Provincia di Bolzano, CC0) e ${righe.length} giornate negli inverni ${res.stagioni.join(", ")}.\n\n`;
   md += `Neve misurata = aumento dell'altezza neve tra le 8:00 di un giorno e le 8:00 del giorno dopo (la neve che "resta", al netto dell'assestamento). Contano le giornate con almeno 1 cm misurato o previsto.\n\n`;
-  md += `## Modelli\n\n| Modello | Giornate | Fattore | Errore medio (cm) | Peso | Fattore a 1 / 2 / 3 giorni |\n|---|---|---|---|---|---|\n`;
+  md += `## Modelli\n\n| Modello | Giornate con neve | Nevicate ≥5 cm | Fattore relativo | Errore medio (cm) | Peso |\n|---|---|---|---|---|---|\n`;
   for(const id in res.models){ const m = res.models[id];
-    md += `| ${lab(id)} | ${m.n} | ${m.ok ? "×" + f2(m.factor) : "neutro (pochi dati)"} | ${f1(m.mae)} | ${f2(m.weight)} | ${[1, 2, 3].map(L => "×" + f2(m.perAnticipo[L].factor)).join(" / ")} |\n`; }
-  md += `\nFattore < 1: il modello tende a prevedere più neve di quella misurata. Peso > 1: sbaglia meno della media.\n\n## Verifica fuori campione\n\nPer ogni inverno i fattori sono calcolati sugli altri inverni e messi alla prova su quello.\n\n| Anticipo | Giornate | Errore medio prima | Errore medio dopo | Nevicate ≥10 cm prese (prima → dopo) | Falsi allarmi (prima → dopo) |\n|---|---|---|---|---|---|\n`;
+    md += `| ${lab(id)} | ${m.n} | ${m.nevicate} | ${m.ok ? "×" + f2(m.factor) : "neutro (pochi dati)"} | ${f1(m.mae)} | ${f2(m.weight)} |\n`; }
+  md += `\nFattore relativo: corregge le differenze tra modelli (la media è 1). Peso > 1: sbaglia meno della media. Scala comune non applicata: ×${f2(res.scala)} (la neve misurata come aumento dell'altezza neve è sempre un po' meno di quella caduta).\n\n`;
+  md += `## Nevicate di almeno 10 cm\n\nQuanta neve prevedeva ogni modello rispetto a quella misurata (1 = giusto, 0,7 = il 30% in meno).\n\n| Modello | 1 giorno prima | 2 giorni prima | 3 giorni prima |\n|---|---|---|---|\n`;
+  for(const id in res.models){ const g = res.models[id].grosse;
+    md += `| ${lab(id)} | ${[1, 2, 3].map(L => g[L].n ? `${f2(g[L].rapporto)} (${g[L].n})` : "–").join(" | ")} |\n`; }
+  md += `\n## Verifica fuori campione\n\nPer ogni inverno i fattori sono calcolati sugli altri inverni e messi alla prova su quello. "Prima" = mediana semplice dei modelli, "dopo" = Previsione FreeRide calibrata.\n\n| Anticipo | Giornate | Errore medio prima → dopo | Nevicate ≥10 cm prese | Neve prevista nelle nevicate ≥10 cm | Falsi allarmi |\n|---|---|---|---|---|---|\n`;
   for(const L in res.verifica){ const v = res.verifica[L];
-    md += `| ${L} giorno/i | ${v.calibrato.n} | ${f1(v.grezzo.mae)} cm | ${f1(v.calibrato.mae)} cm | ${v.grezzo.prese}/${v.grezzo.nevicateGrosse} → ${v.calibrato.prese}/${v.calibrato.nevicateGrosse} | ${v.grezzo.falsiAllarmi} → ${v.calibrato.falsiAllarmi} |\n`; }
+    md += `| ${L} giorno/i | ${v.calibrato.n} | ${f1(v.grezzo.mae)} → ${f1(v.calibrato.mae)} cm | ${v.grezzo.prese} → ${v.calibrato.prese} su ${v.calibrato.nevicateGrosse} | ${f2(v.grezzo.grosseRapporto)} → ${f2(v.calibrato.grosseRapporto)} | ${v.grezzo.falsiAllarmi} → ${v.calibrato.falsiAllarmi} |\n`; }
   md += `\n## Regimi dei venti (stazioni dell'Alto Adige)\n\nRapporto tra neve misurata e prevista (mediana dei modelli, 1 giorno prima): sopra 1 i modelli sottostimano.\n\n| Regime | Giornate | Misurata (cm) | Prevista (cm) | Rapporto |\n|---|---|---|---|---|\n`;
   for(const k in res.regimi){ const g = res.regimi[k]; md += `| ${k} | ${g.giorni} | ${Math.round(g.misurata)} | ${Math.round(g.prevista)} | ${f2(g.rapporto)} |\n`; }
   md += `\n## Stazioni usate\n\n${staz.map(s => `- ${s.name} (${s.code}), ${s.alt} m, ${f1(s.km)} km dallo spot più vicino`).join("\n")}\n`;
@@ -283,7 +287,7 @@ async function main(){
   const r1 = x => Math.round(x * 10) / 10;
   writeFileSync(join(OUT, "calibrazione-giornate.json"), JSON.stringify(righe.map(r => ({...r, obs: r1(r.obs),
     fc: Object.fromEntries(Object.entries(r.fc).map(([k, v]) => [k, Object.fromEntries(Object.entries(v).map(([L, x]) => [L, r1(x)]))]))}))));
-  for(const id in res.models){ const m = res.models[id]; log(`${id.padEnd(7)} giornate ${String(m.n).padStart(4)}  fattore ×${m.factor.toFixed(2)}  peso ${m.weight.toFixed(2)}  errore ${m.mae == null ? "–" : m.mae.toFixed(1)} cm`); }
+  for(const id in res.models){ const m = res.models[id]; log(`${id.padEnd(7)} giornate ${String(m.n).padStart(4)}  fattore ×${m.factor.toFixed(2)}  peso ${m.weight.toFixed(2)}  errore ${m.mae == null ? "–" : m.mae.toFixed(1)} cm  nevicate ≥10 cm a 1 g: ${m.grosse[1].rapporto == null ? "–" : m.grosse[1].rapporto.toFixed(2)}`); }
   for(const L in res.verifica){ const v = res.verifica[L]; log(`verifica ${L} g: errore ${v.grezzo.mae?.toFixed(1)} → ${v.calibrato.mae?.toFixed(1)} cm su ${v.calibrato.n} giornate`); }
   log(`scritto ${OUT}/calibrazione.json e calibrazione.md in ${Math.round((Date.now() - t0) / 1000)} s`);
 }

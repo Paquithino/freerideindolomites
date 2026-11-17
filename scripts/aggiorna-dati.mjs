@@ -18,6 +18,7 @@ import { loadWeather, demoWeather, romeNowISO, dailyPlan } from "../js/meteo.js"
 import { loadModels, demoModels, ensembleFor } from "../js/modelli.js";
 import { loadAvalanche, avForSpot } from "../js/valanghe.js";
 import { loadStations, stationsFor } from "../js/stazioni.js";
+import { METODO } from "../js/calibrazione.js";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const DEMO = process.argv.includes("--demo");
@@ -70,11 +71,12 @@ async function ultimoPubblicato(){
 async function caricaCalibrazione(){
   try{
     const c = JSON.parse(await readFile(resolve(ARCH_DIR, "calibrazione.json"), "utf8"));
+    if(c.metodo !== METODO){ log("calibrazione: fatta con un metodo vecchio, la ignoro (rilancia \"Calibra i modelli\")"); return; }
     const models = {};
     for(const id in c.models){ const m = c.models[id]; models[id] = {ok: m.ok, n: m.n, factor: m.factor, weight: m.weight}; }
     const v = c.verifica && c.verifica[1];
     state.cal = {generated: c.generated, stagioni: c.stagioni, stazioni: (c.stazioni || []).length, models,
-      verifica: v ? {n: v.calibrato.n, prima: v.grezzo.mae, dopo: v.calibrato.mae} : null};
+      verifica: v ? {n: v.calibrato.n, nevicate: v.calibrato.nevicateGrosse, presePrima: v.grezzo.prese, preseDopo: v.calibrato.prese} : null};
     log("calibrazione:", Object.entries(models).map(([k, m]) => `${k} ×${m.factor} peso ${m.weight.toFixed(2)}${m.ok ? "" : " (neutro)"}`).join(", "));
   }catch(e){ log("calibrazione: non presente, modelli non corretti"); }
 }

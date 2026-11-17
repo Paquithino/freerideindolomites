@@ -276,7 +276,7 @@ function calNote(){
   if(!c) return base + " Per ora pesano tutti uguale: la calibrazione sulle stazioni non è ancora disponibile.";
   const v = c.verifica;
   return base + ` I cm sono corretti con la <b>calibrazione</b> su ${c.stazioni || "alcune"} stazioni dell'Alto Adige negli inverni ${(c.stagioni || []).join(", ")}: ×fattore = correzione dei cm, peso = quanto conta il modello nella Previsione FreeRide (chi ha sbagliato meno conta di più).`
-    + (v && v.prima != null ? ` Su ${v.n} giornate di prova l'errore medio a 1 giorno è passato da ${r1(v.prima)} a ${r1(v.dopo)} cm.` : "")
+    + (v && v.nevicate ? ` Nella verifica sugli inverni passati, a 1 giorno le nevicate di almeno 10 cm riconosciute sono passate da ${v.presePrima} a ${v.preseDopo} su ${v.nevicate}.` : "")
     + ` <a href="./html/info.html#calibrazione">Come funziona</a>`;
 }
 
