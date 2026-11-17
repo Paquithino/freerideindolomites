@@ -1,0 +1,79 @@
+# =========================================================
+# Aggiorna dati e sito — gira ogni ora, a ogni push su main e a mano
+#   1. scarica meteo, modelli, stazioni e bollettini (scripts/aggiorna-dati.mjs)
+#   2. ricostruisce il sito con i dati freschi e lo pubblica su GitHub Pages
+#   3. una volta al giorno salva l'archivio per la calibrazione nel ramo "dati"
+# Una volta sola: Settings → Pages → Source: "GitHub Actions"
+# =========================================================
+name: Aggiorna dati e sito
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "7 * * * *"        # ogni ora, al minuto 7 (orario UTC)
+  workflow_dispatch:          # pulsante "Run workflow" nella scheda Actions
+permissions:
+  contents: write             # per salvare l'archivio nel ramo "dati"
+  pages: write
+  id-token: write
+concurrency:
+  group: aggiorna-sito
+  cancel-in-progress: false
+jobs:
+  dati-e-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Prepara la cartella dell'archivio (ramo "dati")
+        run: |
+          git config user.name  "freeride-bot"
+          git config user.email "freeride-bot@users.noreply.github.com"
+          if git ls-remote --exit-code --heads origin dati >/dev/null 2>&1; then
+            git fetch --depth=1 origin dati:dati
+            git worktree add archivio dati
+          else
+            git worktree add --orphan -b dati archivio
+          fi
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Installa le dipendenze
+        run: npm install --no-audit --no-fund
+
+      - name: Scarica e calcola i dati
+        id: dati
+        continue-on-error: true   # se una fonte non risponde, il sito si pubblica comunque (scaricherà i dati da solo)
+        env:
+          ARCHIVIO_DIR: archivio
+        run: node scripts/aggiorna-dati.mjs
+
+      - name: Costruisci il sito
+        run: npm run build
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - name: Salva l'archivio
+        if: steps.dati.outcome == 'success'
+        run: |
+          cd archivio
+          git add -A
+          if git diff --cached --quiet; then echo "Archivio invariato"; exit 0; fi
+          git -c user.name="freeride-bot" -c user.email="freeride-bot@users.noreply.github.com" commit -q -m "Archivio $(date -u +%F)"
+          git push origin dati
+
+  pubblica:
+    needs: dati-e-build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

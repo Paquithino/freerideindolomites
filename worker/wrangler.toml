@@ -1,0 +1,8 @@
+name = "freeride-api"
+main = "worker.js"
+# avvio locale: npm run worker:dev (risponde su http://localhost:8787)
+compatibility_date = "2026-11-01"
+
+[vars]
+# Metti qui l'indirizzo del sito per accettare richieste solo da lì, es. "https://tuonome.github.io"
+ALLOWED_ORIGIN = "*"

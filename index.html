@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FreeRide in Dolomites</title>
+<meta name="description" content="Neve fresca, meteo in quota, pericolo valanghe e webcam degli spot freeride delle Dolomiti. Ottimizzato per smartphone.">
+<meta name="theme-color" content="#0b1220">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="FreeRide">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<meta property="og:title" content="FreeRide in Dolomites">
+<meta property="og:description" content="Neve, meteo in quota, valanghe e webcam per il fuoripista in Dolomiti.">
+<link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap hbar">
+    <svg class="logo" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7dd3fc"/><stop offset="1" stop-color="#2563eb"/></linearGradient></defs><rect width="64" height="64" rx="14" fill="#131d33"/><path d="M6 50 L22 22 L30 34 L40 14 L58 50 Z" fill="url(#lg)"/><path d="M40 14 L45 24 L41 22 L37 27 L34 22 Z M22 22 L26 29 L22 27 L19 30 Z" fill="#fff"/><path d="M12 56 C24 50 34 54 52 47" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+    <div class="brand">FreeRide in Dolomites<small>neve · meteo · valanghe · webcam</small></div>
+    <div class="sp"></div>
+    <a class="iconbtn" href="html/info.html" aria-label="Info e guida" style="color:inherit;text-decoration:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg></a>
+    <button class="iconbtn" id="refresh" aria-label="Aggiorna dati"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg></button>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="banner"></div>
+
+  <!-- SPOT LIST -->
+  <section class="view" id="v-spot">
+   <div class="spot-layout">
+    <div class="spot-main">
+    <div class="hero" id="hero"></div>
+    <div class="toolbar">
+      <div class="chips" id="areaChips"></div>
+      <div class="sortsel">Ordina per
+        <select id="sort">
+          <option value="powder">Indice Powder</option>
+          <option value="fresh">Neve fresca 48h</option>
+          <option value="next">Neve in arrivo 72h</option>
+          <option value="n7d">Neve in arrivo 7 giorni</option>
+          <option value="station">Neve misurata (stazione)</option>
+          <option value="depth">Neve al suolo (modello)</option>
+          <option value="danger">Pericolo valanghe (basso→alto)</option>
+          <option value="name">Nome</option>
+        </select>
+        <div class="seg desk-flex" role="group" aria-label="Vista">
+          <button data-view="tabella">▤ Tabella</button><button data-view="schede">▦ Schede</button>
+        </div>
+      </div>
+    </div>
+    <div class="updated" id="updated"></div>
+    <div class="list" id="list"></div>
+    </div>
+    <aside class="spot-aside" id="aside"></aside>
+   </div>
+  </section>
+
+  <!-- DETAIL -->
+  <section class="view" id="v-detail"></section>
+
+
+  <!-- PIANIFICA -->
+  <section class="view" id="v-pianifica">
+    <h2 class="ttl">Pianifica le prossime uscite</h2>
+    <p class="lead">Neve prevista giorno per giorno (cm, alla quota di riferimento). Le colonne sbiadite hanno affidabilità bassa. Tocca uno spot per i dettagli.</p>
+    <div class="chips" id="planChips"></div>
+    <div class="plan-wrap" id="planTable"></div>
+    <div class="plan-legend">Neve/giorno:
+      <i style="background:#bae6fd"></i>1–5 <i style="background:#7dd3fc"></i>5–10 <i style="background:#38bdf8"></i>10–20 <i style="background:#a78bfa"></i>20–35 <i style="background:#e879f9"></i>35+ cm</div>
+    <h2 class="ttl" style="font-size:17px">🎯 Giornate migliori in arrivo</h2>
+    <p class="lead">Giorni con almeno 10 cm di neve fresca e, se possibile, sole. Controlla sempre il bollettino valanghe del giorno.</p>
+    <div class="list best" id="bestDays"></div>
+  </section>
+
+  <!-- AVALANCHE -->
+  <section class="view" id="v-valanghe">
+    <h2 class="ttl">Pericolo valanghe</h2>
+    <p class="lead">Grado del bollettino ufficiale per ciascuno spot (scala europea EAWS 1–5). Tocca uno spot per quote, problemi valanghivi ed esposizioni.</p>
+    <div class="disc">⚠️ Il grado di pericolo è solo il primo livello di informazione. Leggi sempre il bollettino completo, valuta il terreno e muoviti con ARTVA, pala e sonda — e con chi sa usarli.</div>
+    <div class="list" id="avList"></div>
+    <div class="av-info">
+    <div class="sec"><h4>Scala del pericolo</h4><div class="scale">
+      <div><span class="dsq d1">1</span>Debole — condizioni generalmente sicure</div>
+      <div><span class="dsq d2">2</span>Moderato — attenzione su pendii ripidi specifici</div>
+      <div><span class="dsq d3">3</span>Marcato — metà degli incidenti mortali; distacchi possibili anche con debole sovraccarico</div>
+      <div><span class="dsq d4">4</span>Forte — fuoripista fortemente sconsigliato</div>
+      <div><span class="dsq d5">5</span>Molto forte — situazione straordinaria</div>
+    </div></div>
+    <div class="sec"><h4>Bollettini ufficiali</h4><div class="links" id="avLinks"></div></div>
+    </div>
+  </section>
+
+  <!-- WEBCAM -->
+  <section class="view" id="v-webcam">
+    <h2 class="ttl">Webcam</h2>
+    <p class="lead">Le webcam in quota per controllare visibilità, vento e neve prima di partire.</p>
+    <div class="chips" id="camChips"></div>
+    <div class="list" id="camList"></div>
+  </section>
+
+  <footer>Meteo © Open-Meteo.com · Previsioni neve: snow-forecast.com · Valanghe: bollettini ufficiali AINEVA · Webcam © dei rispettivi gestori · Fatto per i riders delle Dolomiti</footer>
+</main>
+
+<div class="lightbox" id="lightbox"><img alt="Webcam ingrandita"><button aria-label="Chiudi">×</button></div>
+
+<nav class="tabs"><div class="in">
+  <a href="#spot" data-tab="spot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M2 20 9 7l4 6 3-4 6 11z"/></svg>Spot</a>
+  <a href="#pianifica" data-tab="pianifica"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M8 14h2M14 14h2M8 17h2"/></svg>Pianifica</a>
+  <a href="#valanghe" data-tab="valanghe"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17v.5"/></svg>Valanghe</a>
+  <a href="#webcam" data-tab="webcam"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="m16 10 5-3v10l-5-3"/></svg>Webcam</a>
+  <a href="html/info.html" class="desk-only"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>Info e guida</a>
+  <div class="side-foot desk-only" id="sideFoot"></div>
+</div></nav>
+
+<script type="module" src="./js/app.js"></script>
+</body>
+</html>
