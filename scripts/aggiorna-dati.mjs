@@ -13,7 +13,7 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { SPOTS, MODELS } from "../js/config.js";
-import { state } from "../js/state.js";
+import { state, unpackTimes } from "../js/state.js";
 import { loadWeather, demoWeather, romeNowISO, dailyPlan } from "../js/meteo.js";
 import { loadModels, demoModels, ensembleFor } from "../js/modelli.js";
 import { loadAvalanche, avForSpot } from "../js/valanghe.js";
@@ -52,6 +52,20 @@ function slimWx(d){
 
 const roundOnly = obj => JSON.parse(JSON.stringify(obj, (k, v) => typeof v === "number" ? Math.round(v * 10) / 10 : v));
 
+/* Piano B: se Open-Meteo non risponde, riprendiamo meteo e modelli dall'ultimo file
+   pubblicato sul sito (stazioni e bollettini restano freschi). Il campo "generated"
+   resta quello del meteo riusato: dopo 3 ore il sito scarica i dati da solo. */
+async function ultimoPubblicato(){
+  const base = process.env.SITO_URL;
+  if(!base) return null;
+  try{
+    const r = await fetch(base.replace(/\/?$/, "/") + "dati/ultimo.json", {cache: "no-store"});
+    if(!r.ok) return null;
+    const j = unpackTimes(await r.json());
+    return j && j.wx && !j.demo ? j : null;
+  }catch(e){ return null; }
+}
+
 /* calibrazione dei modelli (scritta da scripts/calibra.mjs nel ramo "dati"): fattori e pesi */
 async function caricaCalibrazione(){
   try{
@@ -65,6 +79,8 @@ async function caricaCalibrazione(){
   }catch(e){ log("calibrazione: non presente, modelli non corretti"); }
 }
 
+let riuso = null;   // orario del meteo riusato, se Open-Meteo non ha risposto
+
 async function main(){
   const t0 = Date.now();
   await caricaCalibrazione();
@@ -75,6 +91,17 @@ async function main(){
     const res = await Promise.allSettled([loadWeather(), loadModels(), loadAvalanche(), loadStations()]);
     const names = ["meteo", "modelli", "valanghe", "stazioni"];
     res.forEach((r, i) => log(names[i].padEnd(9), r.status === "fulfilled" ? "ok" : "ERRORE " + (r.reason && r.reason.message)));
+    const meteoOk = !!state.wx[SPOTS[0].id], modelliOk = Object.keys(state.ens || {}).length > 0;
+    if(!meteoOk || !modelliOk){
+      const prev = await ultimoPubblicato();
+      const eta = prev ? Math.round((Date.now() - new Date(prev.generated).getTime()) / 60000) : null;
+      if(prev && eta < 24 * 60){
+        if(!meteoOk){ state.wx = prev.wx; riuso = prev.generated; }
+        if(!modelliOk && prev.ens){ state.ens = prev.ens; state.ensMemo = {}; }
+        if(!(state.stations || []).length && prev.stations) state.stations = prev.stations;
+        log(`Open-Meteo non risponde: riuso ${!meteoOk ? "meteo e " : ""}${!modelliOk ? "modelli" : ""} dell'ultimo giro riuscito (${eta} minuti fa)`);
+      }else log("Open-Meteo non risponde e non c'è un giro recente da riusare");
+    }
   }
   log("modelli ricevuti:", Object.keys(state.ens || {}).join(", ") || "nessuno",
       "| stazioni:", (state.stations || []).length,
@@ -85,7 +112,7 @@ async function main(){
   /* ---------- file per il sito ---------- */
   const wx = {}; for(const s of SPOTS) wx[s.id] = slimWx(state.wx[s.id]);
   const snapshot = round({
-    generated: new Date().toISOString(), demo: DEMO,
+    generated: riuso || new Date().toISOString(), demo: DEMO, aggiornato: new Date().toISOString(),
     wx, ens: state.ens, av: state.av, avDate: state.avDate, avErr: state.avErr, stations: state.stations,
     sources: {meteo: "Open-Meteo.com (CC BY 4.0)", stazioni: "Meteo Alto Adige, Meteotrentino via avalanche.report (CC BY 4.0); ARPAV Veneto (CC BY 4.0)", valanghe: "Bollettini EAWS/AINEVA"}
   });
@@ -101,7 +128,9 @@ async function main(){
   const today = romeNowISO().slice(0, 10);
   const archFile = resolve(ARCH_DIR, `${today}.json`);
   const exists = await access(archFile).then(() => true, () => false);
-  if(exists && !process.argv.includes("--forza-archivio")){
+  if(riuso){
+    log("archivio: salto oggi questo giro (meteo non aggiornato)");
+  }else if(exists && !process.argv.includes("--forza-archivio")){
     log("archivio di oggi già presente:", archFile.replace(ROOT + "/", ""));
   }else{
     const spots = {};

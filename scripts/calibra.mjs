@@ -11,7 +11,7 @@
      5. calcola fattori e pesi dei modelli (js/calibrazione.js) e li verifica
         inverno per inverno; scrive calibrazione.json e un resoconto leggibile
    ========================================================= */
-import { writeFileSync, mkdirSync } from "node:fs";
+import { writeFileSync, mkdirSync, readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { SPOTS, MODELS } from "../js/config.js";
 import { correctedSnow, classify } from "../js/modelli.js";
@@ -39,7 +39,7 @@ function stagioni(){
   const y = +ieri.slice(0, 4), m = +ieri.slice(5, 7);
   const start = m >= 11 ? `${y}-11-01` : m <= 5 ? `${y - 1}-11-01` : null;
   if(start && !s.some(x => x.from <= start && x.to >= start) && (Date.parse(ieri) - Date.parse(start)) / 864e5 >= 10){
-    s.push({id: `${start.slice(0, 4)}-${String(+start.slice(2, 4) + 1).padStart(2, "0")}`, from: start, to: ieri});
+    s.push({id: `${start.slice(0, 4)}-${String(+start.slice(2, 4) + 1).padStart(2, "0")}`, from: start, to: ieri, inCorso: true});
   }
   return s;
 }
@@ -57,7 +57,7 @@ async function getJson(url, tentativi = 4){
   let last;
   for(let i = 0; i < tentativi; i++){
     try{
-      const r = await fetch(url);
+      const r = await fetch(url, {signal: AbortSignal.timeout(60e3)});   // massimo 60 s per richiesta
       if(r.ok) return await r.json();
       last = new Error(`HTTP ${r.status} da ${new URL(url).host}: ${(await r.text()).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 160)}`);
       if(r.status === 429){ log("  troppe richieste, aspetto 65 s"); await sleep(65e3); continue; }
@@ -84,6 +84,7 @@ async function scegliStazioni(){
   const vicine = lista.map(s => ({...s, km: Math.min(...dolomiti.map(p => distKm(p.lat, p.lon, s.lat, s.lon)))}))
     .filter(s => s.km <= MAX_KM).sort((a, b) => a.km - b.km);
   // teniamo solo quelle che misurano l'altezza neve (HS)
+  log(`stazioni Alto Adige candidate: ${vicine.length}`);
   const conNeve = [];
   for(const s of vicine){
     if(conNeve.length >= MAX_STAZIONI) break;
@@ -114,7 +115,7 @@ async function neveAlle8(code, from, to){
       }
     }catch(e){ log(`  ${code} ${d}: ${e.message}`); }
     d = addDays(fine, 1);
-    await sleep(300);
+    await sleep(150);
   }
   const hs = {};
   for(const g of giorni(from, addDays(to, 1))){
@@ -222,17 +223,40 @@ async function main(){
   log("stazioni:", staz.map(s => `${s.name} ${s.alt} m`).join(", "));
 
   const righe = [];
+  const CACHE = join(OUT, "calibrazione-cache");
+  mkdirSync(CACHE, {recursive: true});
+  const codici = staz.map(x => x.code).join(",");
+  const oggi = new Date().toISOString().slice(0, 10);
   for(const s of st){
+    // gli inverni conclusi non cambiano più: se li abbiamo già calcolati con le stesse stazioni, li riusiamo
+    const cf = join(CACHE, `${s.id}.json`);
+    if(!s.inCorso && existsSync(cf)){
+      try{
+        const c = JSON.parse(readFileSync(cf, "utf8"));
+        if(c.stazioni === codici){ righe.push(...c.righe); log(`— inverno ${s.id}: già calcolato, riuso ${c.righe.length} giornate`); continue; }
+      }catch(e){}
+    }
     log(`— inverno ${s.id}`);
-    const oss = [];
-    for(const x of staz){ oss.push(await neveAlle8(x.code, s.from, s.to)); }
+    const nPrima = righe.length;
+    const oss = new Array(staz.length);
+    let fatte = 0; const tS = Date.now();
+    for(let i = 0; i < staz.length; i += 4){
+      await Promise.all(staz.slice(i, i + 4).map(async (x, j) => {
+        oss[i + j] = await neveAlle8(x.code, s.from, s.to);
+        log(`  neve misurata ${++fatte}/${staz.length}: ${x.name}`);
+      }));
+    }
+    log(`  neve misurata scaricata in ${Math.round((Date.now() - tS) / 1000)} s`);
     log(`  neve misurata: ${oss.filter(o => Object.values(o).some(v => v != null)).length}/${staz.length} stazioni con dati`);
     const prev = {};
     for(const m of MODELS){
+      const tM = Date.now();
       const p = await previsioni(staz, m, s);
-      if(p){ prev[m.id] = p; log(`  ${m.id}: ok`); }
+      if(p){ prev[m.id] = p; log(`  ${m.id}: ok (${Math.round((Date.now() - tM) / 1000)} s)`); }
     }
+    const tR = Date.now();
     const reg = await regimi(staz, s);
+    log(`  regimi dei venti: ${reg ? "ok" : "non disponibili"} (${Math.round((Date.now() - tR) / 1000)} s)`);
     staz.forEach((x, i) => {
       for(const g of giorni(s.from, s.to)){
         const h0 = oss[i][g], h1 = oss[i][addDays(g, 1)];
@@ -245,6 +269,8 @@ async function main(){
       }
     });
     log(`  giornate valide finora: ${righe.length}`);
+    // salvo subito l'inverno appena calcolato (solo se concluso): se il giro si interrompe, il prossimo riparte da qui
+    if(!s.inCorso && s.to < oggi && righe.length > nPrima) writeFileSync(cf, JSON.stringify({stazioni: codici, righe: righe.slice(nPrima)}));
   }
   if(righe.length < 50) throw new Error(`Troppe poche giornate valide (${righe.length}): non scrivo la calibrazione`);
 

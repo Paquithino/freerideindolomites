@@ -2,7 +2,9 @@
 # Calibrazione dei modelli sugli inverni passati
 #   confronta le previsioni passate (Open-Meteo) con la neve misurata
 #   dalle stazioni e salva calibrazione.json nel ramo "dati".
-#   Parte a mano (Run workflow) e il 1° di ogni mese; dura circa 10-15 minuti.
+#   Parte a mano (Run workflow) e il 1° di ogni mese. Il primo giro dura circa un'ora;
+#   gli inverni conclusi vengono salvati (calibrazione-cache/) e i giri successivi
+#   ricalcolano solo l'inverno in corso (pochi minuti).
 #   Dal giro orario successivo il sito usa i nuovi fattori.
 # =========================================================
 name: Calibra i modelli
@@ -13,12 +15,12 @@ on:
 permissions:
   contents: write
 concurrency:
-  group: aggiorna-sito        # non si sovrappone all'aggiornamento orario
+  group: calibra              # gira in parallelo all'aggiornamento orario, che così non resta fermo
   cancel-in-progress: false
 jobs:
   calibra:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
         with:
@@ -38,14 +40,21 @@ jobs:
           node-version: 22
 
       - name: Calcola la calibrazione
+        timeout-minutes: 100      # se serve più tempo, il passo si ferma ma gli inverni già fatti vengono salvati
         env:
           ARCHIVIO_DIR: archivio
         run: node scripts/calibra.mjs
 
       - name: Salva nel ramo dati
+        if: always()              # salva anche se il calcolo si è interrotto: il prossimo giro riparte da lì
         run: |
           cd archivio
           git add -A
           if git diff --cached --quiet; then echo "Nessuna novità"; exit 0; fi
           git -c user.name="freeride-bot" -c user.email="freeride-bot@users.noreply.github.com" commit -q -m "Calibrazione $(date -u +%F)"
-          git push origin dati
+          # se nel frattempo l'aggiornamento orario ha salvato l'archivio, ci mettiamo in coda ai suoi commit
+          for i in 1 2 3; do
+            git push origin HEAD:dati && exit 0
+            git -c user.name="freeride-bot" -c user.email="freeride-bot@users.noreply.github.com" pull --rebase origin dati
+          done
+          exit 1

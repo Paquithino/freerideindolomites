@@ -50,6 +50,7 @@ jobs:
         continue-on-error: true   # se una fonte non risponde, il sito si pubblica comunque (scaricherà i dati da solo)
         env:
           ARCHIVIO_DIR: archivio
+          SITO_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/   # per il piano B
         run: node scripts/aggiorna-dati.mjs
 
       - name: Costruisci il sito
@@ -66,7 +67,12 @@ jobs:
           git add -A
           if git diff --cached --quiet; then echo "Archivio invariato"; exit 0; fi
           git -c user.name="freeride-bot" -c user.email="freeride-bot@users.noreply.github.com" commit -q -m "Archivio $(date -u +%F)"
-          git push origin dati
+          # se nel frattempo la calibrazione ha salvato i suoi file, ci mettiamo in coda ai suoi commit
+          for i in 1 2 3; do
+            git push origin HEAD:dati && exit 0
+            git -c user.name="freeride-bot" -c user.email="freeride-bot@users.noreply.github.com" pull --rebase origin dati
+          done
+          exit 1
 
   pubblica:
     needs: dati-e-build
