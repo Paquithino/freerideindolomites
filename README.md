@@ -127,3 +127,22 @@ Piano gratuito: 100.000 richieste/giorno.
   Zone AINEVA Veneto già confermate: `IT-34-BL-01` Agordino-Zoldano, `IT-34-BL-02` Ampezzo-Cadore, `IT-34-BL-04` Cadore.
 - Che le immagini webcam si vedano. Se no, attiva il worker.
 - **Diritti webcam**: le immagini sono dei gestori. Per un uso pubblico è corretto chiedere il permesso (o usare i loro codici di embed) e mantenere il credito, già mostrato sotto ogni immagine.
+
+## Test automatici
+
+Due livelli, tutti offline (le fonti esterne vengono simulate, quindi i test non dipendono dal meteo del giorno):
+
+| Comando | Cosa prova | Tempo |
+|---|---|---|
+| `npm run test:unit` | logica: calcoli neve per quota, calibrazione, giudizio della versione semplice, lettura XML ARPAV, bollettini valanghe (anche testi malevoli), controllo webcam, file prodotto dal robot, coerenza della configurazione | ~5 s |
+| `npm run test:e2e` | il sito vero nel browser su **desktop**, **Android**, **telefono stretto (340 px)** e **iPhone/Safari**: home, versione semplice, pagina spot, Previsione, Valanghe, Webcam, lettura dei dati, pagina Info, assenza di scorrimento laterale e di errori JavaScript | ~3–5 min |
+| `npm test` | tutti e due | |
+| `npm run test:mobile` / `npm run test:desktop` | solo telefoni / solo desktop | |
+| `npm run test:ui` | interfaccia grafica per guardare i test passo passo | |
+| `npm run test:report` | report con le **foto di tutte le pagine** su ogni dispositivo | |
+
+Prima volta sul computer: `npm install` e poi `npm run test:setup` (scarica Chrome e Safari per i test).
+
+Su GitHub i test partono a ogni push su `main` (workflow **Test del sito**): se qualcosa si rompe il commit si segna con ❌ e il report si scarica dagli Artifacts del giro.
+
+Struttura: `tests/unit/` (test veloci, `node --test`), `tests/e2e/` (Playwright), `tests/fixtures/` (bollettini di prova), `tests/server.mjs` (server statico per i test).

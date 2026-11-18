@@ -14,10 +14,14 @@ export const snowColor = cm => cm < 1 ? null : cm < 5 ? "#bae6fd" : cm < 10 ? "#
 
 /* fetch con nuovi tentativi: errori di rete, 429 (troppe richieste) e 5xx (server)
    capitano ogni tanto e di solito passano dopo pochi secondi */
-export async function fetchRetry(url, opt = {}, tries = 3){
+/* Nel browser si ritenta poco (chi guarda il telefono non deve aspettare mezzo minuto: i test
+   hanno misurato 27 s di attesa con le fonti irraggiungibili); il robot su GitHub invece ha tempo. */
+const NEL_BROWSER = typeof window !== "undefined";
+export async function fetchRetry(url, opt = {}, tries = NEL_BROWSER ? 2 : 3){
   let last;
+  const pause = NEL_BROWSER ? [0, 1500] : [0, 3000, 10000];
   for(let i = 0; i < tries; i++){
-    if(i) await new Promise(r => setTimeout(r, [0, 3000, 10000][i] || 10000));
+    if(i) await new Promise(r => setTimeout(r, pause[i] || pause[pause.length - 1]));
     try{
       const r = await fetch(url, opt);
       if(r.ok || (r.status < 500 && r.status !== 429)) return r;
@@ -42,6 +46,15 @@ export const state = {
 
 
 /* Ricostruisce le liste di orari compattate dall'automazione ({"@h": inizio, n} / {"@d": inizio, n}) */
+/* liste di orari regolari -> {"@h": primo, n} / {"@d": primo, n} (le scrive il robot, unpackTimes le ricostruisce) */
+export function packTimes(arr){
+  if(!Array.isArray(arr) || arr.length < 3 || typeof arr[0] !== "string") return arr;
+  const hourly = arr[0].length === 16, step = hourly ? 3600e3 : 864e5;
+  const toMs = s => Date.parse(s + (hourly ? ":00Z" : "T00:00:00Z"));
+  const t0 = toMs(arr[0]);
+  for(let i = 1; i < arr.length; i++) if(toMs(arr[i]) - t0 !== i * step) return arr;   // non regolare: lascio così
+  return hourly ? {"@h": arr[0], n: arr.length} : {"@d": arr[0], n: arr.length};
+}
 export function unpackTimes(obj){
   if(Array.isArray(obj)){ obj.forEach(unpackTimes); return obj; }
   if(!obj || typeof obj !== "object") return obj;

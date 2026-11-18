@@ -13,7 +13,7 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { SPOTS, MODELS } from "../js/config.js";
-import { state, unpackTimes } from "../js/state.js";
+import { state, unpackTimes, packTimes } from "../js/state.js";
 import { loadWeather, demoWeather, romeNowISO, dailyPlan } from "../js/meteo.js";
 import { loadModels, demoModels, ensembleFor } from "../js/modelli.js";
 import { loadAvalanche, avForSpot } from "../js/valanghe.js";
@@ -24,7 +24,7 @@ import { controllaWebcam } from "./controlla-webcam.mjs";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const DEMO = process.argv.includes("--demo");
-const OUT = resolve(ROOT, "public/dati/ultimo.json");
+const OUT = resolve(ROOT, process.env.OUT_FILE || "public/dati/ultimo.json");
 const ARCH_DIR = resolve(ROOT, process.env.ARCHIVIO_DIR || "archivio");
 
 const log = (...a) => console.log(new Date().toISOString().slice(11, 19), ...a);
@@ -33,14 +33,6 @@ const log = (...a) => console.log(new Date().toISOString().slice(11, 19), ...a);
    - numeri arrotondati a un decimale
    - le liste di orari ("time") diventano {"@h": primo orario, n} o {"@d": primo giorno, n};
      il sito le ricostruisce (js/state.js, funzione unpackTimes) */
-function packTimes(arr){
-  if(!Array.isArray(arr) || arr.length < 3 || typeof arr[0] !== "string") return arr;
-  const hourly = arr[0].length === 16, step = hourly ? 3600e3 : 864e5;
-  const toMs = s => Date.parse(s + (hourly ? ":00Z" : "T00:00:00Z"));
-  const t0 = toMs(arr[0]);
-  for(let i = 1; i < arr.length; i++) if(toMs(arr[i]) - t0 !== i * step) return arr;   // non regolare: lascio così
-  return hourly ? {"@h": arr[0], n: arr.length} : {"@d": arr[0], n: arr.length};
-}
 function round(obj){
   return JSON.parse(JSON.stringify(obj, (k, v) => k === "time" ? packTimes(v) : typeof v === "number" ? Math.round(v * 10) / 10 : v));
 }

@@ -13,11 +13,20 @@
     "dati": "node scripts/aggiorna-dati.mjs",
     "dati:demo": "node scripts/aggiorna-dati.mjs --demo",
     "calibra": "node scripts/calibra.mjs",
-    "webcam": "node scripts/controlla-webcam.mjs"
+    "webcam": "node scripts/controlla-webcam.mjs",
+    "test": "npm run test:unit && npm run test:e2e",
+    "test:unit": "node --test tests/unit/*.test.mjs",
+    "test:e2e": "playwright test",
+    "test:mobile": "playwright test --project=mobile --project=piccolo --project=iphone",
+    "test:desktop": "playwright test --project=desktop",
+    "test:ui": "playwright test --ui",
+    "test:report": "playwright show-report",
+    "test:setup": "playwright install chromium webkit"
   },
   "devDependencies": {
     "vite": "^6.3.0",
-    "wrangler": "^4.0.0"
+    "wrangler": "^4.0.0",
+    "@playwright/test": "^1.56.0"
   },
   "engines": {
     "node": ">=18"

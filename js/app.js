@@ -1,6 +1,7 @@
 import { SPOTS, AREAS, AV_LINKS, PROV_NAME, FORECAST_DAYS, SF_HOME } from "./config.js";
 import { $, esc, LS, r0, r1, scoreColor, snowColor, state, unpackTimes } from "./state.js";
 import { wmo, dirName, metrics, dailyPlan, bestDay, dayName, dayNum, isWeekend, loadWeather, demoWeather, romeNowISO } from "./meteo.js";
+import { giudizio } from "./giudizio.js";
 import { DNAME, avForSpot, avBlockHTML, dsq, loadAvalanche, bollettiniPerServizio, gradiHTML, problemiHTML, testiHTML, intestazione, stripTags, PROB } from "./valanghe.js";
 import { camsHTML } from "./webcam.js";
 import { loadStations, stationsHTML, bestStation } from "./stazioni.js";
@@ -47,21 +48,6 @@ function renderHero(){
    Per chi vuole solo sapere "com'è la neve e si può andare": un giudizio a parole,
    tre numeri grandi, i prossimi giorni a icone. Niente modelli, forbici, tabelle. */
 const semplice = () => state.modo === "semplice";
-function giudizio(m, av){
-  const lv = av ? av.level : 0;
-  if(lv >= 4) return {ico: "⛔", txt: "Pericolo valanghe forte", sub: "Fuoripista sconsigliato: resta sulle piste battute.", cls: "bad"};
-  let g;
-  if(m.p48 >= 20) g = {ico: "❄️", txt: "Neve fresca abbondante", sub: `${r0(m.p48)} cm caduti negli ultimi 2 giorni.`, cls: "top"};
-  else if(m.n72 >= 20) g = {ico: "🌨", txt: "Bella nevicata in arrivo", sub: `Circa ${r0(m.n72)} cm nei prossimi 3 giorni.`, cls: "top"};
-  else if(m.p48 >= 5) g = {ico: "🌤", txt: "Un po' di neve fresca", sub: `${r0(m.p48)} cm negli ultimi 2 giorni.`, cls: "ok"};
-  else if(m.n72 >= 5) g = {ico: "🌥", txt: "Un po' di neve in arrivo", sub: `Circa ${r0(m.n72)} cm nei prossimi 3 giorni.`, cls: "ok"};
-  else g = {ico: "😐", txt: "Niente neve nuova", sub: "Neve vecchia, nessuna nevicata in vista nei prossimi 3 giorni.", cls: "meh"};
-  const avvisi = [];
-  if(lv === 3) avvisi.push("⚠️ Pericolo valanghe marcato: serve esperienza.");
-  if((m.w7 || 0) >= 50) avvisi.push("💨 Vento forte in quota.");
-  if(m.temp > 3) avvisi.push("🌡 Fa caldo: neve pesante o bagnata.");
-  return {...g, avvisi};
-}
 function modoHTML(){
   const nuovo = !state.modo;
   return `${nuovo ? `<p class="modo-q">Come preferisci vedere il sito?</p>` : ""}

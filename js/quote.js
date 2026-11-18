@@ -37,7 +37,7 @@ function query(){
 }
 
 /* riassunto giornaliero di una quota */
-function giorni(H){
+export function giorni(H){
   const out = {};
   (H.time || []).forEach((t, i) => {
     const d = t.slice(0, 10), p = H.precipitation[i] || 0, T = H.temperature_2m[i];
@@ -62,7 +62,7 @@ function giorni(H){
 }
 
 /* zero termico e quota neve del giorno (dalla quota media, durante le ore di precipitazione) */
-function zeroTermico(H){
+export function zeroTermico(H){
   const out = {};
   const byDay = {};
   (H.time || []).forEach((t, i) => {

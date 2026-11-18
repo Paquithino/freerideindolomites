@@ -49,6 +49,7 @@ export function camsHTML(spot){
 }
 
 /* tocco su "Apri panorama" → carica l'iframe solo quando serve */
+if(typeof document !== "undefined"){
 document.addEventListener("click", e => {
   const b = e.target.closest("[data-embed]");
   if(b){ const f = document.createElement("iframe"); f.src = b.dataset.embed; f.loading = "lazy"; f.allowFullscreen = true; f.title = "Panorama webcam"; b.replaceWith(f); return; }
@@ -60,3 +61,4 @@ document.addEventListener("click", e => {
 document.addEventListener("keydown", e => {
   if(e.key === "Escape") document.getElementById("lightbox")?.classList.remove("on");
 });
+}

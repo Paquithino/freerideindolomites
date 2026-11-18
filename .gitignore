@@ -4,3 +4,6 @@ dist/
 .DS_Store
 public/dati/
 archivio/
+test-results/
+playwright-report/
+tests/.tmp/

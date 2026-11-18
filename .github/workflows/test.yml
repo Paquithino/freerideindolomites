@@ -1,0 +1,39 @@
+# Test automatici: partono a ogni push su main e si possono lanciare a mano.
+# Se qualcosa si rompe, il commit si segna con la ❌ rossa e il report (con foto) si scarica dagli Artifacts.
+name: Test del sito
+
+on:
+  push:
+    branches: [main]
+    paths-ignore: ["**.md"]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Installa
+        run: npm install --no-audit --no-fund
+      - name: Test della logica (calcoli, lettura dati, bollettini, webcam)
+        run: npm run test:unit
+      - name: Installa i browser (Chrome e Safari)
+        run: npx playwright install --with-deps chromium webkit
+      - name: Test nel browser (desktop, Android, telefono piccolo, iPhone)
+        run: npx playwright test
+      - name: Salva il report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: report-test
+          path: playwright-report/
+          retention-days: 14

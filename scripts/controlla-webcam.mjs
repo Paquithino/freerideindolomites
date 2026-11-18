@@ -10,7 +10,7 @@ import { SPOTS } from "../js/config.js";
 const UA = "Mozilla/5.0 (compatible; FreeRideInDolomites/1.0; +https://paquithino.github.io/freerideindolomites/)";
 const FERMA_ORE = 48;
 
-async function prova(url, tipo){
+export async function prova(url, tipo){
   const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 15000);
   try{
     const r = await fetch(url, {headers: {"User-Agent": UA, "Accept": tipo === "img" ? "image/*" : "text/html"}, redirect: "follow", signal: ctl.signal});
