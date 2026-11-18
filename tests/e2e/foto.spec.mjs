@@ -12,6 +12,14 @@ for(const [nome, hash, modo] of PAGINE){
   test(`foto · ${nome}`, async ({page, errori}, ti) => {
     await apri(page, hash, {modo, snapshot: s => { s.av = {"IT-34": VENETO}; }});
     await page.waitForTimeout(300);
-    await ti.attach(`${nome} · ${ti.project.name}`, {body: await page.screenshot({fullPage: true}), contentType: "image/png"});
+    // pagine molto lunghe (webcam: 28 spot) superano il limite di dimensione delle foto di Safari/WebKit:
+    // in quel caso si fotografano i primi 6000 px invece di far fallire il test, che serve solo da documentazione
+    let foto;
+    try{ foto = await page.screenshot({fullPage: true, timeout: 15_000}); }
+    catch(e){
+      const h = Math.min(6000, await page.evaluate(() => document.documentElement.scrollHeight));
+      foto = await page.screenshot({clip: {x: 0, y: 0, width: page.viewportSize().width, height: h}, fullPage: true});
+    }
+    await ti.attach(`${nome} · ${ti.project.name}`, {body: foto, contentType: "image/png"});
   });
 }
