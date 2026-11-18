@@ -17,11 +17,12 @@
     "test": "npm run test:unit && npm run test:e2e",
     "test:unit": "node --test tests/unit/*.test.mjs",
     "test:e2e": "playwright test",
-    "test:mobile": "playwright test --project=mobile --project=piccolo --project=iphone",
+    "test:mobile": "playwright test --project=mobile --project=piccolo",
     "test:desktop": "playwright test --project=desktop",
     "test:ui": "playwright test --ui",
     "test:report": "playwright show-report",
-    "test:setup": "playwright install chromium webkit"
+    "test:setup": "node tests/browser.mjs",
+    "test:safari": "SAFARI=1 playwright test --project=iphone"
   },
   "devDependencies": {
     "vite": "^6.3.0",

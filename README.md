@@ -137,11 +137,11 @@ Due livelli, tutti offline (le fonti esterne vengono simulate, quindi i test non
 | `npm run test:unit` | logica: calcoli neve per quota, calibrazione, giudizio della versione semplice, lettura XML ARPAV, bollettini valanghe (anche testi malevoli), controllo webcam, file prodotto dal robot, coerenza della configurazione | ~5 s |
 | `npm run test:e2e` | il sito vero nel browser su **desktop**, **Android**, **telefono stretto (340 px)** e **iPhone/Safari**: home, versione semplice, pagina spot, Previsione, Valanghe, Webcam, lettura dei dati, pagina Info, assenza di scorrimento laterale e di errori JavaScript | ~3–5 min |
 | `npm test` | tutti e due | |
-| `npm run test:mobile` / `npm run test:desktop` | solo telefoni / solo desktop | |
+| `npm run test:mobile` / `npm run test:desktop` | solo telefoni Android / solo desktop | |
 | `npm run test:ui` | interfaccia grafica per guardare i test passo passo | |
 | `npm run test:report` | report con le **foto di tutte le pagine** su ogni dispositivo | |
 
-Prima volta sul computer: `npm install` e poi `npm run test:setup` (scarica Chrome e Safari per i test).
+Prima volta sul computer: `npm install` e poi `npm run test:setup`, che dice quale browser verrà usato. Sul Mac i test usano **Brave** (o Chrome) già installato, perché Playwright non scarica il suo Chromium su macOS 12; per indicarne un altro: `CHROME_PATH="/percorso/browser" npm test`. Safari (WebKit) gira sui test di GitHub; sul Mac solo con `npm run test:safari` se il sistema lo supporta.
 
 Su GitHub i test partono a ogni push su `main` (workflow **Test del sito**): se qualcosa si rompe il commit si segna con ❌ e il report si scarica dagli Artifacts del giro.
 

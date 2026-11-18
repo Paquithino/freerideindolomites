@@ -1,4 +1,5 @@
 import { defineConfig, devices } from "@playwright/test";
+import { browserLocale, conSafari } from "./tests/browser.mjs";
 
 /* Test del sito nel browser: desktop, Android e iPhone.
    - npm test            → test veloci (logica) + test nel browser
@@ -6,7 +7,9 @@ import { defineConfig, devices } from "@playwright/test";
    - npm run test:ui     → interfaccia grafica per vedere i test passo passo
    Tutto gira offline: le fonti esterne (Open-Meteo, bollettini, webcam) vengono simulate. */
 const PORT = 4317;
-const chrome = process.env.CHROME_PATH ? {launchOptions: {executablePath: process.env.CHROME_PATH}} : {};
+// Sul Mac usa Brave (o Chrome) già installato: Playwright non scarica Chromium su macOS 12
+const locale = browserLocale();
+const chrome = locale ? {launchOptions: {executablePath: locale}} : {};
 
 export default defineConfig({
   testDir: "tests/e2e",
@@ -25,7 +28,7 @@ export default defineConfig({
     {name: "desktop", use: {...devices["Desktop Chrome"], viewport: {width: 1366, height: 900}, ...chrome}},
     {name: "mobile", use: {...devices["Pixel 7"], ...chrome}},
     {name: "piccolo", use: {...devices["Pixel 7"], viewport: {width: 340, height: 700}, ...chrome}},   // telefoni stretti (es. iPhone SE)
-    {name: "iphone", use: {...devices["iPhone 14"]}}                                                    // Safari vero (WebKit)
+    ...(conSafari() ? [{name: "iphone", use: {...devices["iPhone 14"]}}] : [])                          // Safari vero (WebKit): GitHub, o SAFARI=1
   ],
   webServer: {command: `node tests/server.mjs`, env: {PORT: String(PORT)}, url: `http://localhost:${PORT}/index.html`, reuseExistingServer: !process.env.CI}
 });
