@@ -55,8 +55,10 @@ test("controllo completo: ogni webcam configurata viene provata una volta sola",
   const righe = [];
   const r = await controllaWebcam(x => righe.push(x));
   assert.equal(Object.keys(r.cams).length, attese.size);
-  assert.equal(richieste.length, attese.size);
+  assert.equal(richieste.length, attese.size + 1, "webcam + una prova a PeakVisor");
   assert.match(righe[0], new RegExp(`${attese.size}/${attese.size} raggiungibili`));
+  assert.equal(r.peakvisor.ok, false, "PeakVisor non simulato qui = irraggiungibile");
+  assert.ok(righe.some(x => /^peakvisor: ✗/.test(x)));
 });
 
 /* ---------- come il sito usa il risultato ---------- */
@@ -81,4 +83,16 @@ test("sito: immagini con referrerpolicy no-referrer e aggiornamento ogni 5 minut
   const h = camCard({t: "x", img: "https://c/x.jpg", src: "y"});
   assert.match(h, /referrerpolicy="no-referrer"/);
   assert.match(camSrc("https://c/x.jpg"), /\?_=\d+$/); assert.match(camSrc("https://c/x.jpg?a=1"), /&_=\d+$/);
+});
+
+test("controllo PeakVisor: incorporabile, bloccato o irraggiungibile", async () => {
+  const { viste, urlVista } = await import("../../js/peakvisor.js");
+  const u = urlVista(viste(SPOTS[0])[0]);
+  for(const u2 of SPOTS.flatMap(s => s.cams.map(c => c.img || c.embed).filter(Boolean))) risposte[u2] = img();
+  risposte[u] = () => new Response("<html>", {status: 200});
+  assert.deepEqual((await controllaWebcam(() => {})).peakvisor, {ok: true});
+  risposte[u] = () => new Response("<html>", {status: 200, headers: {"x-frame-options": "DENY"}});
+  assert.equal((await controllaWebcam(() => {})).peakvisor.noFrame, true);
+  risposte[u] = () => new Response("errore", {status: 503});
+  assert.match((await controllaWebcam(() => {})).peakvisor.why, /HTTP 503/);
 });

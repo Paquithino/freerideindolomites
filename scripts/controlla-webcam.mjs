@@ -6,6 +6,7 @@
    e apre in una nuova scheda i panorami che non si lasciano incorporare.
    ========================================================= */
 import { SPOTS } from "../js/config.js";
+import { viste, urlVista } from "../js/peakvisor.js";
 
 const UA = "Mozilla/5.0 (compatible; FreeRideInDolomites/1.0; +https://paquithino.github.io/freerideindolomites/)";
 const FERMA_ORE = 48;
@@ -51,7 +52,10 @@ export async function controllaWebcam(log = console.log){
   log(`webcam: ${voci.length - ko.length}/${voci.length} raggiungibili`);
   for(const [u, v] of ko) log(`  ✗ ${v.spot} · ${v.t} — ${out[u].why}\n      ${u}`);
   for(const [u, v] of avvisi) log(`  ! ${v.spot} · ${v.t} — ${out[u].why}`);
-  return {checked: new Date().toISOString(), cams: out};
+  // PeakVisor (montagna in 3D): una sola prova basta, il servizio è lo stesso per tutti gli spot
+  const pv = await prova(urlVista(viste(SPOTS[0])[0]), "embed");
+  log(`peakvisor: ${!pv.ok ? "✗ " + pv.why : pv.noFrame ? "! " + pv.why : "ok"}`);
+  return {checked: new Date().toISOString(), cams: out, peakvisor: pv};
 }
 
 // uso diretto: node scripts/controlla-webcam.mjs

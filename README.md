@@ -146,3 +146,16 @@ Prima volta sul computer: `npm install` e poi `npm run test:setup`, che dice qua
 Su GitHub i test partono a ogni push su `main` (workflow **Test del sito**): se qualcosa si rompe il commit si segna con ❌ e il report si scarica dagli Artifacts del giro.
 
 Struttura: `tests/unit/` (test veloci, `node --test`), `tests/e2e/` (Playwright), `tests/fixtures/` (bollettini di prova), `tests/server.mjs` (server statico per i test).
+
+## Montagna in 3D (PeakVisor)
+
+Ogni spot ha la sezione **Montagna in 3D**: il panorama 3D interattivo di [PeakVisor](https://peakvisor.com/api) incorporato nella pagina (si carica solo al tocco, ha lo schermo intero che funziona anche su iPhone).
+Le inquadrature automatiche sono *Dall'alto* (700 m sopra la vetta dello spot) e *Dal paese*. Per aggiungere una vista studiata su una linea, in `js/config.js` aggiungi allo spot:
+
+```js
+pv: {nome: "Canale Holzer", lat: 46.5098, lng: 11.8187, alt: 2900, yaw: 30, pitch: -10, hfov: 60}
+```
+
+Il robot controlla ogni ora anche PeakVisor (riga `peakvisor:` nel log di Actions e in `npm run webcam`): se non risponde o non si lascia più incorporare, il sito mostra al posto del riquadro dei link che aprono il 3D in una nuova scheda.
+
+(un oggetto o una lista). I valori si leggono dall'url di peakvisor.com/embed dopo aver sistemato la vista: `yaw` direzione −180…180, `pitch` −90…90, `hfov` zoom 140 (largo) … 4 (stretto).

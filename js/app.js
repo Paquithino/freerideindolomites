@@ -2,6 +2,7 @@ import { SPOTS, AREAS, AV_LINKS, PROV_NAME, FORECAST_DAYS, SF_HOME } from "./con
 import { $, esc, LS, r0, r1, scoreColor, snowColor, state, unpackTimes } from "./state.js";
 import { wmo, dirName, metrics, dailyPlan, bestDay, dayName, dayNum, isWeekend, loadWeather, demoWeather, romeNowISO } from "./meteo.js";
 import { giudizio } from "./giudizio.js";
+import { peakvisorHTML } from "./peakvisor.js";
 import { DNAME, avForSpot, avBlockHTML, dsq, loadAvalanche, bollettiniPerServizio, gradiHTML, problemiHTML, testiHTML, intestazione, stripTags, PROB } from "./valanghe.js";
 import { camsHTML } from "./webcam.js";
 import { loadStations, stationsHTML, bestStation } from "./stazioni.js";
@@ -393,6 +394,7 @@ function renderDetail(id){
     }else main += `<div class="sec note o-now">Dati meteo non disponibili.</div>`;
     side += sec("o-av", "Pericolo valanghe", avBlockHTML(s));
     side += sec("o-cam", "Webcam", camsHTML(s));
+    main += sec("o-3d", "Montagna in 3D · scegli la linea", peakvisorHTML(s));
     $("#v-detail").innerHTML = `${head}<div class="dgrid"><div class="dcol dmain">${main}</div><div class="dcol dside">${side}</div></div>
       <button class="sg-tutti" data-modo="completa">📊 Vedi tutti i dati di questo spot</button>
       <div class="disc">Indicazioni automatiche. Prima di uscire leggi il bollettino valanghe, osserva il terreno e porta ARTVA, pala e sonda.</div>`;
@@ -420,13 +422,14 @@ function renderDetail(id){
         <div class="big"><b style="color:var(--powder)">+${r0(m.n7d)}</b><span>cm prossimi 7 gg</span></div>
       </div>`);
     main += sec("o-quote", `Neve per quota · Vetta, Metà, Base`, quoteHTML(s));
+    main += sec("o-3d", "Montagna in 3D · scegli la linea", peakvisorHTML(s));
     main += sec("o-meas", "Neve misurata · stazioni vicine", stationsHTML(s));
     main += sec("o-plan", `Previsione · prossimi ${FORECAST_DAYS} giorni`,
       `${best ? `<div class="flags" style="margin:0 0 10px"><span class="flag p">🎯 Giornata migliore: ${dayName(best.date)} ${dayNum(best.date)} · ~${r0(best.fresh)} cm freschi · affidabilità ${best.conf}</span></div>` : ""}${daysHTML(s)}`);
     main += sec("o-models", "Confronto modelli", modelsHTML(s));
     main += sec("o-hour", "Ora per ora · ieri → 3 giorni", hourlyChart(s, m));
   }
-  if(!m) main += sec("o-meas", "Neve misurata · stazioni vicine", stationsHTML(s));
+  if(!m){ main += sec("o-meas", "Neve misurata · stazioni vicine", stationsHTML(s)); main += sec("o-3d", "Montagna in 3D · scegli la linea", peakvisorHTML(s)); }
   side += sec("o-cam", "Webcam", camsHTML(s));
   side += sec("o-av", "Pericolo valanghe · bollettino ufficiale", avBlockHTML(s));
   side += sec("o-sf", "Snow-forecast", sfHTML(s));

@@ -78,6 +78,9 @@ export function metrics(spot){
     if(ens.n72){ m.n72 = ens.n72.med; m.n72r = ens.n72; }
     if(ens.n7d){ m.n7d = ens.n7d.med; m.n7dr = ens.n7d; }
     m.ens = ens;
+    // i modelli a breve scadenza (es. ICON-2I) escono dalle finestre lunghe e la mediana può scendere:
+    // la neve attesa in 3 o 7 giorni non può essere meno di quella attesa nelle prime 24 ore (trovato dai test)
+    m.n72 = Math.max(m.n72, m.n24); m.n7d = Math.max(m.n7d, m.n72);
   }
   const tomorrow = addDaysISO(T[idx].slice(0, 10), 1);
   const i8 = T.indexOf(tomorrow + "T08:00");
