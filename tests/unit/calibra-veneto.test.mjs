@@ -47,3 +47,11 @@ test("fattori per zona: zona Veneto calcolata e assegnata agli spot vicini, Friu
   assert.equal(res.spotZona.sappada, "ve", "Friuli → Veneto");
   assert.match(stdout, /zona Veneto: icon ×/);
 });
+
+test("resoconto completo anche con i pluviometri (qui si era rotto: \"id is not defined\")", async () => {
+  assert.ok(res.pioggiaVeneto && res.pioggiaVeneto.tutte.giornate > 100, "rete pluviometri presente nel giro di prova");
+  const md = await readFile(join(dir, "calibrazione.md"), "utf8");
+  assert.match(md, /## Veneto – precipitazione/);
+  assert.match(md, /Fattori usati dal sito per gli spot di questa zona/);
+  assert.equal((md.match(/Fattori usati dal sito/g) || []).length, Object.keys(res.zone).length, "tabella fattori solo nelle zone di neve");
+});

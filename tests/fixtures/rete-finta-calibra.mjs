@@ -27,7 +27,20 @@ globalThis.fetch = async (url) => {
   const u = new URL(url);
   if(u.host === "geoservices.buergernetz.bz.it") return Response.json({features: []});
   if(u.pathname.endsWith("stazioni_neve.xml") || u.pathname.endsWith("stazioni.xml")) return latin1(elenco);
-  if(u.host === "meteo.arpa.veneto.it") return latin1("<STAZIONE></STAZIONE>");
+  // ogni stazione ha pluviometro e termometro (rete "Veneto precipitazione")
+  if(u.host === "meteo.arpa.veneto.it"){ const id = +u.pathname.match(/(\d+)\.xml$/)[1];
+    return latin1(`<STAZIONE><SENSORI><SENSORE><ID>9${id}</ID><TYPE>PREC</TYPE></SENSORE><SENSORE><ID>8${id}</ID><TYPE>TEMP</TYPE></SENSORE></SENSORI></STAZIONE>`); }
+  if(u.host === "api.arpa.veneto.it"){
+    const cod = u.searchParams.get("codseq"), anno = +u.searchParams.get("anno"), prec = cod.startsWith("9");
+    const data = [];
+    for(let t = Date.UTC(anno, 0, 1); t < Date.UTC(anno + 1, 0, 1); t += 864e5){
+      const g = new Date(t).toISOString().slice(0, 10), m = +g.slice(5, 7);
+      if(m > 4 && m < 11) continue;
+      data.push(prec ? {dataora: g, valore: String((t / 864e5) % 7 < 2 ? 12 : 0), tipo: "PREC", nome_sensore: "Precipitazione"}
+                     : {dataora: g, valore: JSON.stringify({MINIMO: -8, MEDIO: -3, MASSIMO: 1}), tipo: "TEMP", nome_sensore: "Temperatura"});
+    }
+    return Response.json({success: true, data});
+  }
   const lats = (u.searchParams.get("latitude") || "").split(",").map(Number);
   const T = ore(u.searchParams.get("start_date"), u.searchParams.get("end_date"));
   if(u.host === "previous-runs-api.open-meteo.com"){
@@ -42,6 +55,7 @@ globalThis.fetch = async (url) => {
           return hn == null ? 0 : hn / 24 * k * 0.7;   // 0,7: correctedSnow a -5 °C lo riporta circa ai cm
         });
         hourly[`temperature_2m_previous_day${L}`] = T.map(() => -5);
+        hourly[`precipitation_previous_day${L}`] = T.map((t, i) => (i % 24 < 6 ? 2 * k : 0));
       }
       return {hourly};
     }));

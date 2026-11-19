@@ -350,13 +350,6 @@ function resoconto(res, staz, righe){
     if(!z.grosse){ md += "Troppe poche giornate.\n"; continue; }
     md += `Giornate con almeno 10 mm misurati:\n\n| Modello | 1 giorno | 2 giorni | 3 giorni |\n|---|---|---|---|\n`;
     for(const mid in z.grosse){ const g = z.grosse[mid]; md += `| ${lab(mid)} | ${[1, 2, 3].map(L => g[L].n ? `${f2(g[L].rapporto)} (${g[L].n})` : "–").join(" | ")} |\n`; }
-    if(z.models){
-      const sp = Object.entries(res.spotZona || {}).filter(([, x]) => x === id).map(([k]) => k);
-      md += `\nFattori usati dal sito per gli spot di questa zona${sp.length ? ` (${sp.join(", ")})` : ""}:\n\n| Modello | Fattore | Peso |\n|---|---|---|\n`;
-      for(const mid in z.models){ const m = z.models[mid]; md += `| ${lab(mid)} | ${m.ok ? "×" + f2(m.factor) : "generale"} | ${m.ok ? f2(m.weight) : "–"} |\n`; }
-      const v = z.verifica1;
-      if(v) md += `\nVerifica fuori campione a 1 giorno con i fattori di zona: nevicate ≥10 cm prese ${v.grezzo.prese} → ${v.calibrato.prese} su ${v.calibrato.nevicateGrosse}, falsi allarmi ${v.grezzo.falsiAllarmi} → ${v.calibrato.falsiAllarmi}.\n`;
-    }
     md += `\nRegimi dei venti (mm misurati / previsti, 1 giorno prima):\n\n| Regime | Giornate | Misurata (mm) | Prevista (mm) | Rapporto |\n|---|---|---|---|---|\n`;
     for(const r in z.regimi){ const g = z.regimi[r]; md += `| ${r} | ${g.giorni} | ${Math.round(g.misurata)} | ${Math.round(g.prevista)} | ${f2(g.rapporto)} |\n`; }
   }
