@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-19T15:37:09.745Z",
+ "generated": "2026-11-19T16:40:15.734Z",
  "metodo": 2,
  "scala": 1.0242150294103805,
  "models": {
@@ -470,6 +470,7 @@
  "perZona": {
   "bz": {
    "nome": "Alto Adige",
+   "stazioni": 7,
    "giornate": 3071,
    "grosse": {
     "icon": {
@@ -600,10 +601,48 @@
      "falsiAllarmi": 27,
      "grosseRapporto": 0.9109877007727475
     }
+   },
+   "models": {
+    "icon": {
+     "ok": true,
+     "n": 907,
+     "factor": 1.05,
+     "weight": 0.9342844552588244,
+     "mae": 4.257270121278958
+    },
+    "icon2i": {
+     "ok": true,
+     "n": 241,
+     "factor": 0.88,
+     "weight": 1.110971473257358,
+     "mae": 3.580201104972375
+    },
+    "ecmwf": {
+     "ok": true,
+     "n": 365,
+     "factor": 0.95,
+     "weight": 1.088889790472964,
+     "mae": 3.6528042883211675
+    },
+    "gfs": {
+     "ok": true,
+     "n": 637,
+     "factor": 1.09,
+     "weight": 0.9714348096726213,
+     "mae": 4.094460334903193
+    },
+    "mf": {
+     "ok": true,
+     "n": 956,
+     "factor": 1.04,
+     "weight": 0.8944194713382326,
+     "mae": 4.447020020927801
+    }
    }
   },
   "ve": {
    "nome": "Veneto",
+   "stazioni": 12,
    "giornate": 4957,
    "grosse": {
     "icon": {
@@ -733,6 +772,43 @@
      "prese": 434,
      "falsiAllarmi": 10,
      "grosseRapporto": 0.9648430499817587
+    }
+   },
+   "models": {
+    "icon": {
+     "ok": true,
+     "n": 1473,
+     "factor": 1.06,
+     "weight": 0.900608062415923,
+     "mae": 5.186410138040291
+    },
+    "icon2i": {
+     "ok": true,
+     "n": 367,
+     "factor": 0.87,
+     "weight": 1.1151851359350164,
+     "mae": 4.1884729582577105
+    },
+    "ecmwf": {
+     "ok": true,
+     "n": 523,
+     "factor": 1.07,
+     "weight": 1.0661266997728622,
+     "mae": 4.3812079617834385
+    },
+    "gfs": {
+     "ok": true,
+     "n": 1057,
+     "factor": 1.12,
+     "weight": 0.9310609824881584,
+     "mae": 5.016774274905427
+    },
+    "mf": {
+     "ok": true,
+     "n": 1227,
+     "factor": 0.9,
+     "weight": 0.9870191193880392,
+     "mae": 4.732352893235523
     }
    }
   }
@@ -869,6 +945,43 @@
      "falsiAllarmi": 32,
      "grosseRapporto": 1.0059279190574815
     }
+   },
+   "models": {
+    "icon": {
+     "ok": true,
+     "n": 896,
+     "factor": 1.2,
+     "weight": 1.007702957046414,
+     "mae": 4.353258928571423
+    },
+    "icon2i": {
+     "ok": true,
+     "n": 321,
+     "factor": 1.05,
+     "weight": 0.863203457461265,
+     "mae": 5.081990644490644
+    },
+    "ecmwf": {
+     "ok": true,
+     "n": 431,
+     "factor": 0.98,
+     "weight": 0.9890541297700871,
+     "mae": 4.435340557275534
+    },
+    "gfs": {
+     "ok": true,
+     "n": 1535,
+     "factor": 0.82,
+     "weight": 1.0489967483241815,
+     "mae": 4.181892748588801
+    },
+    "mf": {
+     "ok": true,
+     "n": 428,
+     "factor": 0.99,
+     "weight": 1.0910427073980513,
+     "mae": 4.020733437256428
+    }
    }
   },
   "fredde": {
@@ -1002,8 +1115,198 @@
      "falsiAllarmi": 18,
      "grosseRapporto": 1.0687537323120861
     }
+   },
+   "models": {
+    "icon": {
+     "ok": true,
+     "n": 564,
+     "factor": 1.11,
+     "weight": 1.0148495522283913,
+     "mae": 3.8919946777055006
+    },
+    "icon2i": {
+     "ok": true,
+     "n": 179,
+     "factor": 0.92,
+     "weight": 1.1103230104792097,
+     "mae": 3.5573333333333346
+    },
+    "ecmwf": {
+     "ok": true,
+     "n": 275,
+     "factor": 1.23,
+     "weight": 0.8670647783945817,
+     "mae": 4.5553563636363625
+    },
+    "gfs": {
+     "ok": true,
+     "n": 906,
+     "factor": 0.8,
+     "weight": 0.9950871305831449,
+     "mae": 3.9692896577107164
+    },
+    "mf": {
+     "ok": true,
+     "n": 286,
+     "factor": 1,
+     "weight": 1.0126755283146718,
+     "mae": 3.9003500583430513
+    }
    }
   }
  },
- "fonti": "Altezza neve: Provincia autonoma di Bolzano, open data meteo (CC0); ARPAV – Centro Valanghe di Arabba (neve fresca alle 8:00, dati forniti su richiesta); ARPAV, pluviometri (CC BY 4.0). Previsioni passate e vento: Open-Meteo.com Previous Runs e Historical Forecast API (CC BY 4.0)."
+ "fonti": "Altezza neve: Provincia autonoma di Bolzano, open data meteo (CC0); ARPAV – Centro Valanghe di Arabba (neve fresca alle 8:00, dati forniti su richiesta); ARPAV, pluviometri (CC BY 4.0). Previsioni passate e vento: Open-Meteo.com Previous Runs e Historical Forecast API (CC BY 4.0).",
+ "zone": {
+  "bz": {
+   "nome": "Alto Adige",
+   "stazioni": 7,
+   "models": {
+    "icon": {
+     "ok": true,
+     "n": 907,
+     "factor": 1.05,
+     "weight": 0.9342844552588244,
+     "mae": 4.257270121278958
+    },
+    "icon2i": {
+     "ok": true,
+     "n": 241,
+     "factor": 0.88,
+     "weight": 1.110971473257358,
+     "mae": 3.580201104972375
+    },
+    "ecmwf": {
+     "ok": true,
+     "n": 365,
+     "factor": 0.95,
+     "weight": 1.088889790472964,
+     "mae": 3.6528042883211675
+    },
+    "gfs": {
+     "ok": true,
+     "n": 637,
+     "factor": 1.09,
+     "weight": 0.9714348096726213,
+     "mae": 4.094460334903193
+    },
+    "mf": {
+     "ok": true,
+     "n": 956,
+     "factor": 1.04,
+     "weight": 0.8944194713382326,
+     "mae": 4.447020020927801
+    }
+   },
+   "verifica1": {
+    "grezzo": {
+     "n": 839,
+     "mae": 3.6074493444576894,
+     "bias": -0.21746126340881977,
+     "nevicateGrosse": 147,
+     "prese": 131,
+     "falsiAllarmi": 9,
+     "grosseRapporto": 0.687805963506898
+    },
+    "calibrato": {
+     "n": 902,
+     "mae": 4.035459312638581,
+     "bias": 1.2762167405764968,
+     "nevicateGrosse": 147,
+     "prese": 134,
+     "falsiAllarmi": 27,
+     "grosseRapporto": 0.9109877007727475
+    }
+   }
+  },
+  "ve": {
+   "nome": "Veneto",
+   "stazioni": 12,
+   "models": {
+    "icon": {
+     "ok": true,
+     "n": 1473,
+     "factor": 1.06,
+     "weight": 0.900608062415923,
+     "mae": 5.186410138040291
+    },
+    "icon2i": {
+     "ok": true,
+     "n": 367,
+     "factor": 0.87,
+     "weight": 1.1151851359350164,
+     "mae": 4.1884729582577105
+    },
+    "ecmwf": {
+     "ok": true,
+     "n": 523,
+     "factor": 1.07,
+     "weight": 1.0661266997728622,
+     "mae": 4.3812079617834385
+    },
+    "gfs": {
+     "ok": true,
+     "n": 1057,
+     "factor": 1.12,
+     "weight": 0.9310609824881584,
+     "mae": 5.016774274905427
+    },
+    "mf": {
+     "ok": true,
+     "n": 1227,
+     "factor": 0.9,
+     "weight": 0.9870191193880392,
+     "mae": 4.732352893235523
+    }
+   },
+   "verifica1": {
+    "grezzo": {
+     "n": 1447,
+     "mae": 4.299315825846578,
+     "bias": -0.08165169315825666,
+     "nevicateGrosse": 469,
+     "prese": 428,
+     "falsiAllarmi": 10,
+     "grosseRapporto": 0.9283582634075159
+    },
+    "calibrato": {
+     "n": 1471,
+     "mae": 4.403368796736915,
+     "bias": 0.28622739632902905,
+     "nevicateGrosse": 469,
+     "prese": 434,
+     "falsiAllarmi": 10,
+     "grosseRapporto": 0.9648430499817587
+    }
+   }
+  }
+ },
+ "spotZona": {
+  "cortina": "ve",
+  "alta-badia": "bz",
+  "val-gardena": "bz",
+  "val-di-fassa": "bz",
+  "cadore": "ve",
+  "marmolada": "ve",
+  "sella": "ve",
+  "pordoi": "ve",
+  "san-martino": "ve",
+  "val-zoldana": "ve",
+  "arabba": "ve",
+  "lagazuoi": "ve",
+  "giau": "ve",
+  "civetta": "ve",
+  "san-pellegrino": "ve",
+  "tre-cime": "bz",
+  "plan-de-corones": "bz",
+  "alpe-di-siusi": "bz",
+  "latemar": "bz",
+  "plose": "bz",
+  "sappada": "ve",
+  "forni-di-sopra": "ve",
+  "piancavallo": "ve",
+  "zoncolan": "ve",
+  "pramollo": "ve",
+  "sella-nevea": "ve",
+  "tarvisio": "ve"
+ }
 }
