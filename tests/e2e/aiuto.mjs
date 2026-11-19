@@ -26,6 +26,7 @@ export { expect };
    opz.snapshot(s)   → modifica il file dati prima di servirlo (o null = file assente)
    opz.modo          → "semplice" | "completa" | undefined (prima visita)
    opz.ls            → altre chiavi di localStorage
+   opz.url           → indirizzo da aprire (es. /spot/veneto/) al posto di index.html#…
    opz.immaginiRotte → url di webcam che rispondono 404
    opz.attesa        → ms massimi di caricamento (le fonti dirette ritentano per qualche secondo prima di arrendersi)
    opz.esterni       → funzione (route, url) per rispondere a richieste esterne specifiche */
@@ -56,7 +57,7 @@ export async function apri(page, hash = "#spot", opz = {}){
     if(req.resourceType() === "document" && req.frame() !== page.mainFrame()) return route.fulfill({body: "<html><body>panorama finto</body></html>", contentType: "text/html"});
     return route.abort("blockedbyclient");
   });
-  await page.goto("/index.html" + hash);
+  await page.goto(opz.url || "/index.html" + hash);
   await expect(page.locator("#refresh")).not.toHaveClass(/spin/, {timeout: opz.attesa || 15_000});
 }
 

@@ -12,6 +12,9 @@ const PORT = +process.env.PORT || 4317;
 
 createServer(async (req, res) => {
   let p = decodeURIComponent(new URL(req.url, "http://x").pathname);
+  // pagine dell'app (come npm run dev): spot/cortina/, valanghe/ … → index.html; guida/ → html/info.html
+  if(/^\/(spot|previsione|pianifica|valanghe|webcam)(\/|$)/.test(p)) p = "/index.html";
+  else if(/^\/guida\/?$/.test(p)) p = "/html/info.html";
   if(p.endsWith("/")) p += "index.html";
   p = normalize(p).replace(/^(\.\.[/\\])+/, "");
   for(const base of [ROOT, resolve(ROOT, "public")]){

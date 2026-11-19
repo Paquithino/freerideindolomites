@@ -36,7 +36,7 @@ test.describe("Valanghe", () => {
     await av.getByText("Leggi il bollettino completo").click();
     await expect(av.locator("details.avfull")).toHaveAttribute("open", "");
     await expect(av).toContainText("TEST manto nevoso");
-    await expect(page).toHaveURL(/#spot-cortina$/);
+    await expect(page).toHaveURL(/\/spot\/cortina\/$/);
   });
 
   test("fuori stagione: messaggio chiaro, nessun errore", async ({page, errori}) => {

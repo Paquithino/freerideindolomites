@@ -31,7 +31,7 @@ test.describe("Previsione", () => {
     await page.locator("#planChips").getByRole("button", {name: "Friuli VG", exact: true}).click();
     await expect(page.locator(".pv-grid .pv-row[data-spot]")).toHaveCount(SPOTS.filter(s => s.area === "Friuli VG").length);
     await page.locator(".pv-grid .pv-row[data-spot]").first().click();
-    await expect(page).toHaveURL(/#spot-/);
+    await expect(page).toHaveURL(/\/spot\/[a-z-]+\/$/);
   });
 
   test("il vecchio indirizzo #pianifica funziona ancora", async ({page, errori}) => {

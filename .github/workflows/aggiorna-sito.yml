@@ -50,10 +50,13 @@ jobs:
         continue-on-error: true   # se una fonte non risponde, il sito si pubblica comunque (scaricherà i dati da solo)
         env:
           ARCHIVIO_DIR: archivio
-          SITO_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/   # per il piano B
+          # indirizzo pubblico del sito: con un dominio tuo, crea la variabile SITO_URL in Settings › Secrets and variables › Actions › Variables
+          SITO_URL: ${{ vars.SITO_URL || format('https://{0}.github.io/{1}/', github.repository_owner, github.event.repository.name) }}
         run: node scripts/aggiorna-dati.mjs
 
-      - name: Costruisci il sito
+      - name: Costruisci il sito e le pagine (spot, sezioni, sitemap)
+        env:
+          SITO_URL: ${{ vars.SITO_URL || format('https://{0}.github.io/{1}/', github.repository_owner, github.event.repository.name) }}
         run: npm run build
 
       - uses: actions/upload-pages-artifact@v3

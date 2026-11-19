@@ -6,7 +6,8 @@ test.describe("Versione semplice", () => {
   test("home: in breve, un giudizio e tre numeri per spot, niente dati tecnici", async ({page, errori}) => {
     await apri(page, "#spot", {modo: "semplice"});
     await expect(page.locator("body")).toHaveClass(/semplice/);
-    await expect(page.locator(".sg-hero")).toContainText("In breve");
+    await expect(page.locator("#hero")).toContainText("In breve");
+    await expect(page.locator(".sg-hero")).toBeVisible();
     await expect(page.locator("#list .card.sg")).toHaveCount(SPOTS.length);
     const prima = page.locator("#list .card.sg").first();
     await expect(prima.locator(".sg-g")).toHaveText(/Neve fresca abbondante|Bella nevicata|Un po'|Niente neve nuova|Pericolo valanghe forte/);
@@ -22,7 +23,9 @@ test.describe("Versione semplice", () => {
     await page.getByRole("button", {name: /Semplice/}).click();
     await page.reload();
     await expect(page.locator("body")).toHaveClass(/semplice/);
-    await page.getByRole("button", {name: /Completa/}).click();
+    // dopo la prima scelta l'interruttore sta in alto (desktop) o nel menu (telefono)
+    if(!(await page.locator("#hmodo").isVisible())) await page.locator("#menuBtn").click();
+    await page.getByRole("button", {name: "Completa", exact: true}).click();
     await expect(page.locator("body")).not.toHaveClass(/semplice/);
     await expect(page.locator("#sort")).toBeVisible();
   });

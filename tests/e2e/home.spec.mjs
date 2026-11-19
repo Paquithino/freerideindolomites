@@ -58,8 +58,8 @@ test.describe("Home · spot", () => {
   test("tocco su uno spot apre la sua pagina e Indietro torna alla lista", async ({page, errori}) => {
     await apri(page, "#spot", {modo: "completa", ls: {fr_view: "schede"}});
     await page.locator('#list [data-spot="cortina"] h3').click();
-    await expect(page).toHaveURL(/#spot-cortina$/);
-    await expect(page.locator("#v-detail h2")).toHaveText("Cortina d'Ampezzo");
+    await expect(page).toHaveURL(/\/spot\/cortina\/$/);
+    await expect(page.locator("#cover h1")).toHaveText("Cortina d'Ampezzo");
     await page.locator("[data-back]").click();
     await expect(page.locator("#list .card").first()).toBeVisible();
   });

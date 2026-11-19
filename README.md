@@ -41,6 +41,7 @@ index.html              pagina principale
 html/info.html          guida: come leggere i dati, fonti, avvertenze
 css/style.css           grafica (colori in :root all'inizio del file)
 js/config.js            ← SPOT, WEBCAM, URL del worker: si modifica solo qui
+js/pagine.js            ← indirizzi delle pagine, titoli e descrizioni per Google
 js/state.js             stato e funzioni condivise
 js/meteo.js             previsioni (Open-Meteo), indice Powder, pianificazione
 js/valanghe.js          bollettini AINEVA / servizi provinciali (formato EAWS)
@@ -156,3 +157,20 @@ pv: {nome: "Canale Holzer", lat: 46.5098, lng: 11.8187, alt: 2900, yaw: 30, pitc
 Il robot controlla ogni ora anche PeakVisor (riga `peakvisor:` nel log di Actions e in `npm run webcam`): se non risponde o non si lascia più incorporare, il sito mostra al posto del riquadro dei link che aprono il 3D in una nuova scheda.
 
 (un oggetto o una lista). I valori si leggono dall'url di peakvisor.com/embed dopo aver sistemato la vista: `yaw` direzione −180…180, `pitch` −90…90, `hfov` zoom 140 (largo) … 4 (stretto).
+
+## Pagine e Google
+
+Ogni sezione e ogni spot ha il suo indirizzo vero (prima era tutto in una pagina con `#`):
+
+| Indirizzo | Pagina |
+|---|---|
+| `/` | Home: in breve e spot |
+| `/spot/`, `/spot/alto-adige/`, `/spot/veneto/`, `/spot/trentino/`, `/spot/friuli/` | Elenco spot, anche per zona |
+| `/spot/<id>/` (28 pagine, es. `/spot/cortina/`) | Pagina dello spot |
+| `/previsione/`, `/valanghe/`, `/webcam/`, `/guida/` | Sezioni |
+
+- `npm run build` = `vite build` + `scripts/genera-pagine.mjs`, che crea una pagina HTML per ogni indirizzo con titolo, descrizione, link canonico, anteprima social, dati strutturati (schema.org) e il testo principale già scritto (neve, previsione, bollettino), più `sitemap.xml`, `robots.txt` e `404.html`. Su GitHub succede a ogni aggiornamento orario, quindi le pagine sono sempre fresche.
+- Indirizzo del sito: variabile `SITO_URL` (Settings › Secrets and variables › Actions › **Variables**). Senza, si usa `https://paquithino.github.io/freerideindolomites/`. **Con il dominio nuovo** crea la variabile, per esempio `SITO_URL = https://www.tuodominio.it/`.
+- I vecchi link con `#` (`#spot-cortina`, `#valanghe`) continuano a funzionare e portano alla pagina nuova.
+- In sviluppo (`npm run dev`) gli indirizzi funzionano lo stesso. Per provare la build in locale: `SITO_URL=http://localhost:4173/ npm run build && npm run preview`.
+- Google: registra il sito in **Google Search Console** e invia `sitemap.xml`. Su GitHub Pages senza dominio il file `robots.txt` non è alla radice del dominio, quindi conta solo la sitemap inviata a mano; con il dominio tuo vale anche robots.txt.

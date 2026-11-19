@@ -6,6 +6,7 @@ import { calOf, zonaDi } from "./calibrazione.js";
 import { peakvisorHTML } from "./peakvisor.js";
 import { DNAME, avForSpot, avBlockHTML, dsq, loadAvalanche, bollettiniPerServizio, gradiHTML, problemiHTML, testiHTML, intestazione, stripTags, PROB } from "./valanghe.js";
 import { camsHTML } from "./webcam.js";
+import { leggiPercorso, daHash, metaPer, coverHTML, percorsoSpot, percorsoArea, slugDaArea, AREE, SITO_NOME } from "./pagine.js";
 import { loadStations, stationsHTML, bestStation } from "./stazioni.js";
 import { loadModels, demoModels, ensembleFor, agreement, regionRegime, regimeLabel, flowEffect, correctHourly } from "./modelli.js";
 import { MODELS, LAVORI_IN_CORSO } from "./config.js";
@@ -20,8 +21,8 @@ const isDesktop = () => DESKTOP_MQ.matches;
 /* larghezza del grafico orario ≈ larghezza reale della colonna, così testo e linee restano alla dimensione giusta */
 function chartWidth(){
   if(!isDesktop()) return 420;
-  const side = innerWidth >= 1700 ? 260 : 232, pad = innerWidth >= 1700 ? 88 : 64;
-  const col = (innerWidth - side - pad - 24) * 1.5 / 2.5 - 36;
+  const wrap = Math.min(innerWidth, 1240) - 48;
+  const col = (wrap - 24) * 1.5 / 2.5 - 36;
   return Math.max(560, Math.round(col));
 }
 
@@ -40,18 +41,25 @@ function renderHero(){
   if(!ms.length){ $("#hero").innerHTML = ""; return; }
   const top = ms.reduce((a, b) => b[1].p48 > a[1].p48 ? b : a);
   const nxt = ms.reduce((a, b) => b[1].n72 > a[1].n72 ? b : a);
-  const best = ms.reduce((a, b) => b[1].score > a[1].score ? b : a);
-  $("#hero").innerHTML = `
-    <div class="k"><span>Più neve 48h</span><b>${r0(top[1].p48)} cm</b><em>${esc(top[0].name)}</em></div>
-    <div class="k"><span>In arrivo 72h</span><b>${r0(nxt[1].n72)} cm</b><em>${esc(nxt[0].name)}</em></div>
-    <div class="k"><span>Indice Powder</span><b>${r1(best[1].score)}</b><em>${esc(best[0].name)}</em></div>`;
+  const avs = SPOTS.map(s => avForSpot(s)).filter(Boolean), mx = avs.length ? Math.max(...avs.map(a => a.level)) : null;
+  const ICO_NEVE = `<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 15h9a4 4 0 0 0 .5-7.97A5.5 5.5 0 0 0 6 8.5 3.5 3.5 0 0 0 7 15z" stroke="#64748b"/><path d="M9 19v.01M12 20.5v.01M15 19v.01" stroke="#0ea5e9" stroke-width="2.4"/></svg>`;
+  const ICO_ARRIVO = `<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h11M3 7h7M3 17h7" stroke="#64748b"/><path d="M15 6l5 6-5 6" stroke="#0369a1"/></svg>`;
+  $("#hero").innerHTML = `<h2 class="ttl sez">In breve</h2><div class="ib">
+    <a class="k" href="${percorsoSpot(top[0].id)}">${ICO_NEVE}<span class="kt"><span>Più neve fresca · 48 ore</span><b>${esc(nomeCorto(top[0]))}</b></span><em>${r0(top[1].p48)}<small> cm</small></em></a>
+    <a class="k" href="${percorsoSpot(nxt[0].id)}">${ICO_ARRIVO}<span class="kt"><span>In arrivo nei prossimi 3 giorni</span><b>${esc(nomeCorto(nxt[0]))}</b></span><em>+${r0(nxt[1].n72)}<small> cm</small></em></a>
+    <a class="k" href="valanghe/">${mx != null ? dsq(mx) : dsq(0)}<span class="kt"><span>Pericolo valanghe fino a</span><b>${mx != null ? DNAME[mx] : "bollettini non emessi"}</b></span><em class="lk">Bollettini</em></a>
+  </div>`;
 }
 /* ---------- versione semplice ----------
    Per chi vuole solo sapere "com'è la neve e si può andare": un giudizio a parole,
    tre numeri grandi, i prossimi giorni a icone. Niente modelli, forbici, tabelle. */
 const semplice = () => state.modo === "semplice";
+function modoSeg(){
+  return `<div class="seg2" role="group" aria-label="Versione del sito"><button data-modo="semplice" class="${semplice() ? "on" : ""}" aria-pressed="${semplice()}">Semplice</button><button data-modo="completa" class="${state.modo === "completa" ? "on" : ""}" aria-pressed="${state.modo === "completa"}">Completa</button></div>`;
+}
 function modoHTML(){
   const nuovo = !state.modo;
+  if(!nuovo) return "";
   return `${nuovo ? `<p class="modo-q">Come preferisci vedere il sito?</p>` : ""}
     <div class="modo-seg" role="group" aria-label="Versione del sito">
       <button data-modo="semplice" class="${semplice() ? "on" : ""}"><b>✨ Semplice</b><span>Solo l'essenziale</span></button>
@@ -66,9 +74,9 @@ function giorniSemplici(s, n = 5){
 }
 function cardSemplice(s){
   const m = metrics(s), av = avForSpot(s), fav = state.fav.has(s.id);
-  if(!m) return `<div class="card sg" data-spot="${s.id}"><h3>${esc(s.name)}</h3><p class="note">Dati non disponibili</p></div>`;
+  if(!m) return `<a class="card sg" href="${percorsoSpot(s.id)}" data-spot="${s.id}"><h3>${esc(s.name)}</h3><p class="note">Dati non disponibili</p></a>`;
   const g = giudizio(m, av);
-  return `<div class="card sg gv-${g.cls}" data-spot="${s.id}">
+  return `<a class="card sg gv-${g.cls}" href="${percorsoSpot(s.id)}" data-spot="${s.id}">
     <div class="sg-top"><button class="star ${fav ? "on" : ""}" data-fav="${s.id}" aria-label="Preferito">${fav ? "★" : "☆"}</button>
       <div style="min-width:0;flex:1"><h3>${esc(s.name)}</h3><div class="sg-g"><span>${g.ico}</span> ${esc(g.txt)}</div></div></div>
     <div class="sg-n">
@@ -77,7 +85,7 @@ function cardSemplice(s){
       <div><b>${av ? dsq(av.level) : "–"}</b><span>${av ? "valanghe " + (DNAME[av.level] || "").toLowerCase() : "valanghe n.d."}</span></div>
     </div>
     ${g.avvisi.length ? `<p class="sg-w">${g.avvisi.map(esc).join(" ")}</p>` : ""}
-  </div>`;
+  </a>`;
 }
 function heroSemplice(){
   const ms = SPOTS.map(s => [s, metrics(s)]).filter(x => x[1]);
@@ -88,7 +96,7 @@ function heroSemplice(){
   righe.push(nxt[1].n72 >= 5 ? `🌨 In arrivo soprattutto a <b>${esc(nomeCorto(nxt[0]))}</b>: circa ${r0(nxt[1].n72)} cm in 3 giorni` : "🌨 Nessuna nevicata in vista nei prossimi 3 giorni");
   const avs = SPOTS.map(s => avForSpot(s)).filter(Boolean);
   if(avs.length){ const mx = Math.max(...avs.map(a => a.level)); righe.push(`${dsq(mx)} Pericolo valanghe fino a <b>${(DNAME[mx] || "").toLowerCase()}</b>`); }
-  return `<div class="sg-hero"><h3>In breve</h3>${righe.map(r => `<p>${r}</p>`).join("")}</div>`;
+  return `<h2 class="ttl sez">In breve</h2><div class="sg-hero">${righe.map(r => `<p>${r}</p>`).join("")}</div>`;
 }
 const chipsHTML = (list, cur, attr) => list.map(a => `<button class="chip ${a === cur ? "on" : ""}" ${attr}="${esc(a)}">${esc(a)}</button>`).join("");
 function filterArea(arr, area){
@@ -98,8 +106,8 @@ function filterArea(arr, area){
 }
 function cardHTML(s){
   const m = metrics(s), av = avForSpot(s), fav = state.fav.has(s.id);
-  if(!m) return `<div class="card" data-spot="${s.id}"><div class="t"><div><h3>${esc(s.name)}</h3><div class="sub">${esc(s.area)} · ${s.elev} m</div></div></div><div class="note" style="margin-top:8px">Dati non disponibili</div></div>`;
-  return `<div class="card" data-spot="${s.id}">
+  if(!m) return `<a class="card" href="${percorsoSpot(s.id)}" data-spot="${s.id}"><div class="t"><div><h3>${esc(s.name)}</h3><div class="sub">${esc(s.area)} · ${s.elev} m</div></div></div><div class="note" style="margin-top:8px">Dati non disponibili</div></a>`;
+  return `<a class="card" href="${percorsoSpot(s.id)}" data-spot="${s.id}">
     <div class="t">
       <button class="star ${fav ? "on" : ""}" data-fav="${s.id}" aria-label="Preferito">${fav ? "★" : "☆"}</button>
       <div style="min-width:0"><h3>${esc(s.name)}</h3>
@@ -118,7 +126,7 @@ function cardHTML(s){
       ${(() => { const b = bestStation(s); return b ? `<span class="flag g" title="${esc(b.name)}">📏 ${r0(b.hs)} cm misurati${(b.d24 || 0) >= 1 ? ` · +${r0(b.d24)} in 24h` : ""}</span>` : ""; })()}
       ${m.flags.map(f => `<span class="flag ${f[0]}">${f[1]}</span>`).join("")}
     </div>
-  </div>`;
+  </a>`;
 }
 const SORT_VAL = {
   powder: m => m.score, fresh: m => m.p48, p24: m => m.p24, p72: m => m.p72, n24: m => m.n24, next: m => m.n72, n7d: m => m.n7d,
@@ -177,14 +185,15 @@ function renderAside(){
     ${(() => { const meas = SPOTS.map(s => [s, bestStation(s)]).filter(x => x[1] && (x[1].d24 || 0) >= 1).sort((a, b) => b[1].d24 - a[1].d24).slice(0, 4);
       return meas.length ? `<div class="sec"><h4>📏 Neve nuova misurata · 24h</h4>${meas.map(([s, b]) => row(s, `+${r0(b.d24)} cm`, `${esc(b.name)} · ${r0(b.hs)} cm al suolo`)).join("")}</div>` : ""; })()}
     <div class="sec"><h4>🎯 Giornate migliori</h4>${best.length ? best.map(([s, b]) => row(s, `${dayName(b.date)} ${dayNum(b.date)}`, `~${r0(b.fresh)} cm freschi · affidabilità ${b.conf}`)).join("") : `<p class="note" style="margin:0">Nessuna nevicata ≥ 10 cm prevista nei prossimi ${FORECAST_DAYS} giorni.</p>`}
-      <a class="more" href="#previsione">Apri la previsione →</a></div>
+      <a class="more" href="previsione/">Apri la previsione →</a></div>
     <div class="sec"><h4>⚠️ Pericolo valanghe</h4>${avs.length ? avs.map(([s, a]) => `<div class="arow" data-spot="${s.id}"><div><b>${esc(s.name)}</b><span>${DNAME[a.level] || "n.d."}</span></div>${dsq(a.level)}</div>`).join("") : `<p class="note" style="margin:0">${state.avErr ? "Bollettini non raggiungibili." : "Bollettini non ancora emessi: la stagione dei bollettini parte di solito a dicembre."}</p>`}
-      <a class="more" href="#valanghe">Tutti i bollettini →</a></div>
+      <a class="more" href="valanghe/">Tutti i bollettini →</a></div>
     <div class="sec"><h4>💨 Vento in quota più forte</h4>${top(m => m.w7 || 0, 3).map(([s, m]) => row(s, `${r0(m.w7)} km/h`, `da ${dirName(m.w7dir)} · ~3.000 m`)).join("")}</div>`;
 }
 
 function renderList(){
   $("#modo").innerHTML = modoHTML();
+  { const z = AREE.find(a => a.area === state.area); $("#spotTitle").textContent = z ? `Spot · ${z.nome}` : state.area === "★ Preferiti" ? "Spot preferiti" : "Spot"; }
   $("#areaChips").innerHTML = chipsHTML(AREAS, state.area, "data-area");
   $("#sort").value = state.sort;
   if(state.loading && !Object.keys(state.wx).length){ $("#list").innerHTML = '<div class="skeleton"></div>'.repeat(5); return; }
@@ -243,7 +252,7 @@ function planSpot(arr, days){
     ${arr.map(s => { const p = dailyPlan(s); return `<div class="pv-row" data-spot="${s.id}"><span class="n">${state.fav.has(s.id) ? "★ " : ""}${esc(nomeCorto(s))}</span>
       <div class="cells" style="grid-template-columns:repeat(${days.length},1fr)">${days.map((g, i) => cellaGiorno(p[i], g)).join("")}</div><em>${r0(tot(s))}</em></div>`; }).join("")}
   </div>
-  <div class="plan-legend">cm/giorno: <i style="background:#bae6fd"></i>1–5 <i style="background:#7dd3fc"></i>5–10 <i style="background:#38bdf8"></i>10–20 <i style="background:#a78bfa"></i>20–35 <i style="background:#e879f9"></i>35+ · sbiadito = previsione poco affidabile</div>`;
+  <div class="plan-legend">cm/giorno: <i style="background:#e0f2fe"></i>1–5 <i style="background:#bae6fd"></i>5–10 <i style="background:#7dd3fc"></i>10–20 <i style="background:#38bdf8"></i>20–35 <i style="background:#0ea5e9"></i>35+ · sbiadito = previsione poco affidabile</div>`;
 }
 function renderPlan(){
   $("#planChips").innerHTML = chipsHTML(AREAS, state.planArea, "data-planarea");
@@ -273,7 +282,7 @@ function hourlyChart(spot, m){
   const smax = Math.max(2, ...snow), tmin = Math.min(...temp) - 2, tmax = Math.max(...temp, 0) + 2;
   const y = v => pt + (Hh - pt - pb) * (1 - (v - tmin) / (tmax - tmin));
   let bars = "", labels = "";
-  snow.forEach((v, k) => { if(v > 0){ const h = (Hh - pt - pb) * v / smax; bars += `<rect x="${pl + k * bw + 0.3}" y="${Hh - pb - h}" width="${Math.max(1, bw - 0.6)}" height="${h}" fill="#67e8f9" opacity=".85"/>`; } });
+  snow.forEach((v, k) => { if(v > 0){ const h = (Hh - pt - pb) * v / smax; bars += `<rect x="${pl + k * bw + 0.3}" y="${Hh - pb - h}" width="${Math.max(1, bw - 0.6)}" height="${h}" fill="#0ea5e9" opacity=".8"/>`; } });
   const line = temp.map((v, k) => `${k ? "L" : "M"}${(pl + k * bw + bw / 2).toFixed(1)},${y(v).toFixed(1)}`).join("");
   const wmax = Math.max(60, ...w7.filter(v => v != null));
   const wind = w7.map((v, k) => `${k ? "L" : "M"}${(pl + k * bw + bw / 2).toFixed(1)},${(pt + (Hh - pt - pb) * (1 - (v || 0) / wmax)).toFixed(1)}`).join("");
@@ -281,19 +290,19 @@ function hourlyChart(spot, m){
     const t = H.time[i0 + k];
     if(t.endsWith("T00:00") || t.endsWith("T12:00")){
       const x = pl + k * bw, lab = t.endsWith("T00:00") ? dayName(t.slice(0, 10)) : "12";
-      labels += `<line x1="${x}" x2="${x}" y1="${pt}" y2="${Hh - pb}" stroke="#24324f" ${t.endsWith("T12:00") ? 'stroke-dasharray="2 3"' : ""}/><text x="${x + 3}" y="${Hh - 10}" font-size="11" fill="#9fb0cc">${lab}</text>`;
+      labels += `<line x1="${x}" x2="${x}" y1="${pt}" y2="${Hh - pb}" stroke="#e3e8ef" ${t.endsWith("T12:00") ? 'stroke-dasharray="2 3"' : ""}/><text x="${x + 3}" y="${Hh - 10}" font-size="11" fill="#4b5b6e">${lab}</text>`;
     }
   }
   const nowX = pl + 23 * bw + bw / 2, zeroY = y(0);
   return `<svg class="chart" viewBox="0 0 ${W} ${Hh}" role="img" aria-label="Grafico orario neve, temperatura e vento">
     ${labels}
-    ${zeroY > pt && zeroY < Hh - pb ? `<line x1="${pl}" x2="${W - pr}" y1="${zeroY}" y2="${zeroY}" stroke="#f87171" stroke-dasharray="4 4" opacity=".6"/><text x="${W - pr + 3}" y="${zeroY + 4}" font-size="10" fill="#f87171">0°</text>` : ""}
-    ${bars}<path d="${wind}" fill="none" stroke="#a78bfa" stroke-width="1.5" opacity=".7"/><path d="${line}" fill="none" stroke="#fbbf24" stroke-width="2.2"/>
-    <line x1="${nowX}" x2="${nowX}" y1="${pt}" y2="${Hh - pb}" stroke="#e8eef9" stroke-width="1.5"/><text x="${nowX + 3}" y="${pt + 9}" font-size="10" fill="#e8eef9">ora</text>
-    <text x="2" y="${pt + 8}" font-size="10" fill="#fbbf24">${Math.round(tmax)}°</text><text x="2" y="${Hh - pb}" font-size="10" fill="#fbbf24">${Math.round(tmin)}°</text>
-    <text x="${W - 2}" y="${pt + 8}" font-size="10" fill="#67e8f9" text-anchor="end">${r1(smax)}cm/h</text>
+    ${zeroY > pt && zeroY < Hh - pb ? `<line x1="${pl}" x2="${W - pr}" y1="${zeroY}" y2="${zeroY}" stroke="#dc2626" stroke-dasharray="4 4" opacity=".55"/><text x="${W - pr + 3}" y="${zeroY + 4}" font-size="10" fill="#dc2626">0°</text>` : ""}
+    ${bars}<path d="${wind}" fill="none" stroke="#7c3aed" stroke-width="1.5" opacity=".6"/><path d="${line}" fill="none" stroke="#d97706" stroke-width="2.2"/>
+    <line x1="${nowX}" x2="${nowX}" y1="${pt}" y2="${Hh - pb}" stroke="#0f2235" stroke-width="1.5"/><text x="${nowX + 3}" y="${pt + 9}" font-size="10" fill="#0f2235">ora</text>
+    <text x="2" y="${pt + 8}" font-size="10" fill="#b45309">${Math.round(tmax)}°</text><text x="2" y="${Hh - pb}" font-size="10" fill="#b45309">${Math.round(tmin)}°</text>
+    <text x="${W - 2}" y="${pt + 8}" font-size="10" fill="#0369a1" text-anchor="end">${r1(smax)}cm/h</text>
   </svg>
-  <div class="legend"><span><i style="background:#67e8f9"></i>Neve (cm/h)</span><span><i style="background:#fbbf24"></i>Temperatura ${spot.elev} m</span><span><i style="background:#a78bfa"></i>Vento in quota (0–${Math.round(wmax)} km/h)</span></div>`;
+  <div class="legend"><span><i style="background:#0ea5e9"></i>Neve (cm/h)</span><span><i style="background:#d97706"></i>Temperatura ${spot.elev} m</span><span><i style="background:#7c3aed"></i>Vento in quota (0–${Math.round(wmax)} km/h)</span></div>`;
 }
 function daysHTML(spot){
   const p = dailyPlan(spot);
@@ -363,19 +372,15 @@ function calNote(spotId){
   const dove = zn ? `sulle stazioni della zona <b>${esc(zn.nome)}</b> (${zn.stazioni} stazioni)` : `su ${c.stazioni || "alcune"} stazioni di Alto Adige e Veneto`;
   return base + ` I cm sono corretti con la <b>calibrazione</b> ${dove}, inverni ${(c.stagioni || []).join(", ")}: ×fattore = correzione dei cm, peso = quanto conta il modello nella Previsione FreeRide (chi ha sbagliato meno conta di più).`
     + (v && v.nevicate ? ` Nella verifica sugli inverni passati, a 1 giorno le nevicate di almeno 10 cm riconosciute sono passate da ${v.presePrima} a ${v.preseDopo} su ${v.nevicate}.` : "")
-    + ` <a href="./html/info.html#calibrazione">Come funziona</a>`;
+    + ` <a href="guida/#calibrazione">Come funziona</a>`;
 }
 
 function renderDetail(id){
   const s = SPOTS.find(x => x.id === id);
-  if(!s){ location.hash = "#spot"; return; }
-  const m = metrics(s), fav = state.fav.has(s.id), best = bestDay(s);
-  const sec = (cls, title, body) => `<div class="sec ${cls}"><h4>${title}</h4>${body}</div>`;
-  let head = `<button class="back" data-back>‹ Indietro</button>
-    <div class="dtitle"><div style="flex:1;min-width:0"><h2>${esc(s.name)}</h2>
-      <div class="sub" style="color:var(--tx2);font-size:13px">${esc(s.area)}${s.group ? " · " + esc(s.group) : ""} · quota di riferimento ${s.elev.toLocaleString("it-IT")} m</div>
-      <div class="zones">⛰ ${esc(s.zones)}</div></div>
-      <button class="star ${fav ? "on" : ""}" data-fav="${s.id}" style="font-size:26px">${fav ? "★" : "☆"}</button></div>`;
+  if(!s){ naviga("", true); return; }
+  const m = metrics(s), best = bestDay(s);
+  const sec = (cls, title, body) => `<section class="sec ${cls}" id="${cls}"><h2 class="sh">${title}</h2>${body}</section>`;
+  let head = `<p class="dzone">⛰ ${esc(s.zones)}${s.group ? " · " + esc(s.group) : ""} · quota di riferimento ${s.elev.toLocaleString("it-IT")} m</p>`;
   let main = "", side = "";
   if(semplice()){
     const av = avForSpot(s);
@@ -475,45 +480,130 @@ function renderCams(){
   $("#camList").innerHTML = arr.map(s => `<div class="sec" style="margin:0"><h4 style="color:var(--tx);font-size:14px;text-transform:none;letter-spacing:0">${esc(s.name)} <span class="small">· ${esc(s.zones)}</span></h4>${camsHTML(s)}</div>`).join("");
 }
 
-/* ---------- navigazione (hash) ---------- */
+/* ---------- navigazione: un indirizzo vero per ogni pagina (spot/cortina/, valanghe/ …) ----------
+   Il tag <base> della pagina è la radice del sito: tutti i link sono relativi a lei. */
+const BASE = new URL(document.baseURI).pathname;
+const percorsoAttuale = () => { const p = location.pathname; return p.startsWith(BASE) ? p.slice(BASE.length) : p.replace(/^\//, ""); };
+let rotta = leggiPercorso(percorsoAttuale()), passi = 0;
+// vecchi link con # (#spot-cortina, #valanghe…): li trasformo nell'indirizzo nuovo
+{ const v = daHash(location.hash); if(v != null){ history.replaceState(null, "", new URL(v, document.baseURI)); rotta = leggiPercorso(v); } }
+function naviga(path, sostituisci = false){
+  const url = new URL(path, document.baseURI);
+  if(url.pathname === location.pathname && !url.hash){ window.scrollTo(0, 0); return; }
+  history[sostituisci ? "replaceState" : "pushState"](null, "", url);
+  if(!sostituisci) passi++;
+  rotta = leggiPercorso(percorsoAttuale());
+  route(); window.scrollTo(0, 0);
+}
+const quando = () => (state.updated || new Date()).toLocaleDateString("it-IT", {weekday: "long", day: "numeric", month: "long"}).replace(/^./, c => c.toUpperCase())
+  + (state.updated ? ` · ore ${state.updated.toLocaleTimeString("it-IT", {hour: "2-digit", minute: "2-digit"})}` : "");
+function impostaMeta(meta, r){
+  document.title = meta.title;
+  const d = document.querySelector('meta[name="description"]'); if(d) d.setAttribute("content", meta.description);
+  const c = document.querySelector('link[rel="canonical"]');
+  if(c && c.dataset.radice) c.setAttribute("href", c.dataset.radice + r.path);
+}
 function route(){
-  const h = (location.hash || "#spot").slice(1);
-  let tab = "spot", view = "v-spot";
-  if(h.startsWith("spot-")){ view = "v-detail"; tab = ""; renderDetail(h.slice(5)); window.scrollTo(0, 0); }
-  else if(h === "previsione" || h === "pianifica"){ tab = "previsione"; view = "v-pianifica"; renderPlan(); }
-  else if(h === "valanghe"){ tab = "valanghe"; view = "v-valanghe"; renderAv(); }
-  else if(h === "webcam"){ tab = "webcam"; view = "v-webcam"; renderCams(); }
-  else renderList();
+  const r = rotta, meta = metaPer(r);
+  let view = "v-spot";
+  if(r.vista === "spot"){ view = "v-detail"; renderDetail(r.id); }
+  else if(r.vista === "previsione"){ view = "v-pianifica"; renderPlan(); }
+  else if(r.vista === "valanghe"){ view = "v-valanghe"; renderAv(); }
+  else if(r.vista === "webcam"){ view = "v-webcam"; renderCams(); }
+  else{
+    // home e liste: la zona viene dall'indirizzo (spot/veneto/), i preferiti restano un filtro
+    if(r.vista === "lista") state.area = r.area || "Tutti";
+    else if(state.area !== "★ Preferiti") state.area = "Tutti";
+    renderList();
+  }
+  $("#cover").innerHTML = coverHTML(r, quando(), {fav: r.vista === "spot" ? state.fav.has(r.id) : null});
+  $("#cover").classList.toggle("cv-spot", r.vista === "spot");
+  document.body.dataset.vista = r.vista;
   document.querySelectorAll(".view").forEach(v => v.classList.toggle("on", v.id === view));
-  document.querySelectorAll("nav.tabs a").forEach(a => a.classList.toggle("on", a.dataset.tab === tab));
+  document.querySelectorAll("[data-tab]").forEach(a => { const on = a.dataset.tab === meta.tab; a.classList.toggle("on", on); on ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"); });
+  impostaMeta(meta, r);
+  renderMenu();
 }
 const rerender = () => { document.body.classList.toggle("semplice", semplice()); renderBanner(); route(); };
 
+/* menu a scomparsa (telefono) */
+function renderMenu(){
+  $("#menuZone").innerHTML = AREE.map(a => `<a href="spot/${a.slug}/"><b>${esc(a.nome)}</b><span>${SPOTS.filter(s => s.area === a.area).length} spot</span></a>`).join("");
+  $("#menuModo").innerHTML = modoSeg();
+  $("#hmodo").innerHTML = state.modo ? modoSeg() : "";
+}
+function menu(apri){
+  const m = $("#menu"), b = $("#menuBtn");
+  m.hidden = !apri; b.setAttribute("aria-expanded", String(apri));
+  document.body.classList.toggle("menu-aperto", apri);
+  if(apri) m.querySelector(".mlinks a")?.focus(); else b.focus({preventScroll: true});
+}
+$("#menuBtn").addEventListener("click", () => menu(true));
+document.addEventListener("keydown", e => { if(e.key === "Escape" && !$("#menu").hidden) menu(false); });
+
+/* link interni: cambio pagina senza ricaricare (gli indirizzi restano veri per Google e per la condivisione) */
+function linkInterno(a, e){
+  const h = a.getAttribute("href");
+  if(!h || a.target === "_blank" || a.hasAttribute("download") || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button > 0) return null;
+  if(h.startsWith("#")) return {ancora: h.slice(1)};
+  const u = new URL(a.href);
+  if(u.origin !== location.origin || !u.pathname.startsWith(BASE)) return null;
+  const p = u.pathname.slice(BASE.length);
+  if(/\.[a-z0-9]+$/i.test(p) || p.startsWith("guida") || p.startsWith("html/")) return null;   // file e pagina guida: caricamento normale
+  return {path: p + u.search};
+}
+
 document.addEventListener("click", e => {
+  if(e.target.closest("[data-menuclose]")){ menu(false); return; }
   const f = e.target.closest("[data-fav]");
-  if(f){ e.stopPropagation(); const id = f.dataset.fav; state.fav.has(id) ? state.fav.delete(id) : state.fav.add(id); LS.set("fr_fav", [...state.fav]); rerender(); return; }
-  if(e.target.closest("[data-embed],img[data-zoom],a")) return;
-  const c = e.target.closest("[data-spot]");
-  if(c){ location.hash = "#spot-" + c.dataset.spot; return; }
-  const sc = e.target.closest("[data-sortcol]");
-  if(sc){ const k = sc.dataset.sortcol; state.dir = state.sort === k ? -state.dir : (k === "name" || k === "danger" ? -1 : -1); state.sort = k; LS.set("fr_sort", k); renderList(); return; }
+  if(f){ e.preventDefault(); e.stopPropagation(); const id = f.dataset.fav; state.fav.has(id) ? state.fav.delete(id) : state.fav.add(id); LS.set("fr_fav", [...state.fav]); rerender(); return; }
   const md = e.target.closest("[data-modo]");
   if(md){ state.modo = md.dataset.modo; LS.set("fr_modo", state.modo); rerender(); return; }
+  const go = e.target.closest("[data-goto]");
+  if(go){
+    const t = document.getElementById(go.dataset.goto);
+    go.parentElement.querySelectorAll("[data-goto]").forEach(b => b.classList.toggle("on", b === go));
+    if(t) t.scrollIntoView({behavior: "smooth", block: "start"});
+    return;
+  }
+  const bk = e.target.closest("[data-back]");
+  if(bk){ e.preventDefault(); if(passi > 0){ passi--; history.back(); } else naviga(bk.getAttribute("href") || ""); return; }
+  const a = e.target.closest("a[href]");
+  if(a){
+    const li = linkInterno(a, e);
+    if(!li) return;
+    e.preventDefault();
+    if(!$("#menu").hidden) menu(false);
+    if(li.ancora != null){ const t = document.getElementById(li.ancora); if(t){ t.setAttribute("tabindex", "-1"); t.focus(); t.scrollIntoView(); } return; }
+    naviga(li.path);
+    return;
+  }
+  if(e.target.closest("[data-embed],img[data-zoom]")) return;
+  const c = e.target.closest("[data-spot]");
+  if(c){ naviga(percorsoSpot(c.dataset.spot)); return; }
+  const sc = e.target.closest("[data-sortcol]");
+  if(sc){ const k = sc.dataset.sortcol; state.dir = state.sort === k ? -state.dir : (k === "name" || k === "danger" ? -1 : -1); state.sort = k; LS.set("fr_sort", k); renderList(); return; }
   const vw = e.target.closest("[data-view]");
   if(vw){ state.view = vw.dataset.view; LS.set("fr_view", state.view); renderList(); return; }
-  const a = e.target.closest("[data-area]");
-  if(a){ state.area = a.dataset.area; LS.set("fr_area", state.area); renderList(); return; }
+  const ar = e.target.closest("[data-area]");
+  if(ar){
+    const z = ar.dataset.area;
+    if(z === "★ Preferiti"){ state.area = z; renderList(); return; }
+    naviga(z === "Tutti" ? "spot/" : percorsoArea(z));
+    return;
+  }
   const pm = e.target.closest("[data-pvmode]");
   if(pm){ state.planMode = pm.dataset.pvmode; LS.set("fr_pvmode", state.planMode); renderPlan(); return; }
   const pa = e.target.closest("[data-planarea]");
   if(pa){ state.planArea = pa.dataset.planarea; renderPlan(); return; }
   const ca = e.target.closest("[data-camarea]");
   if(ca){ state.camArea = ca.dataset.camarea; renderCams(); return; }
-  if(e.target.closest("[data-back]")) history.length > 1 ? history.back() : (location.hash = "#spot");
 });
 $("#sort").addEventListener("change", e => { state.sort = e.target.value; state.dir = -1; LS.set("fr_sort", state.sort); renderList(); });
 $("#refresh").addEventListener("click", () => loadAll());
-window.addEventListener("hashchange", route);
+window.addEventListener("popstate", () => { rotta = leggiPercorso(percorsoAttuale()); route(); });
+// un vecchio link con # aperto mentre il sito è già caricato
+window.addEventListener("hashchange", () => { const v = daHash(location.hash); if(v != null) naviga(v, true); });
 DESKTOP_MQ.addEventListener("change", route);
 
 /* ---------- avvio ---------- */

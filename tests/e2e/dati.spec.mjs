@@ -70,7 +70,7 @@ test.describe("Lettura dati", () => {
 test.describe("Info e guida", () => {
   test("pagina info: si apre, sezioni principali e torna al sito", async ({page, errori}) => {
     await page.goto("/html/info.html");
-    await expect(page).toHaveTitle(/Info e guida/);
+    await expect(page).toHaveTitle(/Guida/);
     for(const t of ["Pericolo valanghe", "Versione semplice", "Calibrazione"]) await expect(page.locator("body")).toContainText(t);
   });
 });

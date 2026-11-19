@@ -39,13 +39,13 @@ test.describe("Pagina spot · versione completa", () => {
     await apri(page, "#spot", {modo: "completa"});
     for(const s of SPOTS){
       await page.evaluate(id => { location.hash = "#spot-" + id; }, s.id);
-      await expect(page.locator("#v-detail h2")).toHaveText(s.name);
+      await expect(page.locator("#cover h1")).toHaveText(s.name);
     }
   });
 
   test("spot inesistente: torna alla lista", async ({page, errori}) => {
     await apri(page, "#spot-non-esiste", {modo: "completa"});
-    await expect(page).toHaveURL(/#spot$/);
+    await expect(page).toHaveURL(/:\d+\/$/);
   });
 
   test("calibrazione per zona: fattori e nota della zona dello spot", async ({page, errori}) => {

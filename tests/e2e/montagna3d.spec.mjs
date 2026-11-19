@@ -10,7 +10,7 @@ test.describe("Montagna in 3D (PeakVisor)", () => {
       await box.getByRole("button", {name: /Apri la montagna in 3D/}).click();
       const f = box.locator("iframe");
       await expect(f).toHaveAttribute("src", /^https:\/\/peakvisor\.com\/embed\?lat=46\.\d+&lng=11\.\d+/);
-      await expect(page).toHaveURL(/#spot-sella$/);
+      await expect(page).toHaveURL(/\/spot\/sella\/$/);
       await senzaScrollLaterale(page);
     });
   }

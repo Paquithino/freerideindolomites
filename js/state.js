@@ -9,8 +9,8 @@ export const LS = {
 };
 export const r0 = v => v == null || isNaN(v) ? "–" : Math.round(v);
 export const r1 = v => v == null || isNaN(v) ? "–" : (Math.round(v * 10) / 10).toLocaleString("it-IT");
-export const scoreColor = s => s >= 7 ? "#22d3ee" : s >= 5 ? "#4ade80" : s >= 3 ? "#fbbf24" : "#94a3b8";
-export const snowColor = cm => cm < 1 ? null : cm < 5 ? "#bae6fd" : cm < 10 ? "#7dd3fc" : cm < 20 ? "#38bdf8" : cm < 35 ? "#a78bfa" : "#e879f9";
+export const scoreColor = s => s >= 7 ? "#0369a1" : s >= 5 ? "#15803d" : s >= 3 ? "#b45309" : "#64748b";
+export const snowColor = cm => cm < 1 ? null : cm < 5 ? "#e0f2fe" : cm < 10 ? "#bae6fd" : cm < 20 ? "#7dd3fc" : cm < 35 ? "#38bdf8" : "#0ea5e9";
 
 /* fetch con nuovi tentativi: errori di rete, 429 (troppe richieste) e 5xx (server)
    capitano ogni tanto e di solito passano dopo pochi secondi */
