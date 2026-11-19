@@ -128,6 +128,10 @@ Piano gratuito: 100.000 richieste/giorno.
 - Che le immagini webcam si vedano. Se no, attiva il worker.
 - **Diritti webcam**: le immagini sono dei gestori. Per un uso pubblico è corretto chiedere il permesso (o usare i loro codici di embed) e mantenere il credito, già mostrato sotto ogni immagine.
 
+## Dati neve del Veneto
+
+La calibrazione usa anche la neve fresca giornaliera di 11 stazioni automatiche e della stazione manuale di Arabba, forniti dal **Centro Valanghe di Arabba (ARPAV)** su richiesta: vedi `dati-storici/LEGGIMI.md`.
+
 ## Test automatici
 
 Due livelli, tutti offline (le fonti esterne vengono simulate, quindi i test non dipendono dal meteo del giorno):
