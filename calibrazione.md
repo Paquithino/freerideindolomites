@@ -38,7 +38,7 @@ Per ogni inverno i fattori sono calcolati sugli altri inverni e messi alla prova
 | 2 giorno/i | 2419 | 4,1 → 4,2 cm | 497 → 503 su 616 | 0,67 → 0,71 | 14 → 35 |
 | 3 giorno/i | 2516 | 5,3 → 5,5 cm | 409 → 436 su 616 | 0,52 → 0,64 | 35 → 62 |
 
-## Regimi dei venti (stazioni dell'Alto Adige)
+## Regimi dei venti (tutte le stazioni)
 
 Rapporto tra neve misurata e prevista (mediana dei modelli, 1 giorno prima): sopra 1 i modelli sottostimano.
 
@@ -63,6 +63,18 @@ Nevicate di almeno 10 cm: neve prevista rispetto a quella misurata.
 | GFS · NOAA (USA) | 0,75 (92) | 0,57 (90) | 0,51 (90) |
 | Météo-France | 0,71 (147) | 0,63 (147) | 0,54 (147) |
 
+Fattori usati dal sito per gli spot di questa zona (alta-badia, val-gardena, val-di-fassa, tre-cime, plan-de-corones, alpe-di-siusi, latemar, plose):
+
+| Modello | Fattore | Peso |
+|---|---|---|
+| ICON · DWD (Germania) | ×1,05 | 0,93 |
+| ICON-2I · ItaliaMeteo | ×0,88 | 1,11 |
+| ECMWF (Europa) | ×0,95 | 1,09 |
+| GFS · NOAA (USA) | ×1,09 | 0,97 |
+| Météo-France | ×1,04 | 0,89 |
+
+Verifica fuori campione a 1 giorno con i fattori di zona: nevicate ≥10 cm prese 131 → 134 su 147, falsi allarmi 9 → 27.
+
 Regimi dei venti (rapporto misurata / prevista, 1 giorno prima):
 
 | Regime | Giornate | Misurata (cm) | Prevista (cm) | Rapporto |
@@ -85,6 +97,18 @@ Nevicate di almeno 10 cm: neve prevista rispetto a quella misurata.
 | ECMWF (Europa) | 0,9 (134) | 0,8 (143) | 0,56 (143) |
 | GFS · NOAA (USA) | 0,77 (300) | 0,68 (297) | 0,73 (291) |
 | Météo-France | 0,9 (312) | 0,77 (312) | 0,7 (312) |
+
+Fattori usati dal sito per gli spot di questa zona (cortina, cadore, marmolada, sella, pordoi, san-martino, val-zoldana, arabba, lagazuoi, giau, civetta, san-pellegrino, sappada, forni-di-sopra, piancavallo, zoncolan, pramollo, sella-nevea, tarvisio):
+
+| Modello | Fattore | Peso |
+|---|---|---|
+| ICON · DWD (Germania) | ×1,06 | 0,9 |
+| ICON-2I · ItaliaMeteo | ×0,87 | 1,12 |
+| ECMWF (Europa) | ×1,07 | 1,07 |
+| GFS · NOAA (USA) | ×1,12 | 0,93 |
+| Météo-France | ×0,9 | 0,99 |
+
+Verifica fuori campione a 1 giorno con i fattori di zona: nevicate ≥10 cm prese 428 → 434 su 469, falsi allarmi 10 → 10.
 
 Regimi dei venti (rapporto misurata / prevista, 1 giorno prima):
 
