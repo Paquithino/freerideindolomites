@@ -40,7 +40,7 @@ Le regole sono in fondo a `css/style.css` (sezioni TABLET e DESKTOP). Per provar
 index.html              pagina principale
 html/info.html          guida: come leggere i dati, fonti, avvertenze
 css/style.css           grafica (colori in :root all'inizio del file)
-js/config.js            ← SPOT, WEBCAM, slug snow-forecast, URL del worker: si modifica solo qui
+js/config.js            ← SPOT, WEBCAM, URL del worker: si modifica solo qui
 js/state.js             stato e funzioni condivise
 js/meteo.js             previsioni (Open-Meteo), indice Powder, pianificazione
 js/valanghe.js          bollettini AINEVA / servizi provinciali (formato EAWS)
@@ -65,15 +65,8 @@ Per aggiungerne uno copia un blocco `{id:..., name:..., ...}` in `js/config.js` 
 | Meteo in quota, neve oraria e 10 giorni | Open-Meteo (CC BY 4.0) | API pubblica, senza chiave |
 | Previsione FreeRide | Open-Meteo, modelli separati: ICON (DWD), ICON-2I (ItaliaMeteo), ECMWF, GFS, Météo-France (`js/modelli.js`) | mediana + forbice min–max, rapporto neve/acqua variabile con la temperatura, regime dei venti a 700 hPa |
 | Neve misurata | Stazioni automatiche Meteo Alto Adige e Meteotrentino, via avalanche.report (`weather_stations/stations.geojson`); stazioni nivometriche ARPAV Veneto, file XML in tempo reale (`meteo.arpa.veneto.it/meteo/dati_meteo/xml/`, CC BY 4.0, solo tramite automazione) | 3 stazioni più vicine per spot (entro 20 km, pesando il dislivello) |
-| Previsione neve "di riferimento" | snow-forecast.com | widget gratuito (campo `sfWidget`); le loro condizioni consentono il link solo alla home page |
 | Valanghe | Bollettini ufficiali AINEVA (Veneto) e servizi provinciali Alto Adige/Trentino (membri AINEVA, pubblicati con Euregio), FVG | file EAWS da static.avalanche.report |
 | Webcam | Panomax, feratel, realcam, meteocam (immagini usate da fassa.com e altabadia.org) | immagine diretta o tramite worker |
-
-### snow-forecast.com
-I dati di snow-forecast non sono un'API libera: il sito offre gratis un **widget da incollare** (con link obbligatorio a snow-forecast.com) e dei **feed JSON/XML su richiesta**.
-- Widget: vai su https://www.snow-forecast.com/pages/configure_feed1, scegli la località, copia il codice e incollalo nel campo `sfWidget` dello spot in `js/config.js`.
-- Feed JSON: se snow-forecast te lo concede, il worker può leggerlo e il sito può usarlo al posto di Open-Meteo.
-- Slug verificati: `Cortina`, `Arabba`, `Canazei`. Gli altri (`Corvara`, `Selva-Val-Gardena`, …) vanno controllati aprendo il link nella scheda dello spot.
 
 ## Automazione dati (GitHub Actions)
 Il file `.github/workflows/aggiorna-sito.yml` gira **ogni ora**, a ogni push su `main` e a mano (scheda Actions → "Aggiorna dati e sito" → Run workflow):
@@ -92,7 +85,7 @@ Se `public/dati/ultimo.json` manca o ha più di 3 ore, il sito scarica i dati di
 
 ## Neve per quota
 
-`js/quote.js`: per ogni spot la previsione alle tre quote di `spot.q` (Vetta / Metà / Base, da snow-forecast), con neve, pioggia o mista decise ora per ora dalla temperatura alla quota e quota neve stimata dallo zero termico. I 5 modelli del confronto si scaricano ogni 3 ore (negli altri giri si riusano), così le richieste a Open-Meteo restano sotto i limiti anche con le tre quote.
+`js/quote.js`: per ogni spot la previsione alle tre quote di `spot.q` (Vetta / Metà / Base), con neve, pioggia o mista decise ora per ora dalla temperatura alla quota e quota neve stimata dallo zero termico. I 5 modelli del confronto si scaricano ogni 3 ore (negli altri giri si riusano), così le richieste a Open-Meteo restano sotto i limiti anche con le tre quote.
 
 ## Calibrazione dei modelli
 

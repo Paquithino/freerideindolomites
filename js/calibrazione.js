@@ -28,8 +28,17 @@ export function weightedMedian(pairs){
   return p[p.length - 1].v;
 }
 
-/* fattore e peso di un modello (neutri se manca la calibrazione) */
-export function calOf(cal, mid){
+/* fattore e peso di un modello (neutri se manca la calibrazione).
+   Con lo spot: si usano i fattori della sua zona (Alto Adige, Veneto…) se quella zona ha abbastanza dati
+   per quel modello, altrimenti quelli generali. */
+export function zonaDi(cal, spotId){
+  const z = spotId && cal && cal.spotZona && cal.spotZona[spotId];
+  return z && cal.zone && cal.zone[z] ? z : null;
+}
+export function calOf(cal, mid, spotId){
+  const z = zonaDi(cal, spotId);
+  const mz = z && cal.zone[z].models && cal.zone[z].models[mid];
+  if(mz && mz.ok) return {factor: mz.factor, weight: mz.weight, zona: z};
   const m = cal && cal.models && cal.models[mid];
   return m && m.ok ? {factor: m.factor, weight: m.weight} : {factor: 1, weight: 1};
 }
@@ -46,7 +55,7 @@ const giornataUtile = (o, f) => o != null && f != null && (o >= SOGLIA_CM || f >
      non la scala generale, perché l'aumento dell'altezza neve sulle stazioni è sempre un po' meno
      della neve caduta (assestamento, vento) e non vogliamo "dimezzare" la neve per questo;
    - il peso è l'inverso dell'errore medio dopo la correzione. */
-function fit(righe, modelli, leads){
+export function fit(righe, modelli, leads){
   const models = {};
   for(const mid of modelli){
     let so = 0, sf = 0, n = 0, nEv = 0;
@@ -80,7 +89,7 @@ function fit(righe, modelli, leads){
 }
 
 /* errore della previsione combinata su un insieme di righe */
-function ensembleError(righe, modelli, cal, L){
+export function ensembleError(righe, modelli, cal, L){
   const err = [], bias = [];
   let colpi = 0, grosse = 0, falsi = 0, soG = 0, seG = 0;
   for(const r of righe){

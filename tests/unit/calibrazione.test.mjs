@@ -67,3 +67,27 @@ test("calibra: pochi dati = modello neutro", () => {
   const c = calibra(poche, ["alto", "basso", "giusto"]);
   for(const m of Object.values(c.models)) assert.equal(m.ok, false);
 });
+
+/* ---------- fattori per zona ---------- */
+import { zonaDi } from "../../js/calibrazione.js";
+const CAL = {
+  models: {icon: {ok: true, factor: 1.06, weight: 0.9}, gfs: {ok: true, factor: 1.12, weight: 0.94}},
+  zone: {bz: {nome: "Alto Adige", models: {icon: {ok: true, factor: 1.05, weight: 0.94}, gfs: {ok: false, factor: 1, weight: 1}}},
+         ve: {nome: "Veneto", models: {icon: {ok: true, factor: 1.07, weight: 0.88}}}},
+  spotZona: {"alta-badia": "bz", cortina: "ve", sappada: "ve", fantasma: "zz"}
+};
+test("fattori per zona: ogni spot usa quelli della sua zona", () => {
+  assert.deepEqual(calOf(CAL, "icon", "alta-badia"), {factor: 1.05, weight: 0.94, zona: "bz"});
+  assert.deepEqual(calOf(CAL, "icon", "cortina"), {factor: 1.07, weight: 0.88, zona: "ve"});
+});
+test("fattori per zona: modello con pochi dati nella zona → fattore generale", () => {
+  assert.deepEqual(calOf(CAL, "gfs", "alta-badia"), {factor: 1.12, weight: 0.94});
+  assert.deepEqual(calOf(CAL, "gfs", "cortina"), {factor: 1.12, weight: 0.94}, "modello assente nella zona");
+});
+test("fattori per zona: spot senza zona, zona sconosciuta o calibrazione vecchia → generale", () => {
+  assert.deepEqual(calOf(CAL, "icon", "brenta"), {factor: 1.06, weight: 0.9});
+  assert.equal(zonaDi(CAL, "fantasma"), null);
+  assert.deepEqual(calOf(CAL, "icon", "fantasma"), {factor: 1.06, weight: 0.9});
+  assert.deepEqual(calOf({models: CAL.models}, "icon", "cortina"), {factor: 1.06, weight: 0.9});
+  assert.deepEqual(calOf(CAL, "icon"), {factor: 1.06, weight: 0.9}, "senza spot: generale");
+});

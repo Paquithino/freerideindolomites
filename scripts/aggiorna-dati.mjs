@@ -68,10 +68,16 @@ async function caricaCalibrazione(){
     if(c.metodo !== METODO){ log("calibrazione: fatta con un metodo vecchio, la ignoro (rilancia \"Calibra i modelli\")"); return; }
     const models = {};
     for(const id in c.models){ const m = c.models[id]; models[id] = {ok: m.ok, n: m.n, factor: m.factor, weight: m.weight}; }
-    const v = c.verifica && c.verifica[1];
+    const ver = v => v ? {n: v.calibrato.n, nevicate: v.calibrato.nevicateGrosse, presePrima: v.grezzo.prese, preseDopo: v.calibrato.prese} : null;
+    const slim = ms => Object.fromEntries(Object.entries(ms || {}).map(([id, m]) => [id, {ok: m.ok, n: m.n, factor: m.factor, weight: m.weight}]));
+    // fattori per zona (Alto Adige, Veneto…): ogni spot usa quelli della sua zona
+    const zone = c.zone ? Object.fromEntries(Object.entries(c.zone).map(([z, x]) => [z, {nome: x.nome, stazioni: x.stazioni, models: slim(x.models), verifica: ver(x.verifica1)}])) : null;
     state.cal = {generated: c.generated, stagioni: c.stagioni, stazioni: (c.stazioni || []).length, models,
-      verifica: v ? {n: v.calibrato.n, nevicate: v.calibrato.nevicateGrosse, presePrima: v.grezzo.prese, preseDopo: v.calibrato.prese} : null};
+      verifica: ver(c.verifica && c.verifica[1]), ...(zone ? {zone, spotZona: c.spotZona || {}} : {})};
     log("calibrazione:", Object.entries(models).map(([k, m]) => `${k} ×${m.factor} peso ${m.weight.toFixed(2)}${m.ok ? "" : " (neutro)"}`).join(", "));
+    if(zone) for(const z in zone) log(`  zona ${zone[z].nome}: ` + Object.entries(zone[z].models).map(([k, m]) => `${k} ×${m.factor}${m.ok ? "" : " (generale)"}`).join(", ")
+      + ` · spot: ${Object.values(c.spotZona || {}).filter(x => x === z).length}`);
+    else log("  calibrazione senza fattori per zona: rilancia \"Calibra i modelli\" per averli");
   }catch(e){ log("calibrazione: non presente, modelli non corretti"); }
 }
 
@@ -164,7 +170,8 @@ async function main(){
     await mkdir(ARCH_DIR, {recursive: true});
     await writeFile(archFile, JSON.stringify(roundOnly({date: today, generated: new Date().toISOString(), demo: DEMO, models: MODELS.map(m => m.id),
       // i cm dei modelli sono già moltiplicati per questi fattori (dividere per riavere i valori grezzi)
-      calFactors: state.cal ? Object.fromEntries(Object.entries(state.cal.models).map(([k, m]) => [k, m.ok ? m.factor : 1])) : null, spots}), null, 1));
+      calFactors: state.cal ? Object.fromEntries(Object.entries(state.cal.models).map(([k, m]) => [k, m.ok ? m.factor : 1])) : null,
+      calZona: state.cal && state.cal.spotZona ? state.cal.spotZona : null, spots}), null, 1));
     log("scritto archivio:", archFile.replace(ROOT + "/", ""));
   }
   log(`fatto in ${((Date.now() - t0) / 1000).toFixed(1)} s`);

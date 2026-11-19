@@ -38,3 +38,12 @@ test("inverno in corso senza dati: saltato senza errori", () => {
   assert.match(stdout, /nessun dato misurato: salto/);
   assert.match(res.fonti, /Centro Valanghe di Arabba/);
 });
+
+test("fattori per zona: zona Veneto calcolata e assegnata agli spot vicini, Friuli compreso", () => {
+  assert.ok(res.zone && res.zone.ve, "zona Veneto");
+  assert.equal(res.zone.ve.stazioni, 12);
+  for(const m of Object.values(res.zone.ve.models)) assert.ok(m.factor >= 0.6 && m.factor <= 1.6);
+  assert.ok(Object.values(res.spotZona).every(z => z === "ve"), "c'è solo la rete Veneto");
+  assert.equal(res.spotZona.sappada, "ve", "Friuli → Veneto");
+  assert.match(stdout, /zona Veneto: icon ×/);
+});

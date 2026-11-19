@@ -47,4 +47,30 @@ test.describe("Pagina spot · versione completa", () => {
     await apri(page, "#spot-non-esiste", {modo: "completa"});
     await expect(page).toHaveURL(/#spot$/);
   });
+
+  test("calibrazione per zona: fattori e nota della zona dello spot", async ({page, errori}) => {
+    const cal = {stagioni: ["2024-25"], stazioni: 28,
+      models: {icon: {ok: true, factor: 1.06, weight: 0.91}, gfs: {ok: true, factor: 1.12, weight: 0.94}},
+      zone: {bz: {nome: "Alto Adige", stazioni: 16, models: {icon: {ok: true, factor: 1.05, weight: 0.94}}, verifica: {nevicate: 147, presePrima: 131, preseDopo: 133}},
+             ve: {nome: "Veneto", stazioni: 12, models: {icon: {ok: true, factor: 1.07, weight: 0.88}}, verifica: {nevicate: 469, presePrima: 428, preseDopo: 434}}},
+      spotZona: {"alta-badia": "bz", cortina: "ve"}};
+    await apri(page, "#spot-alta-badia", {modo: "completa", snapshot: s => { s.cal = cal; }});
+    const m = page.locator(".o-models");
+    await expect(m).toContainText("zona Alto Adige");
+    await expect(m).toContainText("×1,05");
+    await expect(m).toContainText("da 131 a 133 su 147");
+    await page.evaluate(() => { location.hash = "#spot-cortina"; });
+    await expect(page.locator(".o-models")).toContainText("zona Veneto");
+    await expect(page.locator(".o-models")).toContainText("×1,07");
+    await page.evaluate(() => { location.hash = "#spot-brenta"; });
+    await expect(page.locator(".o-models")).toContainText("stazioni di Alto Adige e Veneto");
+    await expect(page.locator(".o-models")).toContainText("×1,06");
+  });
+
+  test("snow-forecast rimosso: nessuna sezione né link", async ({page, errori}) => {
+    await apri(page, "#spot-cortina", {modo: "completa"});
+    await expect(page.locator(".o-sf")).toHaveCount(0);
+    await expect(page.locator('a[href*="snow-forecast"]')).toHaveCount(0);
+    await expect(page.locator("footer")).not.toContainText("snow-forecast");
+  });
 });

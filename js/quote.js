@@ -1,5 +1,5 @@
 /* =========================================================
-   NEVE PER QUOTA — Vetta / Metà / Base, come snow-forecast
+   NEVE PER QUOTA — Vetta / Metà / Base
    Per ogni spot chiediamo a Open-Meteo la previsione alle tre quote (spot.q):
    Open-Meteo corregge la temperatura per la quota richiesta, la precipitazione
    (l'acqua) resta quella del modello. A ogni quota decidiamo noi, ora per ora,
@@ -132,7 +132,7 @@ export function quoteHTML(spot){
     <thead><tr><th class="l">cm di neve</th>${dates.map((d, i) => `<th>${i === 0 ? "Oggi" : dayName(d)}<br>${dayNum(d)}</th>`).join("")}</tr></thead>
     <tbody>${righe}${zt}</tbody></table></div>
     <p class="small" style="margin:8px 0 0">❄️ neve asciutta (sotto −4 °C) · ❄ neve · 💧 neve bagnata · 🌨 neve e pioggia · 🌧 pioggia. Sotto ogni valore: temperatura minima/massima del giorno a quella quota.
-    Quote come snow-forecast: base in paese, vetta in cima agli impianti${spot.q && spot.q.nota ? ` (qui ${esc(spot.q.nota)})` : ""}, metà a metà. Quota neve stimata 300 m sotto lo zero termico durante le precipitazioni.
+    Quote: base in paese, vetta in cima agli impianti${spot.q && spot.q.nota ? ` (qui ${esc(spot.q.nota)})` : ""}, metà a metà. Quota neve stimata 300 m sotto lo zero termico durante le precipitazioni.
     La quantità d'acqua è la stessa per le tre quote (i modelli vedono solo in parte l'effetto delle montagne): cambia se cade come neve o pioggia e quanto rende.</p>`;
 }
 

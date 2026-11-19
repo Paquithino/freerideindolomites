@@ -1,7 +1,8 @@
-import { SPOTS, AREAS, AV_LINKS, PROV_NAME, FORECAST_DAYS, SF_HOME } from "./config.js";
+import { SPOTS, AREAS, AV_LINKS, PROV_NAME, FORECAST_DAYS } from "./config.js";
 import { $, esc, LS, r0, r1, scoreColor, snowColor, state, unpackTimes } from "./state.js";
 import { wmo, dirName, metrics, dailyPlan, bestDay, dayName, dayNum, isWeekend, loadWeather, demoWeather, romeNowISO } from "./meteo.js";
 import { giudizio } from "./giudizio.js";
+import { calOf, zonaDi } from "./calibrazione.js";
 import { peakvisorHTML } from "./peakvisor.js";
 import { DNAME, avForSpot, avBlockHTML, dsq, loadAvalanche, bollettiniPerServizio, gradiHTML, problemiHTML, testiHTML, intestazione, stripTags, PROB } from "./valanghe.js";
 import { camsHTML } from "./webcam.js";
@@ -315,7 +316,7 @@ function windModelsHTML(e, dates){
   if(!dates.some(d => e.days[d].wind && e.days[d].wind.w7)) return "";
   const wc = v => v == null ? `<td class="z">n.d.</td>` : `<td class="${v >= 50 ? "wb" : v >= 30 ? "ww" : ""}">${r0(v)}</td>`;
   const rows = MODELS.filter(m => e.models.includes(m.id)).map(m =>
-    `<tr><td class="l">${esc(m.label)}${calTag(m.id)}</td>${dates.map(d => { const w = e.days[d].wind; const k = w && w.regimes[m.id];
+    `<tr><td class="l">${esc(m.label)}</td>${dates.map(d => { const w = e.days[d].wind; const k = w && w.regimes[m.id];
       return w && w.models[m.id] != null ? `<td class="${w.models[m.id] >= 50 ? "wb" : w.models[m.id] >= 30 ? "ww" : ""}">${r0(w.models[m.id])}<span>${k ? regimeLabel(k).icon : ""}</span></td>` : `<td class="z">n.d.</td>`; }).join("")}</tr>`).join("");
   return `<h5 class="subh">Vento in quota (~3.000 m) · massimo del giorno, km/h</h5>
     <div class="st-wrap"><table class="mdl wind">
@@ -334,7 +335,7 @@ function modelsHTML(spot){
   const dates = Object.keys(e.days).filter(d => d >= today).slice(0, 6);
   const cell = v => v == null ? `<td class="z">n.d.</td>` : `<td class="${v >= 1 ? "s" : "z"}" ${v >= 1 ? `style="--sc:${snowColor(v) || "#bae6fd"}"` : ""}>${v >= 0.5 ? r0(v) : "–"}</td>`;
   const rows = MODELS.filter(m => e.models.includes(m.id)).map(m =>
-    `<tr><td class="l">${esc(m.label)}${calTag(m.id)}</td>${dates.map(d => cell(e.days[d].models[m.id])).join("")}</tr>`).join("");
+    `<tr><td class="l">${esc(m.label)}${calTag(m.id, spot.id)}</td>${dates.map(d => cell(e.days[d].models[m.id])).join("")}</tr>`).join("");
   const ag = agreement(e.n72);
   return `<div class="st-wrap"><table class="mdl">
     <thead><tr><th class="l">cm di neve</th>${dates.map((d, i) => `<th>${i === 0 ? "Oggi" : dayName(d)}<br>${dayNum(d)}</th>`).join("")}</tr></thead>
@@ -343,31 +344,28 @@ function modelsHTML(spot){
     </tbody></table></div>
     ${ag ? `<p class="small" style="margin:8px 0 0"><span class="agr agr-${ag.lvl}">● ${ag.txt}</span> sulle prossime 72 ore (${r0(e.n72.min)}–${r0(e.n72.max)} cm).</p>` : ""}
     ${windModelsHTML(e, dates)}
-    <p class="small" style="margin:6px 0 0">${calNote()}</p>`;
+    <p class="small" style="margin:6px 0 0">${calNote(spot.id)}</p>`;
 }
 /* fattore e peso della calibrazione accanto al nome del modello */
-function calTag(mid){
-  const m = state.cal && state.cal.models && state.cal.models[mid];
-  if(!m || !m.ok) return "";
+function calTag(mid, spotId){
+  if(!state.cal) return "";
+  const c = calOf(state.cal, mid, spotId);
+  if(c.factor === 1 && c.weight === 1) return "";
   const f = v => (Math.round(v * 100) / 100).toLocaleString("it-IT");
-  return `<span>×${f(m.factor)} · peso ${f(m.weight)}</span>`;
+  return `<span>×${f(c.factor)} · peso ${f(c.weight)}</span>`;
 }
-function calNote(){
+function calNote(spotId){
   const base = "Tutti i modelli usano lo stesso rapporto neve/acqua variabile con la temperatura.";
   const c = state.cal;
   if(!c) return base + " Per ora pesano tutti uguale: la calibrazione sulle stazioni non è ancora disponibile.";
-  const v = c.verifica;
-  return base + ` I cm sono corretti con la <b>calibrazione</b> su ${c.stazioni || "alcune"} stazioni dell'Alto Adige negli inverni ${(c.stagioni || []).join(", ")}: ×fattore = correzione dei cm, peso = quanto conta il modello nella Previsione FreeRide (chi ha sbagliato meno conta di più).`
+  const z = zonaDi(c, spotId), zn = z && c.zone[z];
+  const v = zn && zn.verifica ? zn.verifica : c.verifica;
+  const dove = zn ? `sulle stazioni della zona <b>${esc(zn.nome)}</b> (${zn.stazioni} stazioni)` : `su ${c.stazioni || "alcune"} stazioni di Alto Adige e Veneto`;
+  return base + ` I cm sono corretti con la <b>calibrazione</b> ${dove}, inverni ${(c.stagioni || []).join(", ")}: ×fattore = correzione dei cm, peso = quanto conta il modello nella Previsione FreeRide (chi ha sbagliato meno conta di più).`
     + (v && v.nevicate ? ` Nella verifica sugli inverni passati, a 1 giorno le nevicate di almeno 10 cm riconosciute sono passate da ${v.presePrima} a ${v.preseDopo} su ${v.nevicate}.` : "")
     + ` <a href="./html/info.html#calibrazione">Come funziona</a>`;
 }
 
-function sfHTML(spot){
-  return `<div class="sf">${spot.sfWidget
-      ? `<div class="widget">${spot.sfWidget}</div>`
-      : `<p class="note" style="margin:0 0 8px">Qui comparirà il widget gratuito di snow-forecast per ${esc(spot.name)} (da generare sul loro sito e incollare in <code>js/config.js</code>, campo <code>sfWidget</code>).</p>`}
-    <div class="links"><a class="lnk" href="${SF_HOME}" target="_blank" rel="noopener">snow-forecast.com</a></div></div>`;
-}
 function renderDetail(id){
   const s = SPOTS.find(x => x.id === id);
   if(!s){ location.hash = "#spot"; return; }
@@ -432,7 +430,6 @@ function renderDetail(id){
   if(!m){ main += sec("o-meas", "Neve misurata · stazioni vicine", stationsHTML(s)); main += sec("o-3d", "Montagna in 3D · scegli la linea", peakvisorHTML(s)); }
   side += sec("o-cam", "Webcam", camsHTML(s));
   side += sec("o-av", "Pericolo valanghe · bollettino ufficiale", avBlockHTML(s));
-  side += sec("o-sf", "Snow-forecast", sfHTML(s));
   $("#v-detail").innerHTML = `${head}<div class="dgrid"><div class="dcol dmain">${main}</div><div class="dcol dside">${side}</div></div>
     <div class="disc">Dati automatici e indicativi. Prima di uscire leggi il bollettino completo, osserva il terreno e porta ARTVA, pala e sonda.</div>`;
 }

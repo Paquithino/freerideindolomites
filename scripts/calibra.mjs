@@ -289,7 +289,25 @@ async function regimi(stazioni, st, ora = 8){
 function zona(righe){
   if(righe.length < 100) return {giornate: righe.length};
   const c = calibra(righe, MODELS.map(m => m.id));
-  return {giornate: righe.length, grosse: Object.fromEntries(Object.entries(c.models).map(([k, m]) => [k, m.grosse])), regimi: c.regimi, verifica1: c.verifica[1]};
+  return {giornate: righe.length, grosse: Object.fromEntries(Object.entries(c.models).map(([k, m]) => [k, m.grosse])), regimi: c.regimi, verifica1: c.verifica[1],
+    // fattori e pesi calcolati solo su questa zona (li usa il sito per gli spot della zona)
+    models: Object.fromEntries(Object.entries(c.models).map(([k, m]) => [k, {ok: m.ok, n: m.n, factor: m.factor, weight: m.weight, mae: m.mae}]))};
+}
+/* zona di calibrazione di ogni spot: la rete con la stazione più vicina (entro 25 km);
+   il Friuli, senza dati storici, usa il Veneto; gli altri spot lontani usano i fattori generali */
+const ZONA_KM = 25;
+function zonePerSpot(reti, zoneOk){
+  const out = {};
+  for(const sp of SPOTS){
+    let best = null;
+    for(const r of reti){
+      if(r.pioggia || !zoneOk.includes(r.id)) continue;
+      for(const x of r.staz){ const d = distKm(sp.lat, sp.lon, x.lat, x.lon); if(!best || d < best.d) best = {d, z: r.id}; }
+    }
+    if(best && best.d <= ZONA_KM) out[sp.id] = best.z;
+    else if(sp.area === "Friuli VG" && zoneOk.includes("ve")) out[sp.id] = "ve";
+  }
+  return out;
 }
 
 /* ---------- resoconto leggibile ---------- */
@@ -309,13 +327,20 @@ function resoconto(res, staz, righe){
   md += `\n## Verifica fuori campione\n\nPer ogni inverno i fattori sono calcolati sugli altri inverni e messi alla prova su quello. "Prima" = mediana semplice dei modelli, "dopo" = Previsione FreeRide calibrata.\n\n| Anticipo | Giornate | Errore medio prima → dopo | Nevicate ≥10 cm prese | Neve prevista nelle nevicate ≥10 cm | Falsi allarmi |\n|---|---|---|---|---|---|\n`;
   for(const L in res.verifica){ const v = res.verifica[L];
     md += `| ${L} giorno/i | ${v.calibrato.n} | ${f1(v.grezzo.mae)} → ${f1(v.calibrato.mae)} cm | ${v.grezzo.prese} → ${v.calibrato.prese} su ${v.calibrato.nevicateGrosse} | ${f2(v.grezzo.grosseRapporto)} → ${f2(v.calibrato.grosseRapporto)} | ${v.grezzo.falsiAllarmi} → ${v.calibrato.falsiAllarmi} |\n`; }
-  md += `\n## Regimi dei venti (stazioni dell'Alto Adige)\n\nRapporto tra neve misurata e prevista (mediana dei modelli, 1 giorno prima): sopra 1 i modelli sottostimano.\n\n| Regime | Giornate | Misurata (cm) | Prevista (cm) | Rapporto |\n|---|---|---|---|---|\n`;
+  md += `\n## Regimi dei venti (tutte le stazioni)\n\nRapporto tra neve misurata e prevista (mediana dei modelli, 1 giorno prima): sopra 1 i modelli sottostimano.\n\n| Regime | Giornate | Misurata (cm) | Prevista (cm) | Rapporto |\n|---|---|---|---|---|\n`;
   for(const k in res.regimi){ const g = res.regimi[k]; md += `| ${k} | ${g.giorni} | ${Math.round(g.misurata)} | ${Math.round(g.prevista)} | ${f2(g.rapporto)} |\n`; }
   for(const id in (res.perZona || {})){ const z = res.perZona[id];
     md += `\n## Zona: ${z.nome} (${z.giornate} giornate)\n\n`;
     if(!z.grosse){ md += "Troppe poche giornate per un'analisi separata.\n"; continue; }
     md += `Nevicate di almeno 10 cm: neve prevista rispetto a quella misurata.\n\n| Modello | 1 giorno | 2 giorni | 3 giorni |\n|---|---|---|---|\n`;
     for(const mid in z.grosse){ const g = z.grosse[mid]; md += `| ${lab(mid)} | ${[1, 2, 3].map(L => g[L].n ? `${f2(g[L].rapporto)} (${g[L].n})` : "–").join(" | ")} |\n`; }
+    if(z.models){
+      const sp = Object.entries(res.spotZona || {}).filter(([, x]) => x === id).map(([k]) => k);
+      md += `\nFattori usati dal sito per gli spot di questa zona${sp.length ? ` (${sp.join(", ")})` : ""}:\n\n| Modello | Fattore | Peso |\n|---|---|---|\n`;
+      for(const mid in z.models){ const m = z.models[mid]; md += `| ${lab(mid)} | ${m.ok ? "×" + f2(m.factor) : "generale"} | ${m.ok ? f2(m.weight) : "–"} |\n`; }
+      const v = z.verifica1;
+      if(v) md += `\nVerifica fuori campione a 1 giorno con i fattori di zona: nevicate ≥10 cm prese ${v.grezzo.prese} → ${v.calibrato.prese} su ${v.calibrato.nevicateGrosse}, falsi allarmi ${v.grezzo.falsiAllarmi} → ${v.calibrato.falsiAllarmi}.\n`;
+    }
     md += `\nRegimi dei venti (rapporto misurata / prevista, 1 giorno prima):\n\n| Regime | Giornate | Misurata (cm) | Prevista (cm) | Rapporto |\n|---|---|---|---|---|\n`;
     for(const k in z.regimi){ const g = z.regimi[k]; md += `| ${k} | ${g.giorni} | ${Math.round(g.misurata)} | ${Math.round(g.prevista)} | ${f2(g.rapporto)} |\n`; }
   }
@@ -325,6 +350,13 @@ function resoconto(res, staz, righe){
     if(!z.grosse){ md += "Troppe poche giornate.\n"; continue; }
     md += `Giornate con almeno 10 mm misurati:\n\n| Modello | 1 giorno | 2 giorni | 3 giorni |\n|---|---|---|---|\n`;
     for(const mid in z.grosse){ const g = z.grosse[mid]; md += `| ${lab(mid)} | ${[1, 2, 3].map(L => g[L].n ? `${f2(g[L].rapporto)} (${g[L].n})` : "–").join(" | ")} |\n`; }
+    if(z.models){
+      const sp = Object.entries(res.spotZona || {}).filter(([, x]) => x === id).map(([k]) => k);
+      md += `\nFattori usati dal sito per gli spot di questa zona${sp.length ? ` (${sp.join(", ")})` : ""}:\n\n| Modello | Fattore | Peso |\n|---|---|---|\n`;
+      for(const mid in z.models){ const m = z.models[mid]; md += `| ${lab(mid)} | ${m.ok ? "×" + f2(m.factor) : "generale"} | ${m.ok ? f2(m.weight) : "–"} |\n`; }
+      const v = z.verifica1;
+      if(v) md += `\nVerifica fuori campione a 1 giorno con i fattori di zona: nevicate ≥10 cm prese ${v.grezzo.prese} → ${v.calibrato.prese} su ${v.calibrato.nevicateGrosse}, falsi allarmi ${v.grezzo.falsiAllarmi} → ${v.calibrato.falsiAllarmi}.\n`;
+    }
     md += `\nRegimi dei venti (mm misurati / previsti, 1 giorno prima):\n\n| Regime | Giornate | Misurata (mm) | Prevista (mm) | Rapporto |\n|---|---|---|---|---|\n`;
     for(const r in z.regimi){ const g = z.regimi[r]; md += `| ${r} | ${g.giorni} | ${Math.round(g.misurata)} | ${Math.round(g.prevista)} | ${f2(g.rapporto)} |\n`; }
   }
@@ -434,10 +466,19 @@ async function main(){
 
   const res = {generated: new Date().toISOString(), ...calibra(righe, MODELS.map(m => m.id)),
     stazioni: staz.map(({code, name, alt, lat, lon, km, rete}) => ({code, name, alt, lat, lon, km, rete})),
-    perZona: Object.fromEntries(reti.filter(r => !r.pioggia).map(r => [r.id, {nome: r.nome, ...zona(righe.filter(x => x.rete === r.id))}])),
+    perZona: Object.fromEntries(reti.filter(r => !r.pioggia).map(r => [r.id, {nome: r.nome, stazioni: r.staz.length, ...zona(righe.filter(x => x.rete === r.id))}])),
     // Veneto: precipitazione (mm), tutte le giornate e solo quelle fredde (temperatura media ≤ 0 °C: precipitazione nevosa in quota)
     pioggiaVeneto: righePioggia.length ? {tutte: zona(righePioggia), fredde: zona(righePioggia.filter(r => r.tm != null && r.tm <= 0))} : null,
     fonti: "Altezza neve: Provincia autonoma di Bolzano, open data meteo (CC0); ARPAV – Centro Valanghe di Arabba (neve fresca alle 8:00, dati forniti su richiesta); ARPAV, pluviometri (CC BY 4.0). Previsioni passate e vento: Open-Meteo.com Previous Runs e Historical Forecast API (CC BY 4.0)."};
+  // fattori per zona: solo le zone con abbastanza giornate; ogni spot va nella zona della stazione più vicina
+  res.zone = Object.fromEntries(Object.entries(res.perZona).filter(([, z]) => z.models).map(([id, z]) => [id, {nome: z.nome, stazioni: z.stazioni, models: z.models, verifica1: z.verifica1}]));
+  res.spotZona = zonePerSpot(reti, Object.keys(res.zone));
+  for(const [id, z] of Object.entries(res.zone)){
+    const sp = Object.entries(res.spotZona).filter(([, x]) => x === id).map(([k]) => k);
+    log(`zona ${z.nome}: ` + Object.entries(z.models).map(([k, m]) => `${k} ×${m.factor.toFixed(2)}`).join(", ") + ` · ${sp.length} spot (${sp.join(", ")})`);
+  }
+  const fuori = SPOTS.filter(s => !res.spotZona[s.id]).map(s => s.id);
+  if(fuori.length) log(`fattori generali per: ${fuori.join(", ")}`);
   mkdirSync(OUT, {recursive: true});
   writeFileSync(join(OUT, "calibrazione.json"), JSON.stringify(res, null, 1));
   writeFileSync(join(OUT, "calibrazione.md"), resoconto(res, staz, righe));
