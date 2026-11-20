@@ -15,7 +15,7 @@
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#16222f" media="(prefers-color-scheme: dark)">
-<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="stylesheet" href="../css/style.css">
 </head>
@@ -31,18 +31,18 @@
         <button class="iconbtn menubtn" id="menuBtn" aria-label="Apri il menu" aria-expanded="false" aria-controls="menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
   </div>
 </header>
-<div class="cover" style="background-image:url('copertina.jpg')"><div class="cover-in wrap"><div class="cv-top"></div><div class="cv-title"><h1>Contatti</h1><p>Chi ha fatto questo sito e come scrivermi</p></div></div></div>
+<div class="cover"><picture class="cv-img" aria-hidden="true"><source media="(max-width:699px)" srcset="copertina-mobile.jpg"><img src="copertina.jpg" alt="" decoding="async" fetchpriority="high"></picture><div class="cover-in wrap"><div class="cv-top"></div><div class="cv-title"><h1>Contatti</h1><p>Chi ha fatto questo sito e come scrivermi</p></div></div></div>
 <main class="wrap ct" id="contenuto">
   <section class="sec ct-chi">
     <h2 class="sh">Chi ha fatto FreeRide in Dolomites</h2>
     <p>Ciao, sono <b>Francesco Fabbro</b>, ingegnere informatico e freerider. <b>FreeRide in Dolomites è stato ideato, progettato e realizzato interamente da me</b>: l'idea, la grafica, il codice, i testi, il metodo di calibrazione dei modelli e la raccolta automatica dei dati.</p>
     <p>L'ho costruito per avere in un unico posto, anche dal telefono, quello che serve per scegliere dove e quando trovare la neve migliore sulle Dolomiti e in Friuli, senza saltare tra dieci siti diversi.</p>
-    <a class="ct-cv" href="mailto:info@freerideindolomites.com?subject=FreeRide%20in%20Dolomites%20-%20suggerimento"><span><b>Contattami per migliorare il sito</b><small>info@freerideindolomites.com</small></span><i aria-hidden="true">→</i></a>
+    <a class="ct-cv" href="https://paquithino.github.io" target="_blank" rel="noopener author"><span><b>Guarda il mio curriculum</b><small>paquithino.github.io</small></span><i aria-hidden="true">→</i></a>
   </section>
   <section class="sec">
     <h2 class="sh">Contatti</h2>
     <ul class="ct-lista">
-      <li><span>Email</span><a href="mailto:info@freerideindolomites.com">info@freerideindolomites.com</a></li>
+      <!--EMAIL-->
       <li><span>Curriculum</span><a href="https://paquithino.github.io" target="_blank" rel="noopener">paquithino.github.io</a></li>
       <li><span>GitHub</span><a href="https://github.com/Paquithino" target="_blank" rel="noopener">github.com/Paquithino</a></li>
     </ul>
@@ -64,7 +64,6 @@
     </div>
     <nav class="piede-link" aria-label="Contatti e informazioni">
       <a href="contatti/">Contatti</a>
-      <a href="mailto:info@freerideindolomites.com">info@freerideindolomites.com</a>
       <a href="https://paquithino.github.io" target="_blank" rel="noopener">Curriculum</a>
       <a href="https://github.com/Paquithino" target="_blank" rel="noopener">GitHub</a>
       <a href="guida/">Guida e fonti</a>

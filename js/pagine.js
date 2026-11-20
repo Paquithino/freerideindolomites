@@ -17,6 +17,9 @@ import { esc } from "./state.js";
 
 export const SITO_NOME = "FreeRide in Dolomites";
 export const COPERTINA = "copertina.jpg";
+export const COPERTINA_MOBILE = "copertina-mobile.jpg";
+/* foto della copertina: ritaglio stretto sullo sciatore per il telefono, largo per il desktop */
+export const fotoCopertina = () => `<picture class="cv-img" aria-hidden="true"><source media="(max-width:699px)" srcset="${COPERTINA_MOBILE}"><img src="${COPERTINA}" alt="" decoding="async" fetchpriority="high"></picture>`;
 
 export const AREE = [
   {slug: "alto-adige", area: "Alto Adige", nome: "Alto Adige"},
@@ -136,7 +139,7 @@ export function coverHTML(r, quando, opz = {}){
   if(r.vista === "spot"){
     const s = SPOTS.find(x => x.id === r.id);
     const parti = GRUPPI_SPOT.map(g => [g.id, g.corto]);
-    return `<div class="cover-in wrap">
+    return `${fotoCopertina()}<div class="cover-in wrap">
       <div class="cv-top"><a class="cv-back" href="${percorsoArea(s.area)}" data-back>${ICO_INDIETRO}<span>Spot</span></a>
         ${opz.fav != null ? `<button class="cv-fav ${opz.fav ? "on" : ""}" data-fav="${s.id}" aria-label="${opz.fav ? "Togli dai preferiti" : "Aggiungi ai preferiti"}">${opz.fav ? "★" : "☆"}</button>` : ""}</div>
       <div class="cv-title"><h1>${esc(s.name)}</h1><p>${esc(s.area)} · ${mil(s.q.base)} – ${mil(s.q.top)} m</p></div>
@@ -145,7 +148,7 @@ export function coverHTML(r, quando, opz = {}){
   }
   const pills = `<nav class="pills" aria-label="Sezioni">${SEZIONI.map(x => `<a href="${x.path || "./"}" class="${x.tab === meta.tab ? "on" : ""}"${x.tab === meta.tab ? ' aria-current="page"' : ""}>${x.nome}</a>`).join("")}</nav>`;
   if(r.vista === "home"){
-    return `<div class="cover-in wrap"><div class="cv-top">${data}</div><h1 class="sr">${esc(meta.h1)}</h1>${pills}</div>`;
+    return `${fotoCopertina()}<div class="cover-in wrap"><div class="cv-top">${data}</div><h1 class="sr">${esc(meta.h1)}</h1>${pills}</div>`;
   }
-  return `<div class="cover-in wrap"><div class="cv-top">${data}</div><div class="cv-title"><h1>${esc(meta.h1)}</h1></div>${pills}</div>`;
+  return `${fotoCopertina()}<div class="cover-in wrap"><div class="cv-top">${data}</div><div class="cv-title"><h1>${esc(meta.h1)}</h1></div>${pills}</div>`;
 }
