@@ -522,7 +522,9 @@ function route(){
     else if(state.area !== "★ Preferiti") state.area = "Tutti";
     renderList();
   }
-  $("#cover").innerHTML = coverHTML(r, quando(), {fav: r.vista === "spot" ? state.fav.has(r.id) : null});
+  const cover = $("#cover"), foto = cover.querySelector(".cv-img");
+  cover.innerHTML = coverHTML(r, quando(), {fav: r.vista === "spot" ? state.fav.has(r.id) : null});
+  if(foto) cover.querySelector(".cv-img").replaceWith(foto);   // la foto resta quella già caricata
   $("#cover").classList.toggle("cv-spot", r.vista === "spot");
   document.body.dataset.vista = r.vista;
   document.querySelectorAll(".view").forEach(v => v.classList.toggle("on", v.id === view));

@@ -543,10 +543,15 @@ nav.tabs{display:none}
 .seg2 button.on{background:#fff;color:var(--tx);font-weight:700;box-shadow:0 1px 3px rgba(15,34,53,.18)}
 
 /* copertina con foto */
-.cover{position:relative;background:#27465f center 35%/cover no-repeat;color:#fff}
-.cover:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,34,53,.25) 0%,rgba(15,34,53,.45) 55%,rgba(15,34,53,.72) 100%)}
-.cover-in{position:relative;min-height:236px;display:flex;flex-direction:column;justify-content:space-between;gap:16px;padding-top:16px;padding-bottom:18px}
+.cover{position:relative;overflow:hidden;background:#27465f;color:#fff}
+/* foto: ritaglio stretto sullo sciatore (telefono) e largo (desktop), lo sciatore resta sempre in vista */
+.cv-img{position:absolute;inset:0}
+.cv-img img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 100%}
+.cover:before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(15,34,53,.25) 0%,rgba(15,34,53,.45) 55%,rgba(15,34,53,.72) 100%)}
+.cover-in{position:relative;z-index:2;min-height:236px;display:flex;flex-direction:column;justify-content:space-between;gap:16px;padding-top:16px;padding-bottom:18px}
 .cover.cv-spot .cover-in{min-height:250px}
+/* telefono: copertina un po' più alta, così lo sciatore sta tra la data e le pillole */
+@media (max-width:699px){ .cover-in{min-height:320px} .cover.cv-spot .cover-in{min-height:330px} }
 .cv-top{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:36px}
 .cv-date{display:inline-block;padding:6px 12px;border-radius:999px;background:rgba(15,34,53,.6);font-size:13.5px;font-weight:600;color:#fff}
 .cv-title h1{margin:0;font-family:var(--cond);font-weight:700;font-size:40px;line-height:1;color:#fff;text-wrap:balance}
@@ -741,11 +746,12 @@ table.tbl td.s{color:#06223a}
 }
 @media (min-width:960px){
   header.top .hbar{padding:0 24px}
-  .cover-in{min-height:220px}
-  .cover.cv-spot .cover-in{min-height:280px}
+  /* più alta su desktop: la foto è una fascia larga, così lo sciatore entra tutto */
+  .cover-in{min-height:clamp(300px,22vw,400px)}
+  .cover.cv-spot .cover-in{min-height:clamp(320px,24vw,420px)}
+  .cv-img img{object-position:50% 36%}
 }
 @media (min-width:1700px){ header.top .hbar{padding:0 32px} }
-.cover{background-position:center 45%}
 
 /* ---------- vento: icona unica (nome, direzione a vettore, intensità) ---------- */
 .vw{--vb:#f1f5f9;--vf:#334155;display:inline-flex;align-items:center;gap:3px;background:var(--vb);color:var(--vf);border-radius:8px;line-height:1.1;white-space:nowrap;font-variant-numeric:tabular-nums}
@@ -1063,8 +1069,7 @@ footer.piede{margin-top:40px;padding:26px 0 calc(28px + env(safe-area-inset-bott
   .hnav{margin-left:44px;gap:4px}
   .hnav a{font-size:16px;padding:11px 16px}
   /* copertina */
-  .cover-in{min-height:240px;padding-bottom:30px}
-  .cover.cv-spot .cover-in{min-height:300px}
+  .cover-in{padding-bottom:30px}
   .cv-title h1{font-size:68px;letter-spacing:-.01em;line-height:1}
   .cv-title p,.cv-meta{font-size:18px}
   .cover.cv-spot .pills{max-width:640px}
@@ -1081,7 +1086,6 @@ footer.piede{margin-top:40px;padding:26px 0 calc(28px + env(safe-area-inset-bott
   table.tbl td,table.tbl th{padding-top:9px;padding-bottom:9px}
   table.tbl td.l .tn{font-size:16px;white-space:nowrap;min-width:220px}
   table.tbl th{font-size:12px}
-  .cover:not(.cv-spot):not(:has(.cv-title)) .cover-in{min-height:150px}
   .list:not(.as-table){grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:18px}
   /* pagina spot: indice fisso a sinistra, contenuto a destra */
   .sp-lay{display:grid;grid-template-columns:220px minmax(0,1fr);gap:0 36px;align-items:start}

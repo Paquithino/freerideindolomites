@@ -111,3 +111,16 @@ test.describe("Pagine e navigazione", () => {
     await expect(page).toHaveURL(/\/valanghe\/$/);
   });
 });
+
+test("copertina: foto stretta sul telefono, larga sul computer, resta caricata cambiando pagina", async ({page, errori}) => {
+  await apri(page, "", {modo: "completa"});
+  const img = page.locator("#cover .cv-img img");
+  await expect(img).toHaveCount(1);
+  await expect.poll(() => img.evaluate(i => i.currentSrc)).toMatch(/copertina(-mobile)?\.jpg$/);
+  const stretta = await page.evaluate(() => matchMedia("(max-width: 699px)").matches);
+  expect(await img.evaluate(i => i.currentSrc)).toMatch(stretta ? /copertina-mobile\.jpg$/ : /\/copertina\.jpg$/);
+  await img.evaluate(i => i.dataset.prova = "1");
+  await page.locator('a[href="valanghe/"]').first().evaluate(a => a.click());
+  await expect(page).toHaveURL(/\/valanghe\/$/);
+  await expect(page.locator("#cover .cv-img img")).toHaveAttribute("data-prova", "1");
+});
