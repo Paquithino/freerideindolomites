@@ -6,7 +6,9 @@ test.describe("Contatti, autore e diritti", () => {
     await apri(page, "", {pagina: true, url: "/contatti/"});
     await expect(page).toHaveTitle(/Contatti e diritti – Francesco Fabbro/);
     await expect(page.locator("#contenuto")).toContainText("ideato, progettato e realizzato interamente da me");
-    await expect(page.locator(".ct-cv")).toHaveAttribute("href", "https://paquithino.github.io");
+    await expect(page.locator(".ct-cv")).toContainText("Contattami per migliorare il sito");
+    await expect(page.locator(".ct-cv")).toHaveAttribute("href", /^mailto:info@freerideindolomites\.com/);
+    await expect(page.locator(".ct-lista")).toContainText("paquithino.github.io");
     await expect(page.locator(".ct-lista")).toContainText("github.com/Paquithino");
     await expect(page.locator("#diritti")).toContainText("© 2026 Francesco Fabbro. Tutti i diritti riservati.");
     await expect(page.locator("#diritti")).toContainText("Open-Meteo.com");

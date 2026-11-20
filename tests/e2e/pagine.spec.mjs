@@ -58,13 +58,17 @@ test.describe("Pagine e navigazione", () => {
     await expect(page).toHaveURL(/\/spot\/alto-adige\/$/);
   });
 
-  test("pagina spot: le pillole portano alle sezioni della pagina", async ({page, errori}) => {
+  test("pagina spot: le pillole (telefono) o l'indice laterale (computer) portano alle sezioni", async ({page, errori}) => {
     await apri(page, "", {modo: "completa", url: "/spot/cortina/"});
-    await expect(page.locator("#cover [data-goto]")).toHaveText(["Dati", "Previsioni", "Valanghe", "3D", "Webcam"]);
-    await page.locator('#cover [data-goto="s-av"]').click();
+    const largo = await page.evaluate(() => matchMedia("(min-width: 1100px)").matches);
+    const nav = largo ? ".sp-ind" : "#cover";
+    await expect(page.locator(`${nav} [data-goto]`)).toHaveText(largo ? ["1Dati raccolti", "2Previsioni", "3Valanghe", "43D", "5Webcam"] : ["Dati", "Previsioni", "Valanghe", "3D", "Webcam"]);
+    if(largo) await expect(page.locator("#cover [data-goto]").first()).toBeHidden();
+    else await expect(page.locator(".sp-ind")).toBeHidden();
+    await page.locator(`${nav} [data-goto="s-av"]`).click();
     await expect(page.locator("#s-av h2")).toBeInViewport();
-    await expect(page.locator('#cover [data-goto="s-av"]')).toHaveClass(/on/);
-    await page.locator('#cover [data-goto="s-cam"]').click();
+    await expect(page.locator(`${nav} [data-goto="s-av"]`)).toHaveClass(/on/);
+    await page.locator(`${nav} [data-goto="s-cam"]`).click();
     await expect(page.locator("#s-cam h2")).toBeInViewport();
     await expect(page).toHaveURL(/\/spot\/cortina\/$/);
   });
