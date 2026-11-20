@@ -538,7 +538,7 @@ function linkInterno(a, e){
   const u = new URL(a.href);
   if(u.origin !== location.origin || !u.pathname.startsWith(BASE)) return null;
   const p = u.pathname.slice(BASE.length);
-  if(/\.[a-z0-9]+$/i.test(p) || p.startsWith("guida") || p.startsWith("precipitazioni") || p.startsWith("html/")) return null;   // file e pagina guida: caricamento normale
+  if(/\.[a-z0-9]+$/i.test(p) || p.startsWith("guida") || p.startsWith("precipitazioni") || p.startsWith("contatti") || p.startsWith("html/")) return null;   // file e pagina guida: caricamento normale
   return {path: p + u.search};
 }
 

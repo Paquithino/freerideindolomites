@@ -174,3 +174,7 @@ Ogni sezione e ogni spot ha il suo indirizzo vero (prima era tutto in una pagina
 - I vecchi link con `#` (`#spot-cortina`, `#valanghe`) continuano a funzionare e portano alla pagina nuova.
 - In sviluppo (`npm run dev`) gli indirizzi funzionano lo stesso. Per provare la build in locale: `SITO_URL=http://localhost:4173/ npm run build && npm run preview`.
 - Google: registra il sito in **Google Search Console** e invia `sitemap.xml`. Su GitHub Pages senza dominio il file `robots.txt` non è alla radice del dominio, quindi conta solo la sitemap inviata a mano; con il dominio tuo vale anche robots.txt.
+
+## Diritti
+
+© 2026 Francesco Fabbro. Tutti i diritti riservati. Il sito è stato ideato, progettato e realizzato da Francesco Fabbro, ingegnere informatico ([curriculum](https://paquithino.github.io)). Il codice è consultabile ma non riutilizzabile senza permesso scritto: vedi [LICENSE](LICENSE). I dati e le immagini di terzi restano dei rispettivi titolari.

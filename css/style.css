@@ -1023,6 +1023,33 @@ table.nm-oret .vw-cella b{font-size:12px}
   .pc-lline svg line{stroke:#fff}
 }
 
+/* ---------- footer con autore, contatti e diritti ---------- */
+footer.piede{margin-top:40px;padding:26px 0 calc(28px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--card);color:var(--tx2);font-size:13.5px;text-align:left}
+.piede-in{display:grid;gap:12px}
+.piede-logo{font-family:var(--cond);font-size:21px;font-weight:700;letter-spacing:.05em;color:var(--tx)}
+.piede-logo i{font-style:normal;font-weight:400}
+.piede-chi p{margin:4px 0 0;color:var(--tx)}
+.piede-link{display:flex;flex-wrap:wrap;gap:6px 18px}
+.piede-link a{display:inline-flex;align-items:center;min-height:40px;font-weight:700;color:var(--tx);text-decoration:none;border-bottom:2px solid var(--ice2)}
+.piede-link a:hover{border-color:var(--ice)}
+.piede-dir{margin:0;font-weight:600;color:var(--tx)}
+.piede-terzi{margin:0;font-size:12px;color:var(--tx3)}
+@media (min-width:960px){
+  .piede-in{grid-template-columns:1.3fr 1fr;column-gap:40px}
+  .piede-link{justify-content:flex-end;align-self:start}
+  .piede-dir,.piede-terzi{grid-column:1/-1}
+}
+/* ---------- pagina contatti ---------- */
+.ct .sec p{line-height:1.6}
+.ct-cv{display:flex;align-items:center;gap:12px;margin-top:12px;padding:14px 16px;border-radius:var(--r);background:var(--tx);color:var(--bg);text-decoration:none}
+.ct-cv b{display:block;font-size:16px}
+.ct-cv small{display:block;opacity:.8}
+.ct-cv i{margin-left:auto;font-style:normal;font-size:22px}
+.ct-lista{list-style:none;margin:0 0 10px;padding:0}
+.ct-lista li{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line2)}
+.ct-lista li span{min-width:96px;font-weight:600;color:var(--tx2);font-size:13.5px}
+.ct-lista a{font-weight:700;word-break:break-all}
+
 /* =========================================================
    TEMA SCURO automatico: segue l'impostazione del telefono o del computer
    (prefers-color-scheme). Se cambi tema dal sistema il sito cambia subito, senza ricaricare.

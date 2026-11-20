@@ -172,21 +172,23 @@ if(existsSync(fileGuida)){
   scrivi("html/info.html", html);
 }
 
-/* ---------- animazione precipitazioni ---------- */
-const filePrec = join(DIST, "html", "precipitazioni.html");
-if(existsSync(filePrec)){
-  const g = readFileSync(filePrec, "utf8").replace(/(["'(])\.\.\/(assets|js|css)\//g, "$1$2/");
-  const meta = {title: (g.match(/<title>([\s\S]*?)<\/title>/) || [])[1] || "Animazione precipitazioni", description: (g.match(/<meta name="description" content="([^"]*)"/) || [])[1] || ""};
-  const r = {vista: "precipitazioni", path: "precipitazioni/"};
-  const html = testa(g, {...meta, title: meta.title.replace(/&amp;/g, "&")}, SITO + "precipitazioni/", jsonLd(r, {...meta, h1: "Animazione precipitazioni"}));
-  scrivi("precipitazioni/index.html", html);
-  scrivi("html/precipitazioni.html", html);
+/* ---------- pagine a parte: animazione precipitazioni, contatti ---------- */
+for(const [nome, h1] of [["precipitazioni", "Animazione precipitazioni"], ["contatti", "Contatti"]]){
+  const file = join(DIST, "html", nome + ".html");
+  if(!existsSync(file)) continue;
+  const g = readFileSync(file, "utf8").replace(/(["'(])\.\.\/(assets|js|css)\//g, "$1$2/");
+  const meta = {title: ((g.match(/<title>([\s\S]*?)<\/title>/) || [])[1] || h1).replace(/&amp;/g, "&"), description: (g.match(/<meta name="description" content="([^"]*)"/) || [])[1] || ""};
+  let ld = jsonLd({vista: nome, path: nome + "/"}, {...meta, h1});
+  if(nome === "contatti") ld += `<script type="application/ld+json">${JSON.stringify({"@context": "https://schema.org", "@type": "Person", name: "Francesco Fabbro", jobTitle: "Ingegnere informatico", url: "https://paquithino.github.io", sameAs: ["https://github.com/Paquithino"]})}</script>`;
+  const html = testa(g, meta, SITO + nome + "/", ld);
+  scrivi(nome + "/index.html", html);
+  scrivi("html/" + nome + ".html", html);
 }
 
 /* ---------- 404, sitemap, robots ---------- */
 scrivi("404.html", testa(tpl, metaPer({vista: "home"}), null, `<meta name="robots" content="noindex">`).replace(/<body[^>]*>/, `<body data-vista="home">`));
 const oggi = (generato || new Date()).toISOString().slice(0, 10);
-const indirizzi = [...rotte.map(r => r.path), "guida/", "precipitazioni/"];
+const indirizzi = [...rotte.map(r => r.path), "guida/", "precipitazioni/", "contatti/"];
 scrivi("sitemap.xml", `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${indirizzi.map(p =>
   `  <url><loc>${SITO}${p}</loc><lastmod>${oggi}</lastmod><changefreq>${p === "guida/" ? "monthly" : "hourly"}</changefreq><priority>${p === "" ? "1.0" : p.startsWith("spot/") && p.split("/").length > 2 ? "0.8" : "0.6"}</priority></url>`).join("\n")}\n</urlset>\n`);
 scrivi("robots.txt", `User-agent: *\nAllow: /\n\nSitemap: ${SITO}sitemap.xml\n`);

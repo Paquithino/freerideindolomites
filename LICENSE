@@ -1,27 +1,29 @@
-MIT License
+FreeRide in Dolomites
+Copyright © 2026 Francesco Fabbro. Tutti i diritti riservati. / All rights reserved.
 
-Copyright (c) 2026 Francesco Fabbro
+Il sito FreeRide in Dolomites e tutto il contenuto di questo repository (codice
+sorgente, grafica e impaginazione, testi, nome, logo, metodo di calibrazione dei
+modelli e organizzazione dei contenuti) sono stati ideati, progettati e realizzati
+da Francesco Fabbro, ingegnere informatico, che ne detiene in esclusiva tutti i
+diritti.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+Non è consentito copiare, modificare, ripubblicare, distribuire o riutilizzare
+questo materiale, in tutto o in parte, senza il permesso scritto dell'autore.
+La possibilità di consultare il codice su GitHub non concede alcuna licenza d'uso.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+Sono esclusi i dati e le immagini di terzi che il sito mostra, che restano dei
+rispettivi titolari con le loro licenze: previsioni meteo di Open-Meteo.com
+(CC BY 4.0), bollettini valanghe AINEVA ed Euregio, misure delle stazioni di
+Meteo Alto Adige, Meteotrentino e ARPAV Veneto (CC BY 4.0), immagini delle webcam
+(© dei rispettivi gestori), mappe © OpenStreetMap (ODbL) e OpenTopoMap (CC BY-SA),
+vista 3D di PeakVisor.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+Contatti: https://paquithino.github.io
 
 ---
-Il codice è rilasciato con licenza MIT. I dati mostrati dal sito appartengono alle
-rispettive fonti e vanno citati: Open-Meteo.com (CC BY 4.0), stazioni Meteo Alto Adige
-e Meteotrentino via avalanche.report (CC BY 4.0), stazioni ARPAV Veneto (CC BY 4.0), bollettini valanghe AINEVA/EAWS,
-immagini webcam © dei rispettivi gestori.
+
+All rights reserved. FreeRide in Dolomites (source code, design, text, name, logo
+and model-calibration method) was conceived, designed and built by Francesco
+Fabbro. No part of it may be copied, modified, redistributed or reused without the
+author's written permission. Third-party data and images remain the property of
+their respective owners under their own licences.
