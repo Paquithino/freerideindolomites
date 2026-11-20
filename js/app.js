@@ -353,6 +353,21 @@ function calNote(spotId){
 }
 
 const linkAnimazione = s => `<a class="pc-lnk" href="precipitazioni/?spot=${s.id}"><span class="pc-lnk-i" aria-hidden="true"></span><span><b>Guarda l'animazione delle precipitazioni</b><small>Neve e pioggia ora per ora sulla mappa, centrata su ${esc(s.name.split(" · ")[0])}</small></span><i aria-hidden="true">→</i></a>`;
+/* indice delle 5 sezioni (sul computer resta fisso a sinistra mentre scorri) */
+const indiceSpot = parti => `<div class="sp-lay"><nav class="sp-ind" aria-label="Sezioni della pagina"><p>In questa pagina</p>${GRUPPI_SPOT.map((g, i) => parti[i] ? `<button type="button" data-goto="${g.id}" class="${i === 0 ? "on" : ""}"><span>${i + 1}</span>${esc(g.nome)}</button>` : "").join("")}</nav>`;
+/* l'indice segue lo scorrimento della pagina */
+let spiaSezioni = null;
+function seguiSezioni(){
+  if(spiaSezioni) spiaSezioni.disconnect();
+  if(typeof IntersectionObserver === "undefined") return;
+  const nav = document.querySelector("#v-detail .sp-ind");
+  if(!nav) return;
+  spiaSezioni = new IntersectionObserver(es => {
+    const vis = es.filter(e => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+    if(vis) nav.querySelectorAll("[data-goto]").forEach(b => b.classList.toggle("on", b.dataset.goto === vis.target.id));
+  }, {rootMargin: "-90px 0px -60% 0px"});
+  document.querySelectorAll("#v-detail .grp").forEach(g => spiaSezioni.observe(g));
+}
 function renderDetail(id){
   const s = SPOTS.find(x => x.id === id);
   if(!s){ naviga("", true); return; }
@@ -380,9 +395,10 @@ function renderDetail(id){
     av += tab("o-av", "Pericolo valanghe", avBlockHTML(s));
     tre += tab("o-3d", "Montagna in 3D · scegli la linea", peakvisorHTML(s));
     cam += tab("o-cam", "Webcam", camsHTML(s));
-    $("#v-detail").innerHTML = `${head}${gruppoHTML(0, dati)}${gruppoHTML(1, prev)}${gruppoHTML(2, av)}${gruppoHTML(3, tre)}${gruppoHTML(4, cam)}
+    $("#v-detail").innerHTML = `${head}${indiceSpot([dati, prev, av, tre, cam])}<div class="sp-corpo">${gruppoHTML(0, dati)}${gruppoHTML(1, prev)}${gruppoHTML(2, av)}${gruppoHTML(3, tre)}${gruppoHTML(4, cam)}</div></div>
       <button class="sg-tutti" data-modo="completa">📊 Vedi tutti i dati di questo spot</button>
       <div class="disc">Indicazioni automatiche. Prima di uscire leggi il bollettino valanghe, osserva il terreno e porta ARTVA, pala e sonda.</div>`;
+    seguiSezioni();
     return;
   }
   // 1 · Dati raccolti
@@ -422,10 +438,11 @@ function renderDetail(id){
   av += tab("o-av", "Pericolo valanghe · bollettino ufficiale", avBlockHTML(s));
   tre += tab("o-3d", "Montagna in 3D · scegli la linea", peakvisorHTML(s));
   cam += tab("o-cam", "Webcam", camsHTML(s));
-  $("#v-detail").innerHTML = `${head}${gruppoHTML(0, dati)}${gruppoHTML(1, prev)}${gruppoHTML(2, av)}${gruppoHTML(3, tre)}${gruppoHTML(4, cam)}
+  $("#v-detail").innerHTML = `${head}${indiceSpot([dati, prev, av, tre, cam])}<div class="sp-corpo">${gruppoHTML(0, dati)}${gruppoHTML(1, prev)}${gruppoHTML(2, av)}${gruppoHTML(3, tre)}${gruppoHTML(4, cam)}</div></div>
     <div class="disc">Dati automatici e indicativi. Prima di uscire leggi il bollettino completo, osserva il terreno e porta ARTVA, pala e sonda.</div>`;
   avviaOraPerOra(s, $("#v-detail"));
   avviaNeveMisurata(s, $("#v-detail"));
+  seguiSezioni();
 }
 
 /* ---------- valanghe / webcam ---------- */
@@ -505,9 +522,7 @@ function route(){
     else if(state.area !== "★ Preferiti") state.area = "Tutti";
     renderList();
   }
-  const cover = $("#cover"), foto = cover.querySelector(".cv-img");
-  cover.innerHTML = coverHTML(r, quando(), {fav: r.vista === "spot" ? state.fav.has(r.id) : null});
-  if(foto) cover.querySelector(".cv-img").replaceWith(foto);
+  $("#cover").innerHTML = coverHTML(r, quando(), {fav: r.vista === "spot" ? state.fav.has(r.id) : null});
   $("#cover").classList.toggle("cv-spot", r.vista === "spot");
   document.body.dataset.vista = r.vista;
   document.querySelectorAll(".view").forEach(v => v.classList.toggle("on", v.id === view));

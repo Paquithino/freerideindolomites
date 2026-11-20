@@ -199,7 +199,6 @@ footer{color:var(--tx3);font-size:11.5px;padding:10px 0 24px;text-align:center}
    ========================================================= */
 .dgrid{display:flex;flex-direction:column}
 .dcol{display:contents}
-.o-now{order:1}.o-cam{order:2}.o-snow{order:3}.o-quote{order:3}.o-meas{order:4}.o-plan{order:5}.o-models{order:6}.o-hour{order:7}.o-av{order:8}
 .desk-only{display:none !important}
 .card,.chip,.lnk,nav.tabs a{transition:background .15s,border-color .15s,color .15s,transform .08s}
 
@@ -489,7 +488,6 @@ body.semplice .hero{display:block}
   body.semplice #list{grid-template-columns:repeat(auto-fill,minmax(320px,1fr))}
   .sg-hero{max-width:none}
 }
-body.semplice .o-now{order:1}body.semplice .o-plan{order:2}body.semplice .o-av{order:3}body.semplice .o-cam{order:4}
 
 /* montagna in 3D (PeakVisor) */
 .o-3d{order:3}
@@ -545,15 +543,10 @@ nav.tabs{display:none}
 .seg2 button.on{background:#fff;color:var(--tx);font-weight:700;box-shadow:0 1px 3px rgba(15,34,53,.18)}
 
 /* copertina con foto */
-.cover{position:relative;overflow:hidden;background:#27465f;color:#fff}
-/* foto: ritaglio stretto sullo sciatore (telefono) e largo (desktop), lo sciatore resta sempre in vista */
-.cv-img{position:absolute;inset:0}
-.cv-img img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 100%}
-.cover:before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(15,34,53,.25) 0%,rgba(15,34,53,.45) 55%,rgba(15,34,53,.72) 100%)}
-.cover-in{position:relative;z-index:2;min-height:236px;display:flex;flex-direction:column;justify-content:space-between;gap:16px;padding-top:16px;padding-bottom:18px}
+.cover{position:relative;background:#27465f center 35%/cover no-repeat;color:#fff}
+.cover:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,34,53,.25) 0%,rgba(15,34,53,.45) 55%,rgba(15,34,53,.72) 100%)}
+.cover-in{position:relative;min-height:236px;display:flex;flex-direction:column;justify-content:space-between;gap:16px;padding-top:16px;padding-bottom:18px}
 .cover.cv-spot .cover-in{min-height:250px}
-/* telefono: copertina un po' più alta, così lo sciatore sta tra la data e le pillole */
-@media (max-width:699px){ .cover-in{min-height:320px} .cover.cv-spot .cover-in{min-height:330px} }
 .cv-top{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:36px}
 .cv-date{display:inline-block;padding:6px 12px;border-radius:999px;background:rgba(15,34,53,.6);font-size:13.5px;font-weight:600;color:#fff}
 .cv-title h1{margin:0;font-family:var(--cond);font-weight:700;font-size:40px;line-height:1;color:#fff;text-wrap:balance}
@@ -748,12 +741,11 @@ table.tbl td.s{color:#06223a}
 }
 @media (min-width:960px){
   header.top .hbar{padding:0 24px}
-  /* più alta su desktop: la foto è una fascia larga, così lo sciatore entra tutto */
-  .cover-in{min-height:clamp(300px,22vw,400px)}
-  .cover.cv-spot .cover-in{min-height:clamp(320px,24vw,420px)}
-  .cv-img img{object-position:50% 36%}
+  .cover-in{min-height:220px}
+  .cover.cv-spot .cover-in{min-height:280px}
 }
 @media (min-width:1700px){ header.top .hbar{padding:0 32px} }
+.cover{background-position:center 45%}
 
 /* ---------- vento: icona unica (nome, direzione a vettore, intensità) ---------- */
 .vw{--vb:#f1f5f9;--vf:#334155;display:inline-flex;align-items:center;gap:3px;background:var(--vb);color:var(--vf);border-radius:8px;line-height:1.1;white-space:nowrap;font-variant-numeric:tabular-nums}
@@ -1055,6 +1047,101 @@ footer.piede{margin-top:40px;padding:26px 0 calc(28px + env(safe-area-inset-bott
 .ct-lista li{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line2)}
 .ct-lista li span{min-width:96px;font-weight:600;color:var(--tx2);font-size:13.5px}
 .ct-lista a{font-weight:700;word-break:break-all}
+
+/* =========================================================
+   DESKTOP 2.0 — schermi grandi: tutto lo schermo, testo più grande, colonne
+   (telefono e tablet restano come sono)
+   ========================================================= */
+.sp-ind{display:none}
+@media (min-width:1100px){
+  :root{--dw:1760px;--gap:28px}
+  body{font-size:16px}
+  .wrap{max-width:var(--dw);padding:0 40px;margin:0 auto}
+  /* testata allineata al contenuto */
+  header.top .hbar{max-width:var(--dw);margin:0 auto;padding:0 40px;height:76px}
+  .brand .wordmark{height:26px}
+  .hnav{margin-left:44px;gap:4px}
+  .hnav a{font-size:16px;padding:11px 16px}
+  /* copertina */
+  .cover-in{min-height:240px;padding-bottom:30px}
+  .cover.cv-spot .cover-in{min-height:300px}
+  .cv-title h1{font-size:68px;letter-spacing:-.01em;line-height:1}
+  .cv-title p,.cv-meta{font-size:18px}
+  .cover.cv-spot .pills{max-width:640px}
+  /* riquadri e titoli */
+  .sec{padding:22px 26px;border-radius:16px}
+  .sec > h2.sh,.sec > h3.sh{font-size:25px;margin-bottom:14px}
+  .gh{font-size:40px;margin-bottom:6px}
+  .gn{width:38px;height:38px;font-size:18px}
+  .lead,.note{font-size:15.5px}
+  .banner{font-size:14.5px}
+  /* home: elenco largo + colonna laterale */
+  .spot-layout{grid-template-columns:minmax(0,1fr) 360px;gap:var(--gap)}
+  .ttl.sez{font-size:34px}
+  table.tbl td,table.tbl th{padding-top:9px;padding-bottom:9px}
+  table.tbl td.l .tn{font-size:16px;white-space:nowrap;min-width:220px}
+  table.tbl th{font-size:12px}
+  .cover:not(.cv-spot):not(:has(.cv-title)) .cover-in{min-height:150px}
+  .list:not(.as-table){grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:18px}
+  /* pagina spot: indice fisso a sinistra, contenuto a destra */
+  .sp-lay{display:grid;grid-template-columns:220px minmax(0,1fr);gap:0 36px;align-items:start}
+  .sp-ind{display:flex;flex-direction:column;gap:4px;position:sticky;top:96px;margin-top:26px}
+  .sp-ind p{margin:0 0 6px 12px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--tx3)}
+  .sp-ind button{display:flex;align-items:center;gap:12px;width:100%;padding:10px 12px;border:0;border-radius:12px;background:none;color:var(--tx2);font:inherit;font-size:16px;font-weight:600;text-align:left;cursor:pointer}
+  .sp-ind button span{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:999px;border:1.5px solid var(--line);font-size:13px;font-weight:800;flex:none}
+  .sp-ind button:hover{background:var(--card);color:var(--tx)}
+  .sp-ind button.on{background:var(--card);color:var(--tx);box-shadow:0 1px 3px rgba(15,34,53,.1)}
+  .sp-ind button.on span{background:var(--tx);border-color:var(--tx);color:var(--bg)}
+  .cover.cv-spot .pills{display:none}
+  .dzone{font-size:15px}
+  /* sezioni affiancate quando c'è spazio */
+  /* previsione per giorno: più colonne */
+  .pv-days{grid-template-columns:repeat(auto-fill,minmax(400px,1fr));gap:18px}
+  .pv-day{padding:16px 18px}
+  .pv-h b{font-size:18px}
+  .pv-bar .n{font-size:15px}
+  .pv-bar em{font-size:16px}
+  #bestDays{grid-template-columns:repeat(auto-fill,minmax(400px,1fr))}
+  /* webcam */
+  #camList{grid-template-columns:repeat(auto-fill,minmax(420px,1fr));gap:18px}
+  .s-cam .cams{grid-template-columns:repeat(3,minmax(0,1fr))}
+  /* footer */
+  footer.piede{padding:40px 0 44px;font-size:14.5px}
+}
+/* tabella spot: le colonne secondarie compaiono solo quando c'è posto (niente tabella tagliata) */
+@container (max-width:1540px){ table.tbl .o2{display:none} }
+@container (max-width:1360px){ table.tbl .o1{display:none} }
+@media (min-width:1500px){
+  /* spot: Valanghe e 3D una accanto all'altra (flex: l'ordine resta quello della pagina) */
+  .sp-corpo{display:flex;flex-wrap:wrap;align-items:flex-start;gap:0 var(--gap)}
+  .sp-corpo > .grp{flex:1 1 100%;min-width:0}
+  .sp-corpo > .s-av,.sp-corpo > .s-3d{flex:1 1 calc(50% - var(--gap) / 2)}
+  /* Previsioni: Neve per quota e Confronto modelli affiancati */
+  .s-prev .grp-b{display:flex;flex-wrap:wrap;align-items:flex-start;gap:0 var(--gap)}
+  .s-prev .grp-b > *{flex:1 1 100%;min-width:0}
+  .s-prev .grp-b > .o-quote,.s-prev .grp-b > .o-models{flex:1 1 calc(50% - var(--gap) / 2)}
+  .s-cam .cams{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .spot-layout{grid-template-columns:minmax(0,1fr) 400px}
+}
+@media (min-width:1900px){
+  .s-cam .cams{grid-template-columns:repeat(5,minmax(0,1fr))}
+}
+@media (min-width:1100px) and (prefers-color-scheme: dark){
+  .sp-ind button.on,.sp-ind button:hover{background:var(--card2)}
+}
+
+/* menu in alto: 7 voci stanno larghe solo da 1280 px; sotto, menu a tendina come sul telefono */
+.hnav a{white-space:nowrap}
+.brand{flex:none}
+@media (min-width:960px) and (max-width:1279px){
+  .hnav{display:none}
+  .menubtn{display:grid}
+  .hbar .hmodo{margin-left:auto}
+}
+@media (min-width:1280px) and (max-width:1499px){
+  .hnav{margin-left:24px;gap:0}
+  .hnav a{padding:10px 11px;font-size:15px}
+}
 
 /* =========================================================
    TEMA SCURO automatico: segue l'impostazione del telefono o del computer

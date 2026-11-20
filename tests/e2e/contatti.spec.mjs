@@ -36,4 +36,13 @@ test.describe("Contatti, autore e diritti", () => {
     await expect(page.locator("h1")).toHaveText("Contatti");
     await expect(page.locator('#menu a[href="contatti/"]')).toHaveAttribute("aria-current", "page");
   });
+
+  test("computer: Contatti nel menu in alto", async ({page, errori}, info) => {
+    test.skip(!info.project.name.startsWith("desktop"), "menu in alto solo su computer");
+    await apri(page, "", {modo: "completa"});
+    await page.locator('.hnav a[href="contatti/"]').click();
+    await expect(page).toHaveURL(/\/contatti\/$/);
+    await expect(page.locator('.hnav a[href="contatti/"]')).toHaveAttribute("aria-current", "page");
+    await expect(page.locator(".ct-cv")).toHaveAttribute("href", /^mailto:info@freerideindolomites\.com/);
+  });
 });
