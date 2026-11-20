@@ -12,6 +12,25 @@ test.describe("Pagina spot · versione completa", () => {
     await senzaScrollLaterale(page);
   });
 
+  test("5 sezioni numerate con le 10 tabelle nell'ordine giusto", async ({page, errori}) => {
+    await apri(page, "#spot-marmolada", {modo: "completa"});
+    await expect(page.locator("#v-detail h2.gh")).toHaveText(["1Dati raccolti", "2Previsioni", "3Valanghe", "43D", "5Webcam"]);
+    const ordine = await page.locator("#v-detail .grp").evaluateAll(gs => gs.map(g => [g.id, [...g.querySelectorAll(".grp-b > .sec")].map(t => t.id)]));
+    expect(ordine).toEqual([
+      ["s-dati", ["o-now", "o-snow", "o-meas"]],
+      ["s-prev", ["o-plan", "o-quote", "o-models", "o-hour"]],
+      ["s-av", ["o-av"]], ["s-3d", ["o-3d"]], ["s-cam", ["o-cam"]]
+    ]);
+    // titoli: h2 per le sezioni, h3 per le tabelle
+    expect(await page.locator("#v-detail .grp-b > .sec > h3.sh").count()).toBe(10);
+  });
+
+  test("versione semplice: stesse sezioni, stesso ordine", async ({page, errori}) => {
+    await apri(page, "#spot-marmolada", {modo: "semplice"});
+    await expect(page.locator("#v-detail h2.gh")).toHaveText(["1Dati raccolti", "2Previsioni", "3Valanghe", "43D", "5Webcam"]);
+    await senzaScrollLaterale(page);
+  });
+
   test("neve per quota: vetta, metà e base con le quote dello spot", async ({page, errori}) => {
     const s = SPOTS.find(x => x.id === "marmolada");
     await apri(page, "#spot-marmolada", {modo: "completa"});

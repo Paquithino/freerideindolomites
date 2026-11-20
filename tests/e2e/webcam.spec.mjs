@@ -33,6 +33,7 @@ test.describe("Webcam", () => {
 
   test("immagine che non arriva: riquadro con messaggio, non un'icona rotta", async ({page, errori}) => {
     await apri(page, "#spot-marmolada", {modo: "completa", immaginiRotte: [morta]});
+    await page.locator(".o-cam").scrollIntoViewIfNeeded();   // le webcam ora sono in fondo (sezione 5) e si caricano quando arrivi lì
     await expect(page.locator(".o-cam .fail").first()).toContainText("non disponibile");
   });
 

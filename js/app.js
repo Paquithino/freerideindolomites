@@ -7,7 +7,7 @@ import { calOf, zonaDi } from "./calibrazione.js";
 import { peakvisorHTML } from "./peakvisor.js";
 import { DNAME, avForSpot, avBlockHTML, dsq, loadAvalanche, bollettiniPerServizio, gradiHTML, problemiHTML, testiHTML, intestazione, stripTags, PROB } from "./valanghe.js";
 import { camsHTML } from "./webcam.js";
-import { leggiPercorso, daHash, metaPer, coverHTML, percorsoSpot, percorsoArea, slugDaArea, AREE, SITO_NOME } from "./pagine.js";
+import { leggiPercorso, daHash, metaPer, coverHTML, percorsoSpot, percorsoArea, slugDaArea, AREE, SITO_NOME, GRUPPI_SPOT, gruppoHTML, tabellaHTML } from "./pagine.js";
 import { loadStations, stationsHTML, bestStation } from "./stazioni.js";
 import { loadModels, demoModels, ensembleFor, agreement, regionRegime, regimeLabel, flowEffect, correctHourly, dayRegime } from "./modelli.js";
 import { MODELS, LAVORI_IN_CORSO } from "./config.js";
@@ -390,14 +390,16 @@ function renderDetail(id){
   const s = SPOTS.find(x => x.id === id);
   if(!s){ naviga("", true); return; }
   const m = metrics(s), best = bestDay(s);
-  const sec = (cls, title, body) => `<section class="sec ${cls}" id="${cls}"><h2 class="sh">${title}</h2>${body}</section>`;
-  let head = `<p class="dzone">⛰ ${esc(s.zones)}${s.group ? " · " + esc(s.group) : ""} · quota di riferimento ${s.elev.toLocaleString("it-IT")} m</p>`;
-  let main = "", side = "";
+  const tab = tabellaHTML;
+  const head = `<p class="dzone">⛰ ${esc(s.zones)}${s.group ? " · " + esc(s.group) : ""} · quota di riferimento ${s.elev.toLocaleString("it-IT")} m</p>`;
+  const nd = `<div class="sec note o-now">Dati meteo non disponibili.</div>`;
+  // le 5 sezioni, sempre in quest'ordine: dati raccolti, previsioni, valanghe, 3D, webcam
+  let dati = "", prev = "", av = "", tre = "", cam = "";
   if(semplice()){
-    const av = avForSpot(s);
+    const avs = avForSpot(s);
     if(m){
-      const g = giudizio(m, av);
-      main += `<div class="sec sg gv-${g.cls} o-now"><div class="sg-g sg-big"><span>${g.ico}</span> ${esc(g.txt)}</div><p class="sg-sub">${esc(g.sub)}</p>
+      const g = giudizio(m, avs);
+      dati += `<div class="sec sg gv-${g.cls} o-now" id="o-now"><h3 class="sh sr">Adesso</h3><div class="sg-g sg-big"><span>${g.ico}</span> ${esc(g.txt)}</div><p class="sg-sub">${esc(g.sub)}</p>
         ${g.avvisi.length ? `<p class="sg-w">${g.avvisi.map(esc).join(" ")}</p>` : ""}
         <div class="sg-n">
           <div><b>${r0(m.p48)}<small> cm</small></b><span>neve fresca 2 gg</span></div>
@@ -405,19 +407,20 @@ function renderDetail(id){
           <div class="sg-v">${ventoIcona(m.w7, m.w7dir, "cella")}<span>vento ${etichettaUnita()}</span></div>
           <div><b>${r0(m.temp)}°</b><span>adesso a ${s.elev.toLocaleString("it-IT")} m</span></div>
         </div><div class="sg-vu">${unitaToggle()}</div></div>`;
-      main += sec("o-plan", "Prossimi giorni", `${giorniSemplici(s)}${best ? `<p class="sg-best">🎯 Giorno migliore: <b>${giornoLungo(best.date)}</b>, circa ${r0(best.fresh)} cm di neve fresca</p>` : ""}`);
-    }else main += `<div class="sec note o-now">Dati meteo non disponibili.</div>`;
-    side += sec("o-av", "Pericolo valanghe", avBlockHTML(s));
-    side += sec("o-cam", "Webcam", camsHTML(s));
-    main += sec("o-3d", "Montagna in 3D · scegli la linea", peakvisorHTML(s));
-    $("#v-detail").innerHTML = `${head}<div class="dgrid"><div class="dcol dmain">${main}</div><div class="dcol dside">${side}</div></div>
+      prev += tab("o-plan", "Prossimi giorni", `${giorniSemplici(s)}${best ? `<p class="sg-best">🎯 Giorno migliore: <b>${giornoLungo(best.date)}</b>, circa ${r0(best.fresh)} cm di neve fresca</p>` : ""}`);
+    }else dati += nd;
+    av += tab("o-av", "Pericolo valanghe", avBlockHTML(s));
+    tre += tab("o-3d", "Montagna in 3D · scegli la linea", peakvisorHTML(s));
+    cam += tab("o-cam", "Webcam", camsHTML(s));
+    $("#v-detail").innerHTML = `${head}${gruppoHTML(0, dati)}${gruppoHTML(1, prev)}${gruppoHTML(2, av)}${gruppoHTML(3, tre)}${gruppoHTML(4, cam)}
       <button class="sg-tutti" data-modo="completa">📊 Vedi tutti i dati di questo spot</button>
       <div class="disc">Indicazioni automatiche. Prima di uscire leggi il bollettino valanghe, osserva il terreno e porta ARTVA, pala e sonda.</div>`;
     return;
   }
-  if(!m){ main += `<div class="sec note o-now">Dati meteo non disponibili.</div>`; }
+  // 1 · Dati raccolti
+  if(!m) dati += nd;
   else{
-    main += sec("o-now", `Adesso · ${wmo(m.code)[0]} ${wmo(m.code)[1]}`, `<div class="sec-tools">${unitaToggle()}</div>
+    dati += tab("o-now", `Adesso · ${wmo(m.code)[0]} ${wmo(m.code)[1]}`, `<div class="sec-tools">${unitaToggle()}</div>
       <div class="grid3">
         <div class="big"><b style="color:${scoreColor(m.score)}">${r1(m.score)}</b><span>Indice Powder</span></div>
         <div class="big"><b>${r0(m.temp)}°C</b><span>a ${s.elev} m</span></div>
@@ -427,7 +430,7 @@ function renderDetail(id){
         <div class="big"><b>${m.depth != null ? r0(m.depth) : "–"}</b><span>neve al suolo stimata cm</span></div>
       </div>
       ${m.flags.length ? `<div class="flags">${m.flags.map(f => `<span class="flag ${f[0]}">${f[1]}</span>`).join("")}</div>` : ""}`);
-    main += sec("o-snow", "Neve fresca · stima del modello", `
+    dati += tab("o-snow", "Neve fresca · stima del modello", `
       <div class="grid3">
         <div class="big"><b>${r0(m.p24)}</b><span>cm ultime 24h</span></div>
         <div class="big"><b>${r0(m.p48)}</b><span>cm ultime 48h</span></div>
@@ -436,18 +439,21 @@ function renderDetail(id){
         <div class="big"><b style="color:var(--powder)">+${r0(m.n72)}</b><span>cm prossime 72h</span></div>
         <div class="big"><b style="color:var(--powder)">+${r0(m.n7d)}</b><span>cm prossimi 7 gg</span></div>
       </div>`);
-    main += sec("o-quote", `Neve per quota · Vetta, Metà, Base`, quoteHTML(s));
-    main += sec("o-3d", "Montagna in 3D · scegli la linea", peakvisorHTML(s));
-    main += sec("o-meas", "Neve misurata · stazioni vicine", stationsHTML(s));
-    main += sec("o-plan", `Previsione · prossimi ${FORECAST_DAYS} giorni`,
-      `<div class="sec-tools">${unitaToggle()}</div>${best ? `<div class="flags" style="margin:0 0 10px"><span class="flag p">🎯 Giornata migliore: ${dayName(best.date)} ${dayNum(best.date)} · ~${r0(best.fresh)} cm freschi · affidabilità ${best.conf}</span></div>` : ""}${daysHTML(s)}`);
-    main += sec("o-models", "Confronto modelli", modelsHTML(s));
-    main += sec("o-hour", "Ora per ora · ieri → 3 giorni", hourlyChart(s, m));
   }
-  if(!m){ main += sec("o-meas", "Neve misurata · stazioni vicine", stationsHTML(s)); main += sec("o-3d", "Montagna in 3D · scegli la linea", peakvisorHTML(s)); }
-  side += sec("o-cam", "Webcam", camsHTML(s));
-  side += sec("o-av", "Pericolo valanghe · bollettino ufficiale", avBlockHTML(s));
-  $("#v-detail").innerHTML = `${head}<div class="dgrid"><div class="dcol dmain">${main}</div><div class="dcol dside">${side}</div></div>
+  dati += tab("o-meas", "Neve misurata · stazioni vicine", stationsHTML(s), "largo");
+  // 2 · Previsioni
+  if(m){
+    prev += tab("o-plan", `Previsioni · prossimi ${FORECAST_DAYS} giorni`,
+      `<div class="sec-tools">${unitaToggle()}</div>${best ? `<div class="flags" style="margin:0 0 10px"><span class="flag p">🎯 Giornata migliore: ${dayName(best.date)} ${dayNum(best.date)} · ~${r0(best.fresh)} cm freschi · affidabilità ${best.conf}</span></div>` : ""}${daysHTML(s)}`);
+    prev += tab("o-quote", "Neve per quota · Vetta, Metà, Base", quoteHTML(s));
+    prev += tab("o-models", "Confronto modelli", modelsHTML(s));
+    prev += tab("o-hour", "Ora per ora · ieri → 3 giorni", hourlyChart(s, m));
+  }
+  // 3 · Valanghe · 4 · 3D · 5 · Webcam
+  av += tab("o-av", "Pericolo valanghe · bollettino ufficiale", avBlockHTML(s));
+  tre += tab("o-3d", "Montagna in 3D · scegli la linea", peakvisorHTML(s));
+  cam += tab("o-cam", "Webcam", camsHTML(s));
+  $("#v-detail").innerHTML = `${head}${gruppoHTML(0, dati)}${gruppoHTML(1, prev)}${gruppoHTML(2, av)}${gruppoHTML(3, tre)}${gruppoHTML(4, cam)}
     <div class="disc">Dati automatici e indicativi. Prima di uscire leggi il bollettino completo, osserva il terreno e porta ARTVA, pala e sonda.</div>`;
 }
 

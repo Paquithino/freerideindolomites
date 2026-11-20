@@ -17,7 +17,7 @@ import { metrics, dailyPlan, bestDay, wmo, dayName, dayNum } from "../js/meteo.j
 import { quoteHTML } from "../js/quote.js";
 import { avForSpot, avBlockHTML, DNAME, bollettiniPerServizio, gradiHTML, problemiHTML, testiHTML, intestazione, stripTags } from "../js/valanghe.js";
 import { giudizio } from "../js/giudizio.js";
-import { tutteLeRotte, metaPer, coverHTML, percorsoSpot, percorsoArea, AREE, SITO_NOME } from "../js/pagine.js";
+import { tutteLeRotte, metaPer, coverHTML, percorsoSpot, percorsoArea, AREE, SITO_NOME , gruppoHTML, tabellaHTML } from "../js/pagine.js";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const DIST = resolve(ROOT, process.argv[2] || "dist");
@@ -58,22 +58,26 @@ function inBreve(){
 }
 function paginaSpot(s){
   const m = conDati ? metrics(s) : null, av = avForSpot(s), best = conDati ? bestDay(s) : null;
-  const sec = (id, t, body) => `<section class="sec ${id}" id="${id}"><h2 class="sh">${t}</h2>${body}</section>`;
+  const sec = tabellaHTML;
   let h = `<p class="dzone">⛰ ${esc(s.zones)} · quota di riferimento ${s.elev.toLocaleString("it-IT")} m</p>`;
+  // stesse 5 sezioni della pagina vera: dati raccolti, previsioni, valanghe, 3D, webcam
+  let dati = "", prev = "";
   if(m){
     const g = giudizio(m, av);
-    h += sec("o-now", "In breve", `<p><b>${esc(g.txt)}.</b> ${esc(g.sub)}</p>
-      <p>Neve fresca ultime 48 ore: <b>${r0(m.p48)} cm</b> · in arrivo nei prossimi 3 giorni: <b>+${r0(m.n72)} cm</b> · nei prossimi 7 giorni: <b>+${r0(m.n7d)} cm</b> · temperatura a ${s.elev} m: <b>${r0(m.temp)} °C</b>.</p>`);
+    dati += sec("o-now", "Adesso", `<p><b>${esc(g.txt)}.</b> ${esc(g.sub)}</p>
+      <p>Temperatura a ${s.elev} m: <b>${r0(m.temp)} °C</b>.</p>`);
+    dati += sec("o-snow", "Neve fresca · stima del modello", `<p>Ultime 48 ore: <b>${r0(m.p48)} cm</b> · in arrivo nei prossimi 3 giorni: <b>+${r0(m.n72)} cm</b> · nei prossimi 7 giorni: <b>+${r0(m.n7d)} cm</b>.</p>`);
     const p = dailyPlan(s);
-    h += sec("o-plan", `Previsione neve · prossimi ${FORECAST_DAYS} giorni`, `<div class="st-wrap"><table class="st"><thead><tr><th class="l">Giorno</th><th>Cielo</th><th>Neve fresca</th><th>Temperatura</th></tr></thead><tbody>
+    prev += sec("o-plan", `Previsioni · prossimi ${FORECAST_DAYS} giorni`, `<div class="st-wrap"><table class="st"><thead><tr><th class="l">Giorno</th><th>Cielo</th><th>Neve fresca</th><th>Temperatura</th></tr></thead><tbody>
       ${p.map(d => `<tr><td class="l">${dayName(d.date)} ${dayNum(d.date)}</td><td>${wmo(d.code)[1]}</td><td>${d.snow >= 0.5 ? r0(d.snow) + " cm" : "–"}</td><td>${r0(d.tmin)}° / ${r0(d.tmax)}°</td></tr>`).join("")}
       </tbody></table></div>${best ? `<p class="note">Giornata migliore: ${dayName(best.date)} ${dayNum(best.date)}, circa ${r0(best.fresh)} cm di neve fresca.</p>` : ""}`);
   }
-  if(state.quote) h += sec("o-quote", "Neve per quota · Vetta, Metà, Base", quoteHTML(s));
-  h += sec("o-av", "Pericolo valanghe · bollettino ufficiale", avBlockHTML(s));
+  if(state.quote) prev += sec("o-quote", "Neve per quota · Vetta, Metà, Base", quoteHTML(s));
+  h += gruppoHTML(0, dati) + gruppoHTML(1, prev);
+  h += gruppoHTML(2, sec("o-av", "Pericolo valanghe · bollettino ufficiale", avBlockHTML(s)));
   const vicini = SPOTS.filter(x => x.area === s.area && x.id !== s.id);
-  h += sec("o-altri", `Altri spot in ${esc((AREE.find(a => a.area === s.area) || {}).nome || s.area)}`,
-    `<ul class="altri">${vicini.map(x => `<li><a href="${percorsoSpot(x.id)}">${esc(x.name)}</a></li>`).join("")}</ul><p><a href="${percorsoArea(s.area)}">Tutti gli spot della zona</a></p>`);
+  h += `<section class="sec o-altri" id="o-altri"><h2 class="sh">Altri spot in ${esc((AREE.find(a => a.area === s.area) || {}).nome || s.area)}</h2>
+    <ul class="altri">${vicini.map(x => `<li><a href="${percorsoSpot(x.id)}">${esc(x.name)}</a></li>`).join("")}</ul><p><a href="${percorsoArea(s.area)}">Tutti gli spot della zona</a></p></section>`;
   return h;
 }
 function paginaPrevisione(){

@@ -60,9 +60,12 @@ test.describe("Pagine e navigazione", () => {
 
   test("pagina spot: le pillole portano alle sezioni della pagina", async ({page, errori}) => {
     await apri(page, "", {modo: "completa", url: "/spot/cortina/"});
-    await page.locator('#cover [data-goto="o-av"]').click();
-    await expect(page.locator("#o-av")).toBeInViewport();
-    await expect(page.locator('#cover [data-goto="o-av"]')).toHaveClass(/on/);
+    await expect(page.locator("#cover [data-goto]")).toHaveText(["Dati", "Previsioni", "Valanghe", "3D", "Webcam"]);
+    await page.locator('#cover [data-goto="s-av"]').click();
+    await expect(page.locator("#s-av h2")).toBeInViewport();
+    await expect(page.locator('#cover [data-goto="s-av"]')).toHaveClass(/on/);
+    await page.locator('#cover [data-goto="s-cam"]').click();
+    await expect(page.locator("#s-cam h2")).toBeInViewport();
     await expect(page).toHaveURL(/\/spot\/cortina\/$/);
   });
 

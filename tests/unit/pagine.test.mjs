@@ -89,8 +89,9 @@ test("generatore: pagina spot con titolo, canonico, base, h1 e testo già scritt
   assert.match(h, /<meta property="og:url" content="https:\/\/www\.esempio\.it\/spot\/cortina\/">/);
   assert.equal((h.match(/<h1/g) || []).length, 1);
   assert.match(h, /<section class="view on" id="v-detail">/);
-  assert.match(h, /Previsione neve · prossimi 10 giorni/);
-  assert.match(h, /Neve fresca ultime 48 ore: <b>\d+ cm<\/b>/);
+  assert.match(h, /Previsioni · prossimi 10 giorni/);
+  assert.match(h, /Ultime 48 ore: <b>\d+ cm<\/b>/);
+  assert.match(h, /<h2 class="gh" id="s-dati-t">.*Dati raccolti<\/h2>[\s\S]*Previsioni<\/h2>[\s\S]*Valanghe<\/h2>/);
   assert.match(h, /href="spot\/arabba\/"/, "link agli altri spot della zona");
   const ld = JSON.parse(h.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
   const tipi = ld["@graph"].map(x => x["@type"]);

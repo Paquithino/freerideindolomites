@@ -15,7 +15,7 @@ test.describe("Tema chiaro/scuro dal sistema", () => {
     await expect.poll(async () => chiaro(await sfondo(page))).toBe(false);
     expect(chiaro(await scheda(page))).toBe(false);
     // il testo resta leggibile: chiaro su scuro
-    const tx = await page.evaluate(() => getComputedStyle(document.querySelector(".sec h2")).color);
+    const tx = await page.evaluate(() => getComputedStyle(document.querySelector(".sec h3")).color);
     expect(chiaro(tx)).toBe(true);
     await page.emulateMedia({colorScheme: "light"});
     await expect.poll(async () => chiaro(await sfondo(page))).toBe(true);

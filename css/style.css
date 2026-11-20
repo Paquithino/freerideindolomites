@@ -647,7 +647,7 @@ select{background:#fff;color:var(--tx);border-color:#d5dde6}
 /* pagina spot */
 .dzone{margin:14px 2px 0;color:var(--tx2);font-size:14px}
 .sec{background:#fff;border:1px solid var(--line)}
-.sec > h2.sh,.sec h4{margin:0 0 12px;font-family:var(--cond);font-size:22px;font-weight:700;text-transform:none;letter-spacing:0;color:var(--tx)}
+.sec > h2.sh,.sec > h3.sh,.sec h4{margin:0 0 12px;font-family:var(--cond);font-size:22px;font-weight:700;text-transform:none;letter-spacing:0;color:var(--tx)}
 .big{background:var(--bg2)}
 .big b{font-family:var(--cond);font-weight:700;color:var(--tx)}
 .big span{color:var(--tx2)}
@@ -820,6 +820,27 @@ table.mdl.wind td .vw-cella em{font-size:9.5px}
 .sg-n .vw b{font-size:24px}
 .sg-n .vw-mini{flex-wrap:wrap;justify-content:center;max-width:100%}
 
+
+/* ---------- pagina spot: 5 sezioni numerate con le loro tabelle ---------- */
+.grp{margin:22px 0 0}
+.grp + .grp{margin-top:30px}
+.gh{display:flex;align-items:center;gap:10px;margin:0 0 4px;font-family:var(--cond);font-size:30px;font-weight:700;line-height:1.1;color:var(--tx);scroll-margin-top:76px}
+.gn{display:inline-grid;place-items:center;width:32px;height:32px;flex:none;border-radius:999px;background:var(--tx);color:var(--bg);font-family:Barlow,sans-serif;font-size:16px;font-weight:800}
+.grp{scroll-margin-top:70px}
+.grp-b > .sec{margin:12px 0 0}
+.cover.cv-spot .pills button{font-size:14px;padding:0 2px}
+@media (max-width:380px){ .cover.cv-spot .pills button{font-size:12.5px} }
+@media (min-width:960px){
+  .grp{scroll-margin-top:84px}
+  .gh{font-size:34px}
+  /* Dati raccolti: Adesso e Neve fresca affiancate, Neve misurata sotto a tutta larghezza */
+  .s-dati .grp-b{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 var(--gap,20px);align-items:start}
+  .s-dati .grp-b > .sec.largo,.s-dati .grp-b > .note{grid-column:1/-1}
+  .s-cam .cams{grid-template-columns:repeat(3,minmax(0,1fr))}
+  /* nella versione semplice: il riquadro unico occupa tutta la riga */
+  body.semplice .s-dati .grp-b{display:block}
+}
+@media (min-width:1300px){ .s-cam .cams{grid-template-columns:repeat(4,minmax(0,1fr))} }
 
 /* =========================================================
    TEMA SCURO automatico: segue l'impostazione del telefono o del computer

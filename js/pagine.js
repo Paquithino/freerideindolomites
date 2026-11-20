@@ -108,6 +108,26 @@ export function metaPer(r){
   }
 }
 
+/* Pagina spot: 5 sezioni, 10 tabelle (vedi struttura-pagina-spot.md)
+   1 Dati raccolti: Adesso, Neve fresca, Neve misurata
+   2 Previsioni: prossimi 10 giorni, Neve per quota, Confronto modelli, Ora per ora
+   3 Valanghe: Pericolo valanghe · 4 3D: Montagna in 3D · 5 Webcam: Webcam */
+export const GRUPPI_SPOT = [
+  {id: "s-dati", nome: "Dati raccolti", corto: "Dati"},
+  {id: "s-prev", nome: "Previsioni", corto: "Previsioni"},
+  {id: "s-av", nome: "Valanghe", corto: "Valanghe"},
+  {id: "s-3d", nome: "3D", corto: "3D"},
+  {id: "s-cam", nome: "Webcam", corto: "Webcam"}
+];
+/* una sezione numerata (h2) che contiene le sue tabelle; vuota = non mostrata */
+export function gruppoHTML(i, corpo){
+  if(!corpo) return "";
+  const g = GRUPPI_SPOT[i];
+  return `<section class="grp ${g.id}" id="${g.id}" aria-labelledby="${g.id}-t"><h2 class="gh" id="${g.id}-t"><span class="gn" aria-hidden="true">${i + 1}</span>${esc(g.nome)}</h2><div class="grp-b">${corpo}</div></section>`;
+}
+/* una tabella dentro la sezione (h3) */
+export const tabellaHTML = (cls, titolo, corpo, extra = "") => `<section class="sec ${cls}${extra ? " " + extra : ""}" id="${cls}"><h3 class="sh">${titolo}</h3>${corpo}</section>`;
+
 const ICO_INDIETRO = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>`;
 /* fascia di copertina con la foto: data, titolo e pillole (sezioni, oppure parti della pagina spot) */
 export function coverHTML(r, quando, opz = {}){
@@ -115,7 +135,7 @@ export function coverHTML(r, quando, opz = {}){
   const data = quando ? `<span class="cv-date">${esc(quando)}</span>` : "";
   if(r.vista === "spot"){
     const s = SPOTS.find(x => x.id === r.id);
-    const parti = [["o-plan", "Previsione"], ["o-av", "Valanghe"], ["o-cam", "Webcam"], ["o-3d", "3D"]];
+    const parti = GRUPPI_SPOT.map(g => [g.id, g.corto]);
     return `<div class="cover-in wrap">
       <div class="cv-top"><a class="cv-back" href="${percorsoArea(s.area)}" data-back>${ICO_INDIETRO}<span>Spot</span></a>
         ${opz.fav != null ? `<button class="cv-fav ${opz.fav ? "on" : ""}" data-fav="${s.id}" aria-label="${opz.fav ? "Togli dai preferiti" : "Aggiungi ai preferiti"}">${opz.fav ? "★" : "☆"}</button>` : ""}</div>
