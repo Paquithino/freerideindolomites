@@ -17,7 +17,7 @@ export function giudizio(m, av){
   else g = {ico: "😐", txt: "Niente neve nuova", sub: "Neve vecchia, nessuna nevicata in vista nei prossimi 3 giorni.", cls: "meh"};
   const avvisi = [];
   if(lv === 3) avvisi.push("⚠️ Pericolo valanghe marcato: serve esperienza.");
-  if((m.w7 || 0) >= SOGLIE.vento) avvisi.push("💨 Vento forte in quota.");
+  if((m.w7 || 0) >= SOGLIE.vento) avvisi.push("Vento forte in quota.");
   if(m.temp > SOGLIE.caldo) avvisi.push("🌡 Fa caldo: neve pesante o bagnata.");
   return {...g, avvisi};
 }

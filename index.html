@@ -6,7 +6,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>FreeRide in Dolomites</title>
 <meta name="description" content="Neve fresca, meteo in quota, pericolo valanghe e webcam degli spot freeride delle Dolomiti. Ottimizzato per smartphone.">
-<meta name="theme-color" content="#ffffff">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#16222f" media="(prefers-color-scheme: dark)">
 <link rel="canonical" href="https://paquithino.github.io/freerideindolomites/" data-radice="https://paquithino.github.io/freerideindolomites/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -59,6 +61,7 @@
     <h2 class="ttl sez" id="spotTitle">Spot</h2>
     <div class="toolbar">
       <div class="chips" id="areaChips"></div>
+      <div class="vu-list" id="vuList"></div>
       <div class="sortsel">Ordina per
         <select id="sort">
           <option value="powder">Indice Powder</option>

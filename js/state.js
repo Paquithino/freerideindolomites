@@ -9,7 +9,8 @@ export const LS = {
 };
 export const r0 = v => v == null || isNaN(v) ? "–" : Math.round(v);
 export const r1 = v => v == null || isNaN(v) ? "–" : (Math.round(v * 10) / 10).toLocaleString("it-IT");
-export const scoreColor = s => s >= 7 ? "#0369a1" : s >= 5 ? "#15803d" : s >= 3 ? "#b45309" : "#64748b";
+/* colori dell'indice: variabili CSS, così seguono il tema chiaro/scuro */
+export const scoreColor = s => s >= 7 ? "var(--pw4)" : s >= 5 ? "var(--pw3)" : s >= 3 ? "var(--pw2)" : "var(--pw1)";
 export const snowColor = cm => cm < 1 ? null : cm < 5 ? "#e0f2fe" : cm < 10 ? "#bae6fd" : cm < 20 ? "#7dd3fc" : cm < 35 ? "#38bdf8" : "#0ea5e9";
 
 /* fetch con nuovi tentativi: errori di rete, 429 (troppe richieste) e 5xx (server)
@@ -39,7 +40,7 @@ export const state = {
   quote: null,
   wx:{}, av:{}, avDate:{}, avErr:false, wxErr:false, demo:false, loading:false,
   area: LS.get("fr_area", "Tutti"), sort: LS.get("fr_sort", "powder"),
-  fav: new Set(LS.get("fr_fav", [])), view: LS.get("fr_view", "tabella"), modo: LS.get("fr_modo", null), dir: -1, camArea: "Tutti", planArea: "Tutti", planMode: LS.get("fr_pvmode", "giorno"), updated: null,
+  fav: new Set(LS.get("fr_fav", [])), view: LS.get("fr_view", "tabella"), modo: LS.get("fr_modo", null), ventoUnita: LS.get("fr_vento", "kmh"), dir: -1, camArea: "Tutti", planArea: "Tutti", planMode: LS.get("fr_pvmode", "giorno"), updated: null,
   stations: [], stationsDate: null,
   ens: {}, ensMemo: {}
 };

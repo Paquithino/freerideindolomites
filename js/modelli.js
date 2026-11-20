@@ -6,6 +6,7 @@
    - regime dei venti in quota (scirocco, nordstau, bora…) ed esposizione degli spot
    ========================================================= */
 import { SPOTS, MODELS, FORECAST_DAYS, WORKER_URL, FLOW_EXPOSURE, REGIMES } from "./config.js";
+import { mediaDirezioni, settore } from "./vento.js";
 import { state, fetchRetry } from "./state.js";
 import { romeNowISO } from "./meteo.js";
 import { calOf, weightedMedian } from "./calibrazione.js";
@@ -104,8 +105,9 @@ function dailyWind(series){
   if(!series.w7) return out;
   series.time.forEach((t, i) => {
     const d = t.slice(0, 10), sp = series.w7[i], dr = series.d7 ? series.d7[i] : null;
-    const o = out[d] = out[d] || {w7: null, g: null, u: 0, v: 0, wt: 0, wet: 0};
-    if(sp != null) o.w7 = Math.max(o.w7 ?? 0, sp);
+    const o = out[d] = out[d] || {w7: null, dir: null, g: null, u: 0, v: 0, wt: 0, wet: 0};
+    // direzione del vento nell'ora più ventosa (quella che si vede nell'icona)
+    if(sp != null && (o.w7 == null || sp > o.w7)){ o.w7 = sp; if(dr != null) o.dir = dr; }
     if(series.g && series.g[i] != null) o.g = Math.max(o.g ?? 0, series.g[i]);
     if(sp != null && dr != null){
       const p = series.snow[i] || 0, wt = 0.05 + p, rad = dr * Math.PI / 180;
@@ -136,13 +138,17 @@ export function ensembleFor(spot){
   const days = {};
   for(const d of dates){
     const models = {}; for(const mid in per) models[mid] = per[mid][d] ?? null;
-    const w = {}, g = {}, reg = {};
-    for(const mid in wind){ const x = wind[mid][d]; if(!x || per[mid][d] == null) continue; w[mid] = x.w7; g[mid] = x.g; reg[mid] = x.regime; }
+    const w = {}, g = {}, reg = {}, dir = {};
+    for(const mid in wind){ const x = wind[mid][d]; if(!x || per[mid][d] == null) continue; w[mid] = x.w7; g[mid] = x.g; reg[mid] = x.regime; dir[mid] = x.dir; }
+    // direzione FreeRide: media dei vettori dei modelli; accordo = modelli nello stesso settore della media
+    const dMed = mediaDirezioni(Object.values(dir), Object.keys(dir).map(k => w[k] || 0));
+    const sMed = settore(dMed), nDir = Object.values(dir).filter(x => x != null);
+    const accordo = sMed ? nDir.filter(x => settore(x).k === sMed.k).length : 0;
     // regime per consenso: quello indicato dal maggior numero di modelli
     const cnt = {}; Object.values(reg).forEach(k => { if(k) cnt[k] = (cnt[k] || 0) + 1; });
     const top = Object.keys(cnt).sort((a, b) => cnt[b] - cnt[a])[0];
     days[d] = {...(wstats(models, spot.id) || {}), models,
-      wind: {w7: stats(Object.values(w)), g: stats(Object.values(g)), models: w, regimes: reg},
+      wind: {w7: stats(Object.values(w)), g: stats(Object.values(g)), models: w, regimes: reg, dirs: dir, dir: dMed, accordo, nDir: nDir.length},
       regime: top ? {key: top, count: cnt[top], n: Object.values(reg).filter(Boolean).length} : null};
   }
   const res = {days, n24: wstats(sums.n24, spot.id), n72: wstats(sums.n72, spot.id), n7d: wstats(sums.n7d, spot.id), models: Object.keys(per)};

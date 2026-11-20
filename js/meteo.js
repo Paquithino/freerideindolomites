@@ -94,7 +94,7 @@ export function metrics(spot){
   m.score = Math.max(0, Math.min(10, Math.round(s * 10) / 10));
 
   m.flags = [];
-  if(m.p72 >= 10 && (m.w7max48 || 0) >= 40) m.flags.push(["w", "💨 Accumuli da vento"]);
+  if(m.p72 >= 10 && (m.w7max48 || 0) >= 40) m.flags.push(["w", "Accumuli da vento"]);
   if(m.temp > 0 || (m.fz != null && m.fz > spot.elev)) m.flags.push(["w", "🌡 Neve umida"]);
   if(m.p48 >= 20) m.flags.push(["p", "❄️ Powder alert"]);
   if(m.n48 >= 15) m.flags.push(["p", "🌨 Nevicata in arrivo"]);
@@ -109,6 +109,10 @@ export function dailyPlan(spot){
   let s = D.time.indexOf(today); if(s < 0) s = 3;
   const H = d.hourly, hsnow = H && (H.snow_c || H.snowfall), byDay = {};
   if(hsnow) H.time.forEach((t, i) => { const k = t.slice(0, 10); byDay[k] = (byDay[k] || 0) + (hsnow[i] || 0); });
+  // vento in quota (~3.000 m): massimo del giorno e direzione in quell'ora
+  const ventoGiorno = {};
+  if(H && H.wind_speed_700hPa) H.time.forEach((t, i) => { const k = t.slice(0, 10), v = H.wind_speed_700hPa[i];
+    if(v != null && (!ventoGiorno[k] || v > ventoGiorno[k].w7)) ventoGiorno[k] = {w7: v, dir: H.wind_direction_700hPa ? H.wind_direction_700hPa[i] : null}; });
   const ens = ensembleFor(spot);
   const out = [];
   for(let i = s, k = 0; i < D.time.length; i++, k++){
@@ -118,7 +122,7 @@ export function dailyPlan(spot){
     const regime = e && e.regime ? {key: e.regime.key, count: e.regime.count, n: e.regime.n, wet: br ? br.wet : (e.med || 0) >= 1} : br;
     out.push({date, snow: e && e.med != null ? e.med : base, base, ens: e && e.n ? e : null, regime,
       code: D.weather_code[i], tmax: D.temperature_2m_max[i], tmin: D.temperature_2m_min[i],
-      gust: D.wind_gusts_10m_max[i], sun: D.sunshine_duration ? (D.sunshine_duration[i] || 0) / 3600 : null,
+      gust: D.wind_gusts_10m_max[i], w7: ventoGiorno[date] ? ventoGiorno[date].w7 : null, w7dir: ventoGiorno[date] ? ventoGiorno[date].dir : null, sun: D.sunshine_duration ? (D.sunshine_duration[i] || 0) / 3600 : null,
       conf: k <= 2 ? "alta" : k <= 5 ? "media" : "bassa"});
   }
   return out;

@@ -80,5 +80,5 @@ test("raggruppamento per servizio: spot assegnati al loro bollettino, gradi dal 
 test("rosa delle esposizioni: 8 spicchi, evidenziati solo quelli indicati", () => {
   const svg = aspectRose(["N", "S"]);
   assert.equal((svg.match(/<path/g) || []).length, 8);
-  assert.equal((svg.match(/#0369a1/g) || []).length, 2);
+  assert.equal((svg.match(/class="ro-on"/g) || []).length, 2);
 });

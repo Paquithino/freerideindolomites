@@ -83,9 +83,9 @@ export function aspectRose(aspects){
   let p = "";
   order.forEach((a, i) => {
     const a0 = (i * 45 - 22.5 - 90) * Math.PI / 180, a1 = (i * 45 + 22.5 - 90) * Math.PI / 180, R = 24, c = 27;
-    p += `<path d="M${c},${c} L${c + R * Math.cos(a0)},${c + R * Math.sin(a0)} A${R},${R} 0 0 1 ${c + R * Math.cos(a1)},${c + R * Math.sin(a1)} Z" fill="${set.has(a) ? "#0369a1" : "#d8e0e8"}" stroke="#ffffff" stroke-width="1.5"/>`;
+    p += `<path d="M${c},${c} L${c + R * Math.cos(a0)},${c + R * Math.sin(a0)} A${R},${R} 0 0 1 ${c + R * Math.cos(a1)},${c + R * Math.sin(a1)} Z" class="${set.has(a) ? "ro-on" : "ro-off"}" style="fill:${set.has(a) ? "var(--ro-on,#0369a1)" : "var(--ro-off,#d8e0e8)"};stroke:var(--card,#fff)" stroke-width="1.5"/>`;
   });
-  return `<svg viewBox="0 0 54 54" role="img" aria-label="Esposizioni: ${[...set].join(", ") || "nessuna"}">${p}<text x="27" y="8" font-size="7" text-anchor="middle" fill="#0f2235" font-weight="700">N</text></svg>`;
+  return `<svg viewBox="0 0 54 54" role="img" aria-label="Esposizioni: ${[...set].join(", ") || "nessuna"}">${p}<text x="27" y="8" font-size="7" text-anchor="middle" style="fill:var(--tx,#0f2235)" font-weight="700">N</text></svg>`;
 }
 export function elevText(e){
   if(!e) return "tutte le quote";

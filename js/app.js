@@ -2,13 +2,14 @@ import { SPOTS, AREAS, AV_LINKS, PROV_NAME, FORECAST_DAYS } from "./config.js";
 import { $, esc, LS, r0, r1, scoreColor, snowColor, state, unpackTimes } from "./state.js";
 import { wmo, dirName, metrics, dailyPlan, bestDay, dayName, dayNum, isWeekend, loadWeather, demoWeather, romeNowISO } from "./meteo.js";
 import { giudizio } from "./giudizio.js";
+import { ventoIcona, unitaToggle, legendaVento, inUnita, etichettaUnita, testoVento, mediaDirezioni } from "./vento.js";
 import { calOf, zonaDi } from "./calibrazione.js";
 import { peakvisorHTML } from "./peakvisor.js";
 import { DNAME, avForSpot, avBlockHTML, dsq, loadAvalanche, bollettiniPerServizio, gradiHTML, problemiHTML, testiHTML, intestazione, stripTags, PROB } from "./valanghe.js";
 import { camsHTML } from "./webcam.js";
 import { leggiPercorso, daHash, metaPer, coverHTML, percorsoSpot, percorsoArea, slugDaArea, AREE, SITO_NOME } from "./pagine.js";
 import { loadStations, stationsHTML, bestStation } from "./stazioni.js";
-import { loadModels, demoModels, ensembleFor, agreement, regionRegime, regimeLabel, flowEffect, correctHourly } from "./modelli.js";
+import { loadModels, demoModels, ensembleFor, agreement, regionRegime, regimeLabel, flowEffect, correctHourly, dayRegime } from "./modelli.js";
 import { MODELS, LAVORI_IN_CORSO } from "./config.js";
 import { loadQuote, quoteHTML, demoQuote } from "./quote.js";
 
@@ -70,7 +71,7 @@ function giorniSemplici(s, n = 5){
   const p = dailyPlan(s).slice(0, n);
   return `<div class="sg-days" style="grid-template-columns:repeat(${p.length},1fr)">${p.map((d, k) => `<div class="sg-d">
     <span>${k === 0 ? "Oggi" : k === 1 ? "Domani" : dayName(d.date)}</span><i>${wmo(d.code)[0]}</i>
-    <b class="${d.snow >= 0.5 ? "neve" : ""}">${d.snow >= 0.5 ? r0(d.snow) + " cm" : "–"}</b><em>${r0(d.tmax)}°</em></div>`).join("")}</div>`;
+    <b class="${d.snow >= 0.5 ? "neve" : ""}">${d.snow >= 0.5 ? r0(d.snow) + " cm" : "–"}</b><em>${r0(d.tmax)}°</em>${ventoIcona(d.w7, d.w7dir, "cella")}</div>`).join("")}</div>`;
 }
 function cardSemplice(s){
   const m = metrics(s), av = avForSpot(s), fav = state.fav.has(s.id);
@@ -82,6 +83,7 @@ function cardSemplice(s){
     <div class="sg-n">
       <div><b>${r0(m.p48)}<small> cm</small></b><span>neve fresca</span></div>
       <div><b>${m.n72 >= 0.5 ? "+" + r0(m.n72) : "0"}<small> cm</small></b><span>in arrivo 3 gg</span></div>
+      <div class="sg-v">${ventoIcona(m.w7, m.w7dir, "cella")}<span>vento ${etichettaUnita()}</span></div>
       <div><b>${av ? dsq(av.level) : "–"}</b><span>${av ? "valanghe " + (DNAME[av.level] || "").toLowerCase() : "valanghe n.d."}</span></div>
     </div>
     ${g.avvisi.length ? `<p class="sg-w">${g.avvisi.map(esc).join(" ")}</p>` : ""}
@@ -121,7 +123,7 @@ function cardHTML(s){
       <div class="m"><b>${av ? dsq(av.level) : "–"}</b><span>${av ? (DNAME[av.level] || "n.d.") : "valanghe n.d."}</span></div>
     </div>
     <div class="flags">
-      <span class="flag">💨 ${r0(m.w7)} km/h ${dirName(m.w7dir)} in quota</span>
+      <span class="flag fv">${ventoIcona(m.w7, m.w7dir, "mini")}<span>in quota</span></span>
       <span class="flag">0° a ${m.fz != null ? r0(m.fz).toLocaleString("it-IT") + " m" : "–"}</span>
       ${(() => { const b = bestStation(s); return b ? `<span class="flag g" title="${esc(b.name)}">📏 ${r0(b.hs)} cm misurati${(b.d24 || 0) >= 1 ? ` · +${r0(b.d24)} in 24h` : ""}</span>` : ""; })()}
       ${m.flags.map(f => `<span class="flag ${f[0]}">${f[1]}</span>`).join("")}
@@ -163,7 +165,7 @@ function tableHTML(arr){
       <td class="n o1">${m.depth != null ? r0(m.depth) + " cm" : "–"}</td>
       <td class="n" style="color:${m.temp > 0 ? "var(--warn)" : "var(--tx)"}">${r0(m.temp)}°</td>
       <td class="n o2">${m.fz != null ? r0(m.fz).toLocaleString("it-IT") + " m" : "–"}</td>
-      <td class="n" style="color:${(m.w7 || 0) >= 50 ? "var(--bad)" : (m.w7 || 0) >= 30 ? "var(--warn)" : "var(--tx)"}">${r0(m.w7)} <small>${dirName(m.w7dir)}</small></td>
+      <td class="n">${ventoIcona(m.w7, m.w7dir, "mini")}</td>
       <td class="n">${av ? dsq(av.level) : `<span class="small">n.d.</span>`}</td>
       <td class="l fl o2">${m.flags.map(f => `<span class="flag ${f[0]}">${f[1]}</span>`).join("")}</td>
     </tr>`;
@@ -188,11 +190,12 @@ function renderAside(){
       <a class="more" href="previsione/">Apri la previsione →</a></div>
     <div class="sec"><h4>⚠️ Pericolo valanghe</h4>${avs.length ? avs.map(([s, a]) => `<div class="arow" data-spot="${s.id}"><div><b>${esc(s.name)}</b><span>${DNAME[a.level] || "n.d."}</span></div>${dsq(a.level)}</div>`).join("") : `<p class="note" style="margin:0">${state.avErr ? "Bollettini non raggiungibili." : "Bollettini non ancora emessi: la stagione dei bollettini parte di solito a dicembre."}</p>`}
       <a class="more" href="valanghe/">Tutti i bollettini →</a></div>
-    <div class="sec"><h4>💨 Vento in quota più forte</h4>${top(m => m.w7 || 0, 3).map(([s, m]) => row(s, `${r0(m.w7)} km/h`, `da ${dirName(m.w7dir)} · ~3.000 m`)).join("")}</div>`;
+    <div class="sec"><h4>Vento in quota più forte</h4>${top(m => m.w7 || 0, 3).map(([s, m]) => row(s, ventoIcona(m.w7, m.w7dir, "mini"), "~3.000 m")).join("")}</div>`;
 }
 
 function renderList(){
   $("#modo").innerHTML = modoHTML();
+  $("#vuList").innerHTML = unitaToggle();
   { const z = AREE.find(a => a.area === state.area); $("#spotTitle").textContent = z ? `Spot · ${z.nome}` : state.area === "★ Preferiti" ? "Spot preferiti" : "Spot"; }
   $("#areaChips").innerHTML = chipsHTML(AREAS, state.area, "data-area");
   $("#sort").value = state.sort;
@@ -229,7 +232,7 @@ function planGiorni(arr, days){
     const max = conNeve.length ? conNeve[0][1].snow : 0;
     const cod = arr.map(s => piani.get(s)[i] && piani.get(s)[i].code);
     const testa = `<div class="pv-h"><b>${i === 0 ? "Oggi" : i === 1 ? "Domani" : giornoLungo(g.date)}</b>${i <= 1 ? `<span class="pv-dt">${giornoLungo(g.date)}</span>` : ""}
-      ${isWeekend(g.date) ? `<span class="pv-we">weekend</span>` : ""}<span class="pv-rg" title="${esc(R.name)}: ${esc(R.desc)}">${R.icon} ${esc(R.name.split(" ")[0])}</span></div>`;
+      ${isWeekend(g.date) ? `<span class="pv-we">weekend</span>` : ""}<span class="pv-rg" title="Regime: ${esc(R.name)}. ${esc(R.desc)}">${ventoRegione(g.date)}</span></div>`;
     if(!conNeve.length) return `<div class="pv-day nada">${testa}<p class="pv-none">${cielo(cod)} Nessuna nevicata prevista</p></div>`;
     const righe = conNeve.slice(0, 6).map(([s, d]) => {
       const c = snowColor(d.snow) || "#bae6fd", w = Math.max(6, Math.round(100 * d.snow / scala));
@@ -290,19 +293,19 @@ function hourlyChart(spot, m){
     const t = H.time[i0 + k];
     if(t.endsWith("T00:00") || t.endsWith("T12:00")){
       const x = pl + k * bw, lab = t.endsWith("T00:00") ? dayName(t.slice(0, 10)) : "12";
-      labels += `<line x1="${x}" x2="${x}" y1="${pt}" y2="${Hh - pb}" stroke="#e3e8ef" ${t.endsWith("T12:00") ? 'stroke-dasharray="2 3"' : ""}/><text x="${x + 3}" y="${Hh - 10}" font-size="11" fill="#4b5b6e">${lab}</text>`;
+      labels += `<line x1="${x}" x2="${x}" y1="${pt}" y2="${Hh - pb}" style="stroke:var(--line)" ${t.endsWith("T12:00") ? 'stroke-dasharray="2 3"' : ""}/><text x="${x + 3}" y="${Hh - 10}" font-size="11" style="fill:var(--tx2)">${lab}</text>`;
     }
   }
   const nowX = pl + 23 * bw + bw / 2, zeroY = y(0);
   return `<svg class="chart" viewBox="0 0 ${W} ${Hh}" role="img" aria-label="Grafico orario neve, temperatura e vento">
     ${labels}
-    ${zeroY > pt && zeroY < Hh - pb ? `<line x1="${pl}" x2="${W - pr}" y1="${zeroY}" y2="${zeroY}" stroke="#dc2626" stroke-dasharray="4 4" opacity=".55"/><text x="${W - pr + 3}" y="${zeroY + 4}" font-size="10" fill="#dc2626">0°</text>` : ""}
-    ${bars}<path d="${wind}" fill="none" stroke="#7c3aed" stroke-width="1.5" opacity=".6"/><path d="${line}" fill="none" stroke="#d97706" stroke-width="2.2"/>
-    <line x1="${nowX}" x2="${nowX}" y1="${pt}" y2="${Hh - pb}" stroke="#0f2235" stroke-width="1.5"/><text x="${nowX + 3}" y="${pt + 9}" font-size="10" fill="#0f2235">ora</text>
-    <text x="2" y="${pt + 8}" font-size="10" fill="#b45309">${Math.round(tmax)}°</text><text x="2" y="${Hh - pb}" font-size="10" fill="#b45309">${Math.round(tmin)}°</text>
-    <text x="${W - 2}" y="${pt + 8}" font-size="10" fill="#0369a1" text-anchor="end">${r1(smax)}cm/h</text>
+    ${zeroY > pt && zeroY < Hh - pb ? `<line x1="${pl}" x2="${W - pr}" y1="${zeroY}" y2="${zeroY}" style="stroke:var(--bad)" stroke-dasharray="4 4" opacity=".55"/><text x="${W - pr + 3}" y="${zeroY + 4}" font-size="10" style="fill:var(--bad)">0°</text>` : ""}
+    ${bars}<path d="${wind}" fill="none" style="stroke:var(--c-vento)" stroke-width="1.5" opacity=".7"/><path d="${line}" fill="none" style="stroke:var(--c-temp)" stroke-width="2.2"/>
+    <line x1="${nowX}" x2="${nowX}" y1="${pt}" y2="${Hh - pb}" style="stroke:var(--tx)" stroke-width="1.5"/><text x="${nowX + 3}" y="${pt + 9}" font-size="10" style="fill:var(--tx)">ora</text>
+    <text x="2" y="${pt + 8}" font-size="10" style="fill:var(--warn)">${Math.round(tmax)}°</text><text x="2" y="${Hh - pb}" font-size="10" style="fill:var(--warn)">${Math.round(tmin)}°</text>
+    <text x="${W - 2}" y="${pt + 8}" font-size="10" style="fill:var(--ice)" text-anchor="end">${r1(smax)}cm/h</text>
   </svg>
-  <div class="legend"><span><i style="background:#0ea5e9"></i>Neve (cm/h)</span><span><i style="background:#d97706"></i>Temperatura ${spot.elev} m</span><span><i style="background:#7c3aed"></i>Vento in quota (0–${Math.round(wmax)} km/h)</span></div>`;
+  <div class="legend"><span><i style="background:#0ea5e9"></i>Neve (cm/h)</span><span><i style="background:var(--c-temp)"></i>Temperatura ${spot.elev} m</span><span><i style="background:var(--c-vento)"></i>Vento in quota (0–${Math.round(wmax)} km/h)</span></div>`;
 }
 function daysHTML(spot){
   const p = dailyPlan(spot);
@@ -316,25 +319,33 @@ function daysHTML(spot){
       <div class="sn">${d.snow >= 0.5 ? r0(d.snow) + "cm" : "–"}</div>
       ${hi != null && hi - lo >= 1 ? `<div class="rg">${r0(lo)}–${r0(hi)}</div>` : `<div class="rg">&nbsp;</div>`}
       <div class="tt">${r0(d.tmax)}° / ${r0(d.tmin)}°</div>
-      ${R ? `<div class="tt" title="${esc(R.name)}: ${esc(R.desc)}${fx ? " — " + fx.txt : ""}${d.regime.n ? ` (${d.regime.count}/${d.regime.n} modelli)` : ""}">${R.icon} ${esc(R.name.split(" ")[0])}</div>` : `<div class="tt">💨${r0(d.gust)}</div>`}
+      <div class="tv" ${R ? `title="Regime delle precipitazioni: ${esc(R.name)}. ${esc(R.desc)}${fx ? " — " + fx.txt : ""}${d.regime.n ? ` (${d.regime.count}/${d.regime.n} modelli)` : ""}"` : ""}>${ventoIcona(d.w7, d.w7dir, "cella")}</div>
       <div class="conf">${d.conf}</div></div>`; }).join("")}</div></div>
-    <p class="small" style="margin:6px 0 0">Numero grande = Previsione FreeRide (mediana dei modelli), sotto la forbice min–max. Barra chiara = valore più alto tra i modelli. Bordo verde/giallo = vento in quota favorevole/sfavorevole per questo spot. ${isDesktop() ? "" : `Scorri per vedere tutti i ${p.length} giorni.`}</p>`;
+    <p class="small" style="margin:6px 0 0">Numero grande = Previsione FreeRide (mediana dei modelli), sotto la forbice min–max. Barra chiara = valore più alto tra i modelli. Sotto: vento in quota più forte del giorno (freccia = dove va il vento). Bordo verde/giallo = flusso in quota favorevole/sfavorevole alla neve su questo spot. ${isDesktop() ? "" : `Scorri per vedere tutti i ${p.length} giorni.`}</p>`;
 }
 
 function windModelsHTML(e, dates){
   if(!dates.some(d => e.days[d].wind && e.days[d].wind.w7)) return "";
-  const wc = v => v == null ? `<td class="z">n.d.</td>` : `<td class="${v >= 50 ? "wb" : v >= 30 ? "ww" : ""}">${r0(v)}</td>`;
   const rows = MODELS.filter(m => e.models.includes(m.id)).map(m =>
-    `<tr><td class="l">${esc(m.label)}</td>${dates.map(d => { const w = e.days[d].wind; const k = w && w.regimes[m.id];
-      return w && w.models[m.id] != null ? `<td class="${w.models[m.id] >= 50 ? "wb" : w.models[m.id] >= 30 ? "ww" : ""}">${r0(w.models[m.id])}<span>${k ? regimeLabel(k).icon : ""}</span></td>` : `<td class="z">n.d.</td>`; }).join("")}</tr>`).join("");
-  return `<h5 class="subh">Vento in quota (~3.000 m) · massimo del giorno, km/h</h5>
+    `<tr><td class="l">${esc(m.label)}</td>${dates.map(d => { const w = e.days[d].wind;
+      return w && w.models[m.id] != null ? `<td>${ventoIcona(w.models[m.id], w.dirs ? w.dirs[m.id] : null, "cella")}</td>` : `<td class="z">n.d.</td>`; }).join("")}</tr>`).join("");
+  return `<div class="subh-row"><h5 class="subh">Vento in quota (~3.000 m) · massimo del giorno</h5>${unitaToggle()}</div>
     <div class="st-wrap"><table class="mdl wind">
     <thead><tr><th class="l"></th>${dates.map((d, i) => `<th>${i === 0 ? "Oggi" : dayName(d)}<br>${dayNum(d)}</th>`).join("")}</tr></thead>
     <tbody>${rows}
-      <tr class="fr"><td class="l"><b>FreeRide</b><span>mediana · regime</span></td>${dates.map(d => { const x = e.days[d], w = x.wind && x.wind.w7, R = x.regime;
-        return w ? `<td><b>${r0(w.med)}</b><span>${R ? `${regimeLabel(R.key).icon} ${R.count}/${R.n}` : ""}</span></td>` : `<td class="z">n.d.</td>`; }).join("")}</tr>
+      <tr class="fr"><td class="l"><b>FreeRide</b><span>mediana · accordo</span></td>${dates.map(d => { const w = e.days[d].wind;
+        return w && w.w7 ? `<td>${ventoIcona(w.w7.med, w.dir, "cella", {extra: w.nDir ? `${w.accordo}/${w.nDir}` : ""})}</td>` : `<td class="z">n.d.</td>`; }).join("")}</tr>
     </tbody></table></div>
-    <p class="small" style="margin:6px 0 0">Giallo ≥ 30 km/h (trasporto di neve), rosso ≥ 50 km/h (accumuli importanti, impianti in quota a rischio). L'icona indica il regime dei venti per quel modello; "4/5" = quanti modelli sono d'accordo.</p>`;
+    <p class="small" style="margin:6px 0 0">${legendaVento()}</p>
+    <p class="small" style="margin:4px 0 0">La freccia punta dove va il vento (come su windguru), con il nome del vento e l'intensità. Da ${inUnita(30)} ${etichettaUnita()} c'è trasporto di neve, da ${inUnita(50)} accumuli importanti e impianti in quota a rischio. "4/5" = quanti modelli danno il vento dallo stesso settore.</p>`;
+}
+/* vento della regione in un giorno: media dei flussi in quota degli spot (per la Previsione) */
+function ventoRegione(date){
+  const r = SPOTS.map(s => dayRegime(s, date)).filter(Boolean);
+  if(!r.length) return "";
+  const dir = mediaDirezioni(r.map(x => x.dir), r.map(x => x.speed));
+  const sp = r.reduce((a, x) => a + x.speed, 0) / r.length;
+  return ventoIcona(sp, dir, "mini");
 }
 
 function modelsHTML(spot){
@@ -391,8 +402,9 @@ function renderDetail(id){
         <div class="sg-n">
           <div><b>${r0(m.p48)}<small> cm</small></b><span>neve fresca 2 gg</span></div>
           <div><b>${m.n72 >= 0.5 ? "+" + r0(m.n72) : "0"}<small> cm</small></b><span>in arrivo 3 gg</span></div>
+          <div class="sg-v">${ventoIcona(m.w7, m.w7dir, "cella")}<span>vento ${etichettaUnita()}</span></div>
           <div><b>${r0(m.temp)}°</b><span>adesso a ${s.elev.toLocaleString("it-IT")} m</span></div>
-        </div></div>`;
+        </div><div class="sg-vu">${unitaToggle()}</div></div>`;
       main += sec("o-plan", "Prossimi giorni", `${giorniSemplici(s)}${best ? `<p class="sg-best">🎯 Giorno migliore: <b>${giornoLungo(best.date)}</b>, circa ${r0(best.fresh)} cm di neve fresca</p>` : ""}`);
     }else main += `<div class="sec note o-now">Dati meteo non disponibili.</div>`;
     side += sec("o-av", "Pericolo valanghe", avBlockHTML(s));
@@ -405,13 +417,13 @@ function renderDetail(id){
   }
   if(!m){ main += `<div class="sec note o-now">Dati meteo non disponibili.</div>`; }
   else{
-    main += sec("o-now", `Adesso · ${wmo(m.code)[0]} ${wmo(m.code)[1]}`, `
+    main += sec("o-now", `Adesso · ${wmo(m.code)[0]} ${wmo(m.code)[1]}`, `<div class="sec-tools">${unitaToggle()}</div>
       <div class="grid3">
         <div class="big"><b style="color:${scoreColor(m.score)}">${r1(m.score)}</b><span>Indice Powder</span></div>
         <div class="big"><b>${r0(m.temp)}°C</b><span>a ${s.elev} m</span></div>
         <div class="big"><b>${m.fz != null ? r0(m.fz).toLocaleString("it-IT") : "–"}</b><span>zero termico (m)</span></div>
-        <div class="big"><b>${r0(m.w7)}</b><span>vento in quota km/h ${dirName(m.w7dir)}</span></div>
-        <div class="big"><b>${r0(m.gust)}</b><span>raffiche 10 m km/h</span></div>
+        <div class="big bigv">${ventoIcona(m.w7, m.w7dir, "grande")}<span>vento in quota (~3.000 m)</span></div>
+        <div class="big"><b>${inUnita(m.gust) ?? "–"}</b><span>raffiche a 10 m · ${etichettaUnita()}</span></div>
         <div class="big"><b>${m.depth != null ? r0(m.depth) : "–"}</b><span>neve al suolo stimata cm</span></div>
       </div>
       ${m.flags.length ? `<div class="flags">${m.flags.map(f => `<span class="flag ${f[0]}">${f[1]}</span>`).join("")}</div>` : ""}`);
@@ -428,7 +440,7 @@ function renderDetail(id){
     main += sec("o-3d", "Montagna in 3D · scegli la linea", peakvisorHTML(s));
     main += sec("o-meas", "Neve misurata · stazioni vicine", stationsHTML(s));
     main += sec("o-plan", `Previsione · prossimi ${FORECAST_DAYS} giorni`,
-      `${best ? `<div class="flags" style="margin:0 0 10px"><span class="flag p">🎯 Giornata migliore: ${dayName(best.date)} ${dayNum(best.date)} · ~${r0(best.fresh)} cm freschi · affidabilità ${best.conf}</span></div>` : ""}${daysHTML(s)}`);
+      `<div class="sec-tools">${unitaToggle()}</div>${best ? `<div class="flags" style="margin:0 0 10px"><span class="flag p">🎯 Giornata migliore: ${dayName(best.date)} ${dayNum(best.date)} · ~${r0(best.fresh)} cm freschi · affidabilità ${best.conf}</span></div>` : ""}${daysHTML(s)}`);
     main += sec("o-models", "Confronto modelli", modelsHTML(s));
     main += sec("o-hour", "Ora per ora · ieri → 3 giorni", hourlyChart(s, m));
   }
@@ -557,6 +569,8 @@ document.addEventListener("click", e => {
   if(e.target.closest("[data-menuclose]")){ menu(false); return; }
   const f = e.target.closest("[data-fav]");
   if(f){ e.preventDefault(); e.stopPropagation(); const id = f.dataset.fav; state.fav.has(id) ? state.fav.delete(id) : state.fav.add(id); LS.set("fr_fav", [...state.fav]); rerender(); return; }
+  const vu = e.target.closest("[data-vu]");
+  if(vu){ state.ventoUnita = vu.dataset.vu; LS.set("fr_vento", state.ventoUnita); rerender(); return; }
   const md = e.target.closest("[data-modo]");
   if(md){ state.modo = md.dataset.modo; LS.set("fr_modo", state.modo); rerender(); return; }
   const go = e.target.closest("[data-goto]");

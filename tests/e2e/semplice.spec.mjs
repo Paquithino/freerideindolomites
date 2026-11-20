@@ -3,7 +3,7 @@ import { SPOTS } from "../../js/config.js";
 import { VENETO } from "../fixtures/bollettini.mjs";
 
 test.describe("Versione semplice", () => {
-  test("home: in breve, un giudizio e tre numeri per spot, niente dati tecnici", async ({page, errori}) => {
+  test("home: in breve, un giudizio e quattro numeri per spot (vento compreso), niente dati tecnici", async ({page, errori}) => {
     await apri(page, "#spot", {modo: "semplice"});
     await expect(page.locator("body")).toHaveClass(/semplice/);
     await expect(page.locator("#hero")).toContainText("In breve");
@@ -11,7 +11,8 @@ test.describe("Versione semplice", () => {
     await expect(page.locator("#list .card.sg")).toHaveCount(SPOTS.length);
     const prima = page.locator("#list .card.sg").first();
     await expect(prima.locator(".sg-g")).toHaveText(/Neve fresca abbondante|Bella nevicata|Un po'|Niente neve nuova|Pericolo valanghe forte/);
-    await expect(prima.locator(".sg-n > div")).toHaveCount(3);
+    await expect(prima.locator(".sg-n > div")).toHaveCount(4);
+    await expect(prima.locator(".sg-n .vw[role=img]")).toBeVisible();
     await expect(page.locator("#sort")).toBeHidden();
     await expect(page.locator("table.tbl")).toHaveCount(0);
     await expect(page.locator("text=Indice Powder >> visible=true")).toHaveCount(0);
