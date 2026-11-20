@@ -12,6 +12,11 @@ on:
   schedule:
     - cron: "7 * * * *"        # ogni ora, al minuto 7 (orario UTC)
   workflow_dispatch:          # pulsante "Run workflow" nella scheda Actions
+    inputs:
+      precipitazioni:
+        description: "Riscarica subito la griglia dell'animazione precipitazioni (403 chiamate a Open-Meteo)"
+        type: boolean
+        default: false
 permissions:
   contents: write             # per salvare l'archivio nel ramo "dati"
   pages: write
@@ -52,6 +57,7 @@ jobs:
           ARCHIVIO_DIR: archivio
           # indirizzo pubblico del sito: con un dominio tuo, crea la variabile SITO_URL in Settings › Secrets and variables › Actions › Variables
           SITO_URL: ${{ vars.SITO_URL || format('https://{0}.github.io/{1}/', github.repository_owner, github.event.repository.name) }}
+          FORZA_PRECIPITAZIONI: ${{ inputs.precipitazioni && '1' || '0' }}
         run: node scripts/aggiorna-dati.mjs
 
       - name: Costruisci il sito e le pagine (spot, sezioni, sitemap)

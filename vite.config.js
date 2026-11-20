@@ -15,6 +15,7 @@ const pagineInSviluppo = {
       const p = (req.url || "").split("?")[0];
       if(ROTTE_APP.test(p)) req.url = "/index.html";
       else if(/^\/guida\/?$/.test(p)) req.url = "/html/info.html";
+      else if(/^\/precipitazioni\/?(\?|$)/.test(p)) req.url = "/html/precipitazioni.html" + ((req.url || "").includes("?") ? "?" + req.url.split("?")[1] : "");
       next();
     });
   }
@@ -30,7 +31,8 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(root, "index.html"),
-        info: resolve(root, "html/info.html")
+        info: resolve(root, "html/info.html"),
+        precipitazioni: resolve(root, "html/precipitazioni.html")
       }
     }
   }

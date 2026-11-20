@@ -31,6 +31,8 @@ export { expect };
    opz.attesa        → ms massimi di caricamento (le fonti dirette ritentano per qualche secondo prima di arrendersi)
    opz.esterni       → funzione (route, url) per rispondere a richieste esterne specifiche
    opz.storico       → funzione (percorso dentro dati/storico/) → file dello storico finto (vedi fixtures/storico-finto.mjs)
+   opz.precipitazioni → dati dell'animazione (oggetto), "rotto" o assente (404); opz.ritardoPrecipitazioni in ms
+   opz.pagina        → pagina senza l'app: non aspetta il caricamento dei dati del sito
    opz.contaStorico  → chiamata a ogni richiesta dello storico (per verificare che si scarichi solo quando serve) */
 export async function apri(page, hash = "#spot", opz = {}){
   const ls = {...(opz.ls || {})};
@@ -47,6 +49,13 @@ export async function apri(page, hash = "#spot", opz = {}){
         return snap ? route.fulfill({json: snap}) : route.fulfill({status: 404, body: ""});
       }
       if(url.pathname.endsWith("/dati/calibrazione.json")) return route.fulfill({status: 404, body: ""});
+      // animazione precipitazioni: opz.precipitazioni = dati (oggetto), "rotto" (file non valido) o assente = 404
+      if(url.pathname.endsWith("/dati/precipitazioni/ultimo.json")){
+        const d = typeof opz.precipitazioni === "function" ? opz.precipitazioni() : opz.precipitazioni;
+        if(opz.ritardoPrecipitazioni) await new Promise(r => setTimeout(r, opz.ritardoPrecipitazioni));
+        if(d === "rotto") return route.fulfill({body: "{non è json", contentType: "application/json"});
+        return d ? route.fulfill({json: d}) : route.fulfill({status: 404, body: ""});
+      }
       // storico 14 giorni: opz.storico(percorso) → json (o null = file non ancora pubblicato)
       if(url.pathname.includes("/dati/storico/")){
         opz.contaStorico && opz.contaStorico(url.pathname);
@@ -56,6 +65,8 @@ export async function apri(page, hash = "#spot", opz = {}){
       return route.continue();
     }
     if(opz.esterni){ const r = await opz.esterni(route, req.url()); if(r !== undefined) return; }
+    // tasselli della mappa: assenti nei test (la mappa resta usabile senza sfondo)
+    if(url.hostname.endsWith("tile.opentopomap.org")) return route.fulfill({status: 404, body: ""});
     // webcam: immagine finta (o 404 se richiesto), tutto il resto di esterno è bloccato
     if(req.resourceType() === "image"){
       const pulito = req.url().replace(/[?&]_=\d+$/, "");
@@ -66,6 +77,7 @@ export async function apri(page, hash = "#spot", opz = {}){
     return route.abort("blockedbyclient");
   });
   await page.goto(opz.url || "/index.html" + hash);
+  if(opz.pagina) return;                                  // pagine senza l'app (guida, animazione precipitazioni)
   await expect(page.locator("#refresh")).not.toHaveClass(/spin/, {timeout: opz.attesa || 15_000});
 }
 

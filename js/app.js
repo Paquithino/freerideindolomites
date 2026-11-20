@@ -352,6 +352,7 @@ function calNote(spotId){
     + ` <a href="guida/#calibrazione">Come funziona</a>`;
 }
 
+const linkAnimazione = s => `<a class="pc-lnk" href="precipitazioni/?spot=${s.id}"><span class="pc-lnk-i" aria-hidden="true"></span><span><b>Guarda l'animazione delle precipitazioni</b><small>Neve e pioggia ora per ora sulla mappa, centrata su ${esc(s.name.split(" · ")[0])}</small></span><i aria-hidden="true">→</i></a>`;
 function renderDetail(id){
   const s = SPOTS.find(x => x.id === id);
   if(!s){ naviga("", true); return; }
@@ -374,6 +375,7 @@ function renderDetail(id){
           <div><b>${r0(m.temp)}°</b><span>adesso a ${s.elev.toLocaleString("it-IT")} m</span></div>
         </div><div class="sg-vu">${unitaToggle()}</div></div>`;
       prev += tab("o-plan", "Prossimi giorni", `${giorniSemplici(s)}${best ? `<p class="sg-best">🎯 Giorno migliore: <b>${giornoLungo(best.date)}</b>, circa ${r0(best.fresh)} cm di neve fresca</p>` : ""}`);
+      prev += linkAnimazione(s);
     }else dati += nd;
     av += tab("o-av", "Pericolo valanghe", avBlockHTML(s));
     tre += tab("o-3d", "Montagna in 3D · scegli la linea", peakvisorHTML(s));
@@ -411,6 +413,7 @@ function renderDetail(id){
   if(m){
     prev += tab("o-plan", `Previsioni · prossimi ${FORECAST_DAYS} giorni`,
       `<div class="sec-tools">${unitaToggle()}</div>${best ? `<div class="flags" style="margin:0 0 10px"><span class="flag p">🎯 Giornata migliore: ${dayName(best.date)} ${dayNum(best.date)} · ~${r0(best.fresh)} cm freschi · affidabilità ${best.conf}</span></div>` : ""}${daysHTML(s)}`);
+    prev += linkAnimazione(s);
     prev += tab("o-quote", "Neve per quota · Vetta, Metà, Base", quoteHTML(s));
     prev += tab("o-models", "Confronto modelli", modelsHTML(s));
     prev += tab("o-hour", "Ora per ora · ultimi 14 giorni e previsione", oraPerOraHTML(s));
@@ -535,7 +538,7 @@ function linkInterno(a, e){
   const u = new URL(a.href);
   if(u.origin !== location.origin || !u.pathname.startsWith(BASE)) return null;
   const p = u.pathname.slice(BASE.length);
-  if(/\.[a-z0-9]+$/i.test(p) || p.startsWith("guida") || p.startsWith("html/")) return null;   // file e pagina guida: caricamento normale
+  if(/\.[a-z0-9]+$/i.test(p) || p.startsWith("guida") || p.startsWith("precipitazioni") || p.startsWith("html/")) return null;   // file e pagina guida: caricamento normale
   return {path: p + u.search};
 }
 

@@ -15,6 +15,7 @@ createServer(async (req, res) => {
   // pagine dell'app (come npm run dev): spot/cortina/, valanghe/ … → index.html; guida/ → html/info.html
   if(/^\/(spot|previsione|pianifica|valanghe|webcam)(\/|$)/.test(p)) p = "/index.html";
   else if(/^\/guida\/?$/.test(p)) p = "/html/info.html";
+  else if(/^\/precipitazioni\/?$/.test(p)) p = "/html/precipitazioni.html";
   if(p.endsWith("/")) p += "index.html";
   p = normalize(p).replace(/^(\.\.[/\\])+/, "");
   for(const base of [ROOT, resolve(ROOT, "public")]){

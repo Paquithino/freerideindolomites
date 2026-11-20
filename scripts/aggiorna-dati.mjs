@@ -22,6 +22,7 @@ import { METODO } from "../js/calibrazione.js";
 import { loadQuote, demoQuote } from "../js/quote.js";
 import { controllaWebcam } from "./controlla-webcam.mjs";
 import { aggiornaStorico } from "./storico.mjs";
+import { aggiornaPrecipitazioni } from "./precipitazioni.mjs";
 import { correctHourly } from "../js/modelli.js";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -94,14 +95,16 @@ async function main(){
   }else{
     // i 5 modelli si aggiornano solo poche volte al giorno: li scarichiamo ogni 3 ore (00, 03, 06… UTC)
     // e negli altri giri riusiamo quelli dell'ultimo file pubblicato, per restare ben sotto i limiti di Open-Meteo
-    let modelliRiusati = false;
+    let modelliRiusati = false, quoteRiusate = false;
     if(new Date().getUTCHours() % 3 !== 0 && !process.argv.includes("--modelli")){
       const prev = await ultimoPubblicato();
       const eta = prev ? (Date.now() - new Date(prev.aggiornato || prev.generated).getTime()) / 3600e3 : null;
       if(prev && prev.ens && Object.keys(prev.ens).length && eta < 4){ state.ens = prev.ens; state.ensMemo = {}; modelliRiusati = true; }
+      // anche la neve per quota segue le corse dei modelli: la riscarichiamo con loro (−1.300 chiamate al giorno)
+      if(modelliRiusati && prev.quote){ state.quote = prev.quote; quoteRiusate = true; }
     }
-    const res = await Promise.allSettled([loadWeather(), modelliRiusati ? Promise.resolve() : loadModels(), loadAvalanche(), loadStations(), loadQuote()]);
-    const names = ["meteo", modelliRiusati ? "modelli (riusati, si aggiornano ogni 3 ore)" : "modelli", "valanghe", "stazioni", "quote"];
+    const res = await Promise.allSettled([loadWeather(), modelliRiusati ? Promise.resolve() : loadModels(), loadAvalanche(), loadStations(), quoteRiusate ? Promise.resolve() : loadQuote()]);
+    const names = ["meteo", modelliRiusati ? "modelli (riusati, si aggiornano ogni 3 ore)" : "modelli", "valanghe", "stazioni", quoteRiusate ? "quote (riusate, ogni 3 ore)" : "quote"];
     res.forEach((r, i) => log(names[i].padEnd(9), r.status === "fulfilled" ? "ok" : "ERRORE " + (r.reason && r.reason.message)));
     const meteoOk = !!state.wx[SPOTS[0].id], modelliOk = Object.keys(state.ens || {}).length > 0, quoteOk = !!state.quote;
     if(!meteoOk || !modelliOk || !quoteOk){
@@ -143,6 +146,11 @@ async function main(){
     await aggiornaStorico({spots: SPOTS, wx: state.wx, stazioni: state.stations || [], perSpot: stationsFor, dir: dirname(OUT),
       sitoUrl: DEMO ? null : process.env.SITO_URL, log, correggi: correctHourly});
   }catch(e){ log("storico ERRORE", e.message, "(il sito funziona lo stesso, senza i giorni passati)"); }
+  /* ---------- animazione precipitazioni (griglia ogni 3 ore) ---------- */
+  try{
+    await aggiornaPrecipitazioni({dir: dirname(OUT), sitoUrl: DEMO ? null : process.env.SITO_URL, log, demo: DEMO,
+      forza: process.argv.includes("--precipitazioni") || process.env.FORZA_PRECIPITAZIONI === "1"});
+  }catch(e){ log("precipitazioni ERRORE", e.message); }
   // copia della calibrazione per il sito quando scarica i dati da solo
   if(state.cal) await writeFile(resolve(dirname(OUT), "calibrazione.json"), JSON.stringify(state.cal));
 

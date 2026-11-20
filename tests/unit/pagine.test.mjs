@@ -64,7 +64,7 @@ test("copertina: un solo h1, pillole delle sezioni con quella attiva, spot con r
 /* ---------- generatore delle pagine statiche ---------- */
 const dir = await mkdtemp(join(tmpdir(), "pagine-"));
 await mkdir(join(dir, "html"), {recursive: true});
-await cp("index.html", join(dir, "index.html")); await cp("html/info.html", join(dir, "html/info.html"));
+await cp("index.html", join(dir, "index.html")); await cp("html/info.html", join(dir, "html/info.html")); await cp("html/precipitazioni.html", join(dir, "html/precipitazioni.html"));
 await mkdir(join(dir, "dati"));
 await promisify(execFile)(process.execPath, ["scripts/aggiorna-dati.mjs", "--demo"], {env: {...process.env, OUT_FILE: join(dir, "dati/ultimo.json"), ARCHIVIO_DIR: join(dir, "arch")}});
 const { stdout } = await promisify(execFile)(process.execPath, ["scripts/genera-pagine.mjs", dir], {env: {...process.env, SITO_URL: "https://www.esempio.it/"}});
@@ -74,9 +74,14 @@ test.after(() => rm(dir, {recursive: true, force: true}));
 test("generatore: una pagina per ogni indirizzo, più guida, 404, sitemap e robots", async () => {
   assert.match(stdout, /pagine create: 37/);
   for(const r of tutteLeRotte()) assert.ok((await stat(join(dir, r.path, "index.html"))).isFile(), r.path);
-  for(const f of ["guida/index.html", "404.html", "sitemap.xml", "robots.txt"]) assert.ok((await stat(join(dir, f))).isFile(), f);
+  for(const f of ["guida/index.html", "precipitazioni/index.html", "404.html", "sitemap.xml", "robots.txt"]) assert.ok((await stat(join(dir, f))).isFile(), f);
   const sm = await leggi("sitemap.xml");
-  assert.equal((sm.match(/<loc>/g) || []).length, tutteLeRotte().length + 1);
+  assert.equal((sm.match(/<loc>/g) || []).length, tutteLeRotte().length + 2);
+  assert.match(sm, /<loc>https:\/\/www\.esempio\.it\/precipitazioni\/<\/loc>/);
+  const pc = await leggi("precipitazioni/index.html");
+  assert.match(pc, /<title>Animazione precipitazioni e neve Dolomiti – ora per ora \| FreeRide in Dolomites<\/title>/);
+  assert.match(pc, /<link rel="canonical" href="https:\/\/www\.esempio\.it\/precipitazioni\/"/);
+  assert.doesNotMatch(pc, /"\.\.\/(assets|js|css)\//);
   assert.match(sm, /<loc>https:\/\/www\.esempio\.it\/spot\/cortina\/<\/loc>/);
   assert.match(await leggi("robots.txt"), /Sitemap: https:\/\/www\.esempio\.it\/sitemap\.xml/);
 });
