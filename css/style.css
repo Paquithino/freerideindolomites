@@ -842,6 +842,103 @@ table.mdl.wind td .vw-cella em{font-size:9.5px}
 }
 @media (min-width:1300px){ .s-cam .cams{grid-template-columns:repeat(4,minmax(0,1fr))} }
 
+/* ---------- ora per ora: timeline navigabile (14 giorni + previsione) ---------- */
+:root{--c-hs:#bae6fd}
+.oo{position:relative}
+.oo-bar{display:grid;grid-template-columns:48px 1fr 48px;align-items:center;gap:8px;margin:2px 0 8px}
+.oo-fr{height:48px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--tx);font-size:18px;cursor:pointer}
+.oo-fr:disabled{opacity:.35;cursor:default}
+.oo-giorno{text-align:center;line-height:1.15}
+.oo-giorno b{display:block;font-family:var(--cond);font-size:22px;font-weight:700}
+.oo-giorno span{font-size:12.5px;color:var(--tx2)}
+.oo-chip{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.oo-chip::-webkit-scrollbar{display:none}
+.oo-chip button{flex:none;min-height:38px;padding:0 13px;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--tx);font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.oo-chip button.on{background:var(--tx);border-color:var(--tx);color:var(--bg)}
+.oo-chip .oo-adesso{display:none;background:var(--ice2);border-color:var(--ice);color:var(--ice)}
+.oo-chip .oo-adesso.on{display:inline-block}
+.oo-lettura{min-height:84px;background:var(--bg2);border-radius:12px;padding:8px 10px;margin-bottom:8px}
+.oo-lt{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:14px}
+.oo-lt span{font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:999px}
+.oo-rg{background:var(--card2);color:var(--tx2)}
+.oo-ad{background:var(--tx);color:var(--bg)}
+.oo-pv{background:var(--ice2);color:var(--ice)}
+.oo-lv{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:6px}
+.oo-lv > div{display:flex;flex-direction:column;gap:2px;min-width:0}
+.oo-lv span{font-size:11.5px;color:var(--tx2)}
+.oo-lv b{font-family:var(--cond);font-size:20px;font-weight:700}
+.oo-lv em{font-style:normal;font-size:11px;color:var(--tx2)}
+.oo-lw .vw{align-self:flex-start}
+.oo-nd{color:var(--tx3)}
+@media (max-width:420px){ .oo-lv{grid-template-columns:repeat(2,minmax(0,1fr))} }
+.oo-area{position:relative}
+.oo-scorri{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;touch-action:pan-x pan-y;cursor:grab;border-radius:10px;background:var(--card);scrollbar-width:thin}
+.oo-scorri.oo-tira{cursor:grabbing;user-select:none}
+.oo-scorri:focus-visible{outline:3px solid var(--sky)}
+.oo-svg{display:block}
+.oo-asse{position:absolute;top:26px;bottom:26px;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none;font-size:10.5px;font-weight:600}
+.oo-asse span{background:color-mix(in srgb,var(--card) 80%,transparent);padding:0 3px;border-radius:4px}
+.oo-asse-s{left:2px;color:var(--warn)}
+.oo-asse-d{right:2px;align-items:flex-end;color:var(--ice)}
+.oo-carica .oo-scorri{opacity:.55}
+.oo-tx{font-size:10.5px;fill:var(--tx2)}
+.oo-tx2{fill:var(--tx3)}
+.oo-gl{font-weight:700;fill:var(--tx)}
+.oo-g0{stroke:var(--tx3);stroke-width:1}
+.oo-g12{stroke:var(--line);stroke-dasharray:2 3}
+.oo-zero{stroke:var(--bad);stroke-dasharray:4 4;opacity:.5}
+.oo-r0{fill:var(--ice2)}
+.oo-r1{stroke:var(--line);stroke-width:2.5}
+.oo-buco{fill:var(--card2);opacity:.9}
+.oo-hs{fill:var(--c-hs);opacity:.55}
+.oo-n{fill:#0ea5e9}
+.oo-t{fill:none;stroke:var(--c-temp);stroke-width:2.2;stroke-linejoin:round}
+.oo-w{fill:none;stroke:var(--c-vento);stroke-width:1.6;opacity:.85}
+.oo-g{fill:none;stroke:var(--c-vento);stroke-width:1;stroke-dasharray:2 2;opacity:.6}
+.oo-fc{fill:var(--vb)}
+.oo-fa{fill:var(--vf)}
+.oo-svg .vw circle:not(.oo-fc){fill:var(--vf)}
+.oo-now{stroke:var(--tx);stroke-width:2.5}
+.oo-nowp{fill:var(--tx)}
+.oo-nowt{fill:var(--bg);font-size:11px;font-weight:700}
+.oo-cur{stroke:var(--sky);stroke-width:1.5;stroke-dasharray:3 2}
+.oo-l-prev{background:repeating-linear-gradient(45deg,var(--ice2) 0 3px,var(--line) 3px 5px) !important}
+.oo-l-buco{background:var(--card2) !important;border:1px solid var(--line)}
+.oo-nota{margin:6px 0 0}
+@media (prefers-color-scheme: dark){ :root{--c-hs:#1e5a80} }
+
+/* ---------- neve misurata: giorno per giorno, 14 giorni ---------- */
+.nm-vista{margin:0 0 10px}
+.nm-t td.l b{display:block}
+.nm-sp{display:block;margin-top:4px}
+.nm-sp-vuoto{font-size:11px;color:var(--tx3)}
+.nm-sl{fill:none;stroke:var(--sky);stroke-width:1.8;stroke-linejoin:round}
+.nm-sk{stroke:var(--tx3);stroke-dasharray:2 2}
+.nm-sc{fill:var(--tx)}
+.nm-t td small{font-size:10.5px;color:var(--tx3)}
+.nd{color:var(--tx3);cursor:help}
+.nm-ore + .nm-ore{margin-top:14px}
+.sec h4.nm-h{margin:0 0 6px;font-size:16px;font-weight:700;font-family:Barlow,sans-serif}
+.sec h4.nm-h span{font-weight:500;color:var(--tx2);font-size:13px}
+table.nm-oret th.l{position:sticky;left:0;background:var(--card);z-index:1;text-align:left;font-size:11px;min-width:64px}
+table.nm-oret td{padding:5px 3px;font-size:12.5px}
+table.nm-oret .vw-cella{min-width:36px;padding:2px}
+table.nm-oret .vw-cella b{font-size:12px}
+/* telefono: ogni stazione diventa una scheda (niente colonne nascoste a destra) */
+@media (max-width:700px){
+  table.nm-t,table.nm-t tbody{display:block}
+  table.nm-t thead{display:none}
+  table.nm-t tr{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:10px 0;border-top:1px solid var(--line2)}
+  table.nm-t tr:first-child{border-top:0}
+  table.nm-t td{border:0;padding:4px 2px;display:flex;flex-direction:column;align-items:center;gap:2px;white-space:normal;font-size:14px}
+  table.nm-t td::before{content:attr(data-l);font-size:10.5px;font-weight:600;color:var(--tx3);text-align:center;line-height:1.15}
+  table.nm-t td.l{grid-column:1/-1;display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:10px;padding:0 2px 4px}
+  table.nm-t td.l::before{display:none}
+  table.nm-t td.l b,table.nm-t td.l > span:not(.nm-sp){grid-column:1}
+  table.nm-t td.l .nm-sp{grid-column:2;grid-row:1/3;margin:0}
+  table.nm-t td.hs{font-size:16px}
+}
+
 /* =========================================================
    TEMA SCURO automatico: segue l'impostazione del telefono o del computer
    (prefers-color-scheme). Se cambi tema dal sistema il sito cambia subito, senza ricaricare.

@@ -2,13 +2,15 @@ import { SPOTS, AREAS, AV_LINKS, PROV_NAME, FORECAST_DAYS } from "./config.js";
 import { $, esc, LS, r0, r1, scoreColor, snowColor, state, unpackTimes } from "./state.js";
 import { wmo, dirName, metrics, dailyPlan, bestDay, dayName, dayNum, isWeekend, loadWeather, demoWeather, romeNowISO } from "./meteo.js";
 import { giudizio } from "./giudizio.js";
+import { oraPerOraHTML, avviaOraPerOra } from "./oraperora.js";
+import { neveMisurataHTML, avviaNeveMisurata } from "./nevemisurata.js";
 import { ventoIcona, unitaToggle, legendaVento, inUnita, etichettaUnita, testoVento, mediaDirezioni } from "./vento.js";
 import { calOf, zonaDi } from "./calibrazione.js";
 import { peakvisorHTML } from "./peakvisor.js";
 import { DNAME, avForSpot, avBlockHTML, dsq, loadAvalanche, bollettiniPerServizio, gradiHTML, problemiHTML, testiHTML, intestazione, stripTags, PROB } from "./valanghe.js";
 import { camsHTML } from "./webcam.js";
 import { leggiPercorso, daHash, metaPer, coverHTML, percorsoSpot, percorsoArea, slugDaArea, AREE, SITO_NOME, GRUPPI_SPOT, gruppoHTML, tabellaHTML } from "./pagine.js";
-import { loadStations, stationsHTML, bestStation } from "./stazioni.js";
+import { loadStations, bestStation } from "./stazioni.js";
 import { loadModels, demoModels, ensembleFor, agreement, regionRegime, regimeLabel, flowEffect, correctHourly, dayRegime } from "./modelli.js";
 import { MODELS, LAVORI_IN_CORSO } from "./config.js";
 import { loadQuote, quoteHTML, demoQuote } from "./quote.js";
@@ -20,12 +22,6 @@ const DESKTOP_MQ = window.matchMedia("(min-width: 960px)");
 const isDesktop = () => DESKTOP_MQ.matches;
 
 /* larghezza del grafico orario ≈ larghezza reale della colonna, così testo e linee restano alla dimensione giusta */
-function chartWidth(){
-  if(!isDesktop()) return 420;
-  const wrap = Math.min(innerWidth, 1240) - 48;
-  const col = (wrap - 24) * 1.5 / 2.5 - 36;
-  return Math.max(560, Math.round(col));
-}
 
 const rangeTxt = st => st && st.n >= 2 && st.max - st.min >= 1 ? `${r0(st.min)}–${r0(st.max)}` : "";
 
@@ -277,36 +273,6 @@ function renderPlan(){
 }
 
 /* ---------- dettaglio ---------- */
-function hourlyChart(spot, m){
-  const H = state.wx[spot.id].hourly, i0 = m.idx - 23, i1 = Math.min(m.idx + 72, H.time.length - 1);
-  const W = chartWidth(), Hh = isDesktop() ? 240 : 190, pl = 26, pr = 26, pt = 14, pb = 26;
-  const n = i1 - i0 + 1, bw = (W - pl - pr) / n;
-  const snow = (H.snow_c || H.snowfall).slice(i0, i1 + 1), temp = H.temperature_2m.slice(i0, i1 + 1), w7 = (H.wind_speed_700hPa || []).slice(i0, i1 + 1);
-  const smax = Math.max(2, ...snow), tmin = Math.min(...temp) - 2, tmax = Math.max(...temp, 0) + 2;
-  const y = v => pt + (Hh - pt - pb) * (1 - (v - tmin) / (tmax - tmin));
-  let bars = "", labels = "";
-  snow.forEach((v, k) => { if(v > 0){ const h = (Hh - pt - pb) * v / smax; bars += `<rect x="${pl + k * bw + 0.3}" y="${Hh - pb - h}" width="${Math.max(1, bw - 0.6)}" height="${h}" fill="#0ea5e9" opacity=".8"/>`; } });
-  const line = temp.map((v, k) => `${k ? "L" : "M"}${(pl + k * bw + bw / 2).toFixed(1)},${y(v).toFixed(1)}`).join("");
-  const wmax = Math.max(60, ...w7.filter(v => v != null));
-  const wind = w7.map((v, k) => `${k ? "L" : "M"}${(pl + k * bw + bw / 2).toFixed(1)},${(pt + (Hh - pt - pb) * (1 - (v || 0) / wmax)).toFixed(1)}`).join("");
-  for(let k = 0; k < n; k++){
-    const t = H.time[i0 + k];
-    if(t.endsWith("T00:00") || t.endsWith("T12:00")){
-      const x = pl + k * bw, lab = t.endsWith("T00:00") ? dayName(t.slice(0, 10)) : "12";
-      labels += `<line x1="${x}" x2="${x}" y1="${pt}" y2="${Hh - pb}" style="stroke:var(--line)" ${t.endsWith("T12:00") ? 'stroke-dasharray="2 3"' : ""}/><text x="${x + 3}" y="${Hh - 10}" font-size="11" style="fill:var(--tx2)">${lab}</text>`;
-    }
-  }
-  const nowX = pl + 23 * bw + bw / 2, zeroY = y(0);
-  return `<svg class="chart" viewBox="0 0 ${W} ${Hh}" role="img" aria-label="Grafico orario neve, temperatura e vento">
-    ${labels}
-    ${zeroY > pt && zeroY < Hh - pb ? `<line x1="${pl}" x2="${W - pr}" y1="${zeroY}" y2="${zeroY}" style="stroke:var(--bad)" stroke-dasharray="4 4" opacity=".55"/><text x="${W - pr + 3}" y="${zeroY + 4}" font-size="10" style="fill:var(--bad)">0°</text>` : ""}
-    ${bars}<path d="${wind}" fill="none" style="stroke:var(--c-vento)" stroke-width="1.5" opacity=".7"/><path d="${line}" fill="none" style="stroke:var(--c-temp)" stroke-width="2.2"/>
-    <line x1="${nowX}" x2="${nowX}" y1="${pt}" y2="${Hh - pb}" style="stroke:var(--tx)" stroke-width="1.5"/><text x="${nowX + 3}" y="${pt + 9}" font-size="10" style="fill:var(--tx)">ora</text>
-    <text x="2" y="${pt + 8}" font-size="10" style="fill:var(--warn)">${Math.round(tmax)}°</text><text x="2" y="${Hh - pb}" font-size="10" style="fill:var(--warn)">${Math.round(tmin)}°</text>
-    <text x="${W - 2}" y="${pt + 8}" font-size="10" style="fill:var(--ice)" text-anchor="end">${r1(smax)}cm/h</text>
-  </svg>
-  <div class="legend"><span><i style="background:#0ea5e9"></i>Neve (cm/h)</span><span><i style="background:var(--c-temp)"></i>Temperatura ${spot.elev} m</span><span><i style="background:var(--c-vento)"></i>Vento in quota (0–${Math.round(wmax)} km/h)</span></div>`;
-}
 function daysHTML(spot){
   const p = dailyPlan(spot);
   const mx = Math.max(5, ...p.map(d => d.ens ? d.ens.max : d.snow));
@@ -440,14 +406,14 @@ function renderDetail(id){
         <div class="big"><b style="color:var(--powder)">+${r0(m.n7d)}</b><span>cm prossimi 7 gg</span></div>
       </div>`);
   }
-  dati += tab("o-meas", "Neve misurata · stazioni vicine", stationsHTML(s), "largo");
+  dati += tab("o-meas", "Neve misurata · stazioni vicine", neveMisurataHTML(s), "largo");
   // 2 · Previsioni
   if(m){
     prev += tab("o-plan", `Previsioni · prossimi ${FORECAST_DAYS} giorni`,
       `<div class="sec-tools">${unitaToggle()}</div>${best ? `<div class="flags" style="margin:0 0 10px"><span class="flag p">🎯 Giornata migliore: ${dayName(best.date)} ${dayNum(best.date)} · ~${r0(best.fresh)} cm freschi · affidabilità ${best.conf}</span></div>` : ""}${daysHTML(s)}`);
     prev += tab("o-quote", "Neve per quota · Vetta, Metà, Base", quoteHTML(s));
     prev += tab("o-models", "Confronto modelli", modelsHTML(s));
-    prev += tab("o-hour", "Ora per ora · ieri → 3 giorni", hourlyChart(s, m));
+    prev += tab("o-hour", "Ora per ora · ultimi 14 giorni e previsione", oraPerOraHTML(s));
   }
   // 3 · Valanghe · 4 · 3D · 5 · Webcam
   av += tab("o-av", "Pericolo valanghe · bollettino ufficiale", avBlockHTML(s));
@@ -455,6 +421,8 @@ function renderDetail(id){
   cam += tab("o-cam", "Webcam", camsHTML(s));
   $("#v-detail").innerHTML = `${head}${gruppoHTML(0, dati)}${gruppoHTML(1, prev)}${gruppoHTML(2, av)}${gruppoHTML(3, tre)}${gruppoHTML(4, cam)}
     <div class="disc">Dati automatici e indicativi. Prima di uscire leggi il bollettino completo, osserva il terreno e porta ARTVA, pala e sonda.</div>`;
+  avviaOraPerOra(s, $("#v-detail"));
+  avviaNeveMisurata(s, $("#v-detail"));
 }
 
 /* ---------- valanghe / webcam ---------- */

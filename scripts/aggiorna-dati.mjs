@@ -21,6 +21,8 @@ import { loadStations, stationsFor } from "../js/stazioni.js";
 import { METODO } from "../js/calibrazione.js";
 import { loadQuote, demoQuote } from "../js/quote.js";
 import { controllaWebcam } from "./controlla-webcam.mjs";
+import { aggiornaStorico } from "./storico.mjs";
+import { correctHourly } from "../js/modelli.js";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const DEMO = process.argv.includes("--demo");
@@ -127,7 +129,7 @@ async function main(){
   const wx = {}; for(const s of SPOTS) wx[s.id] = slimWx(state.wx[s.id]);
   const snapshot = round({
     generated: riuso || new Date().toISOString(), demo: DEMO, aggiornato: new Date().toISOString(),
-    wx, ens: state.ens, quote: state.quote, av: state.av, avDate: state.avDate, avErr: state.avErr, stations: state.stations,
+    wx, ens: state.ens, quote: state.quote, av: state.av, avDate: state.avDate, avErr: state.avErr, stations: (state.stations || []).map(({ore, ...st}) => st),
     sources: {meteo: "Open-Meteo.com (CC BY 4.0)", stazioni: "Meteo Alto Adige, Meteotrentino via avalanche.report (CC BY 4.0); ARPAV Veneto (CC BY 4.0)", valanghe: "Bollettini EAWS/AINEVA"}
   });
   if(camCheck) snapshot.camCheck = camCheck;
@@ -136,6 +138,11 @@ async function main(){
   const txt = JSON.stringify(snapshot);
   await writeFile(OUT, txt);
   log(`scritto ${OUT.replace(ROOT + "/", "")} (${(txt.length / 1024).toFixed(0)} KB)`);
+  /* ---------- storico 14 giorni (grafico "Ora per ora" e "Neve misurata") ---------- */
+  try{
+    await aggiornaStorico({spots: SPOTS, wx: state.wx, stazioni: state.stations || [], perSpot: stationsFor, dir: dirname(OUT),
+      sitoUrl: DEMO ? null : process.env.SITO_URL, log, correggi: correctHourly});
+  }catch(e){ log("storico ERRORE", e.message, "(il sito funziona lo stesso, senza i giorni passati)"); }
   // copia della calibrazione per il sito quando scarica i dati da solo
   if(state.cal) await writeFile(resolve(dirname(OUT), "calibrazione.json"), JSON.stringify(state.cal));
 

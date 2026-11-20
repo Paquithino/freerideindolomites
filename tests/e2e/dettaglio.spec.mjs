@@ -8,7 +8,7 @@ test.describe("Pagina spot · versione completa", () => {
       [".o-plan", "Previsione"], [".o-models", "Confronto modelli"], [".o-hour", "Ora per ora"], [".o-cam", "Webcam"], [".o-av", "Pericolo valanghe"]]){
       await expect(page.locator(sel).first(), sel).toContainText(testo);
     }
-    await expect(page.locator(".o-hour svg.chart")).toBeVisible();
+    await expect(page.locator(".o-hour svg.oo-svg")).toBeVisible();
     await senzaScrollLaterale(page);
   });
 

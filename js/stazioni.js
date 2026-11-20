@@ -9,7 +9,12 @@ import { WORKER_URL, STATIONS_MAX_KM, STATIONS_PER_SPOT, SPOTS } from "./config.
 import { loadArpav } from "./stazioni-arpav.js";
 import { state, esc, r0 } from "./state.js";
 
-const BASE = "https://static.avalanche.report/weather_stations/";
+export const BASE = "https://static.avalanche.report/weather_stations/";
+/* file orario della rete Euregio (orario UTC nel nome) */
+export function urlOraEuregio(ms){
+  const d = new Date(ms), p = n => String(n).padStart(2, "0");
+  return `${BASE}${d.getUTCFullYear()}-${p(d.getUTCMonth() + 1)}-${p(d.getUTCDate())}_${p(d.getUTCHours())}-00_stations.geojson`;
+}
 
 /* nomi file: prima quello "ultimo", poi quelli orari delle ultime 3 ore (in UTC) */
 function candidateUrls(){
@@ -24,7 +29,7 @@ function candidateUrls(){
 
 const num = v => (v === null || v === undefined || v === "" || isNaN(+v)) ? null : +v;
 
-function normalize(geo){
+export function normalize(geo){
   const out = [];
   for(const f of (geo && geo.features) || []){
     const p = f.properties || {}, c = (f.geometry && f.geometry.coordinates) || [];
@@ -37,7 +42,9 @@ function normalize(geo){
       id: p["LWD-Nummer"] || p.name, name: p.name || p["LWD-Nummer"] || "Stazione",
       lat, lon, elev: num(c[2]) ?? num(p.altitude),
       hs, d24: num(p.HSD24), d48: num(p.HSD48), d72: num(p.HSD72),
-      lt: num(p.LT), region: p["LWD-Region"] || "", operator: p.operator || "", date: p.date || null
+      lt: num(p.LT), region: p["LWD-Region"] || "", operator: p.operator || "", date: p.date || null,
+      // vento (dove la stazione lo misura): VW = medio, VW_MAX = massimo/raffica in km/h, DW = direzione in gradi
+      vw: num(p.VW), vwmax: num(p.VW_MAX), dw: num(p.DW)
     });
   }
   return out;

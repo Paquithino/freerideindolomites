@@ -29,7 +29,9 @@ export { expect };
    opz.url           → indirizzo da aprire (es. /spot/veneto/) al posto di index.html#…
    opz.immaginiRotte → url di webcam che rispondono 404
    opz.attesa        → ms massimi di caricamento (le fonti dirette ritentano per qualche secondo prima di arrendersi)
-   opz.esterni       → funzione (route, url) per rispondere a richieste esterne specifiche */
+   opz.esterni       → funzione (route, url) per rispondere a richieste esterne specifiche
+   opz.storico       → funzione (percorso dentro dati/storico/) → file dello storico finto (vedi fixtures/storico-finto.mjs)
+   opz.contaStorico  → chiamata a ogni richiesta dello storico (per verificare che si scarichi solo quando serve) */
 export async function apri(page, hash = "#spot", opz = {}){
   const ls = {...(opz.ls || {})};
   if(opz.modo) ls.fr_modo = opz.modo;
@@ -45,6 +47,12 @@ export async function apri(page, hash = "#spot", opz = {}){
         return snap ? route.fulfill({json: snap}) : route.fulfill({status: 404, body: ""});
       }
       if(url.pathname.endsWith("/dati/calibrazione.json")) return route.fulfill({status: 404, body: ""});
+      // storico 14 giorni: opz.storico(percorso) → json (o null = file non ancora pubblicato)
+      if(url.pathname.includes("/dati/storico/")){
+        opz.contaStorico && opz.contaStorico(url.pathname);
+        const j = opz.storico ? opz.storico(url.pathname.slice(url.pathname.indexOf("/dati/storico/") + 14)) : null;
+        return j ? route.fulfill({json: j}) : route.fulfill({status: 404, body: ""});
+      }
       return route.continue();
     }
     if(opz.esterni){ const r = await opz.esterni(route, req.url()); if(r !== undefined) return; }

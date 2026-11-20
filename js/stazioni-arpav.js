@@ -58,6 +58,36 @@ function near(ser, t){
   return w.length ? w[Math.floor(w.length / 2)] : null;
 }
 
+/* sensore trovato per descrizione (il vento non c'è in tutte le stazioni): serie in km/h o gradi */
+function serieDove(xml, prova){
+  const s = blocks(xml, "SENSORE").find(b => prova(`${tag(b, "TYPE") || ""} ${tag(b, "DESC") || ""} ${tag(b, "NOME") || ""}`));
+  if(!s) return [];
+  const unita = (tag(s, "UNIT") || tag(s, "UNITA") || "").toLowerCase();
+  const k = /m\/s/.test(unita) ? 3.6 : 1;
+  const out = [];
+  for(const m of s.matchAll(/<DATI ISTANTE="(\d{12})">\s*<VM>([^<]*)<\/VM>/g)){
+    const v = parseFloat(m[2].replace(",", "."));
+    if(isFinite(v)) out.push({t: istanteMs(m[1]), v: v * k});
+  }
+  return out;
+}
+const VENTO = x => /vent|VV/i.test(x) && !/dir|DV/i.test(x), DIREZ = x => /dir|DV/i.test(x) && /vent|DV/i.test(x);
+
+/* ore piene delle ultime ~60 ore (il file ARPAV ha un dato ogni 30 minuti): per lo storico */
+export function oreStazione(xml){
+  const hs = serie(xml, "LIVNEVE"), tt = serie(xml, "TEMP"), vv = serieDove(xml, VENTO), dv = serieDove(xml, DIREZ);
+  if(!hs.length && !tt.length) return [];
+  const tutti = [...hs, ...tt].map(p => p.t), t0 = Math.ceil(Math.min(...tutti) / 3600e3) * 3600e3, t1 = Math.max(...tutti);
+  const out = [];
+  for(let t = t0; t <= t1; t += 3600e3){
+    const r = {hs: near(hs, t), t: near(tt, t)};
+    if(vv.length){ const w = vv.filter(p => p.t > t - 3600e3 && p.t <= t).map(p => p.v); if(w.length){ r.w = w.reduce((a, b) => a + b, 0) / w.length; r.wx = Math.max(...w); } }
+    if(dv.length) r.d = near(dv, t);
+    if(r.hs != null || r.t != null) out.push([t, r]);
+  }
+  return out;
+}
+
 /* da file stazione a riga nel formato delle altre stazioni del sito */
 export function parseStazione(xml, info){
   const hs = serie(xml, "LIVNEVE");
@@ -70,7 +100,8 @@ export function parseStazione(xml, info){
     id: "ARPAV-" + info.id, name: info.name, lat: info.lat, lon: info.lon, elev: info.elev,
     hs: Math.max(0, now), d24: diff(24), d48: diff(48), d72: diff(72),
     lt: temp.length ? temp[temp.length - 1].v : null,
-    region: "", operator: "ARPAV", date: new Date(last.t).toISOString()
+    region: "", operator: "ARPAV", date: new Date(last.t).toISOString(),
+    ore: oreStazione(xml)   // serie oraria per lo storico (il robot la toglie dal file del sito)
   };
 }
 
