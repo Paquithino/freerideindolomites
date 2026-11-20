@@ -963,7 +963,7 @@ table.nm-oret .vw-cella b{font-size:12px}
 .pc-lw{fill:none;stroke:#fff;stroke-width:2;stroke-dasharray:5 4;stroke-linecap:round}
 .pc-spot{position:absolute;inset:0;pointer-events:none}
 .pc-m{position:absolute;left:0;top:0;pointer-events:auto;display:flex;align-items:center;gap:4px;margin:-11px 0 0 -11px;min-width:22px;min-height:22px;padding:0;border:0;background:none;cursor:pointer;font:inherit}
-.pc-m i{width:14px;height:14px;margin:4px;border-radius:50%;background:#0f2235;border:2.5px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.4)}
+.pc-m i{display:block;flex:none;width:14px;height:14px;margin:4px;border-radius:50%;background:#0f2235;border:2.5px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.4)}
 .pc-m.on i{background:#f97316;width:18px;height:18px;margin:2px}
 .pc-m span{font-size:12px;font-weight:700;color:#0f2235;text-shadow:0 0 3px #fff,0 0 3px #fff,0 0 2px #fff;white-space:nowrap}
 .pc-pop{position:absolute;z-index:4;width:220px;transform:translateY(-100%);background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:10px 30px 10px 12px;box-shadow:0 6px 20px rgba(15,34,53,.25);display:flex;flex-direction:column;gap:2px;font-size:13px}

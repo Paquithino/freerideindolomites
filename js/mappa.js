@@ -61,6 +61,8 @@ export function creaMappa(el, opz = {}){
     }
     for(const [key, img] of cache) if(!visti.has(key) && img.parentNode) img.remove();
     if(cache.size > 300) for(const [key] of cache){ if(!visti.has(key)) cache.delete(key); if(cache.size < 200) break; }
+    // stato leggibile (test e strumenti): centro e zoom attuali
+    el.dataset.lat = lat.toFixed(4); el.dataset.lon = lon.toFixed(4); el.dataset.zoom = z.toFixed(2);
     ascoltatori.forEach(f => f(stato()));
   };
   const ridisegna = () => { if(!attesa) attesa = requestAnimationFrame(disegna); };
@@ -79,7 +81,7 @@ export function creaMappa(el, opz = {}){
   let ultimo = null, pizzico = null, tocco0 = 0;
   el.addEventListener("pointerdown", e => {
     if(e.target.closest("button, a, .mp-no")) return;
-    el.setPointerCapture(e.pointerId);
+    try{ el.setPointerCapture(e.pointerId); }catch(x){}   // Safari: non sempre disponibile
     dita.set(e.pointerId, {x: e.clientX, y: e.clientY});
     if(dita.size === 1){
       ultimo = {x: e.clientX, y: e.clientY};

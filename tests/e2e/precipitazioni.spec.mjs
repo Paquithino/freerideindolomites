@@ -1,6 +1,8 @@
 import { test, expect, apri, senzaScrollLaterale, isDesktop } from "./aiuto.mjs";
 import { datiFinti, indiceAdesso } from "../../js/precip-dati.js";
 import { romaLocale, etichettaGiorno } from "../../js/storico.js";
+import { SPOTS } from "../../js/config.js";
+const S_MARMOLADA = SPOTS.find(s => s.id === "marmolada");
 
 const FOTO = process.env.FOTO_PC;
 const etichetta = iso => { const l = romaLocale(Date.parse(iso)); return `${etichettaGiorno(l.slice(0, 10))} · ${l.slice(11, 16)}`; };
@@ -82,12 +84,20 @@ test.describe("Animazione precipitazioni", () => {
     await expect(page).toHaveURL(/\/precipitazioni\/\?spot=marmolada$/);
     await pronta(page);
     await expect(page.locator("#pcMappa")).toHaveAttribute("data-centro", "marmolada");
-    const m = page.locator('[data-pcspot="marmolada"]'), punto = m.locator("i");
+    const m = page.locator('[data-pcspot="marmolada"]');
     await expect(m).toHaveClass(/on/);
-    // il marker dello spot è al centro della mappa
-    const [mb, bb] = [await punto.boundingBox(), await page.locator("#pcMappa").boundingBox()];
-    expect(Math.abs(mb.x + mb.width / 2 - (bb.x + bb.width / 2))).toBeLessThan(30);
-    expect(Math.abs(mb.y + mb.height / 2 - (bb.y + bb.height / 2))).toBeLessThan(30);
+    // centro della mappa = coordinate dello spot (stato della mappa, non pixel: uguale su ogni browser)
+    const box = page.locator("#pcMappa");
+    expect(Math.abs(+(await box.getAttribute("data-lat")) - S_MARMOLADA.lat)).toBeLessThan(0.01);
+    expect(Math.abs(+(await box.getAttribute("data-lon")) - S_MARMOLADA.lon)).toBeLessThan(0.01);
+    expect(+(await box.getAttribute("data-zoom"))).toBeGreaterThanOrEqual(10);
+    // e il segnaposto dello spot è disegnato al centro del riquadro
+    const scarto = await page.evaluate(() => {
+      const el = document.querySelector("#pcMappa"), b = document.querySelector('[data-pcspot="marmolada"]');
+      const [x, y] = (b.style.transform.match(/-?[\d.]+/g) || []).map(Number);
+      return Math.hypot(x - el.clientWidth / 2, y - el.clientHeight / 2);
+    });
+    expect(scarto).toBeLessThan(3);
     const pop = page.locator(".pc-pop");
     await expect(pop).toContainText("Marmolada");
     await expect(pop).toContainText(/mm\/h · (neve|mista|pioggia)|Niente precipitazioni/);
@@ -141,17 +151,21 @@ test.describe("Animazione precipitazioni", () => {
   test("mappa: pulsanti zoom e trascinamento", async ({page, errori}) => {
     await apriMappa(page);
     await pronta(page);
-    const pos = () => page.locator('[data-pcspot="cortina"]').boundingBox();
-    const a = await pos();
+    const box = page.locator("#pcMappa");
+    const st = async () => ({z: +(await box.getAttribute("data-zoom")), lon: +(await box.getAttribute("data-lon")), lat: +(await box.getAttribute("data-lat"))});
+    const a = await st();
     await page.locator('.mp-zoom [data-mp="+"]').click();
-    await page.waitForTimeout(100);
-    const b = await pos();
-    expect(Math.hypot(b.x - a.x, b.y - a.y)).toBeGreaterThan(5);
-    const bb = await page.locator("#pcMappa").boundingBox();
-    await page.mouse.move(bb.x + 30, bb.y + 30); await page.mouse.down();
-    await page.mouse.move(bb.x + 130, bb.y + 50, {steps: 5}); await page.mouse.up();
-    const c = await pos();
-    expect(Math.round(c.x - b.x)).toBeGreaterThan(60);
+    await expect.poll(async () => (await st()).z).toBeGreaterThan(a.z);
+    const b = await st();
+    // trascinamento verso destra con il dito (eventi pointer di tipo touch, come su un telefono vero)
+    await page.evaluate(() => {
+      const el = document.querySelector("#pcMappa"), r = el.getBoundingClientRect();
+      const ev = (tipo, x, y) => el.dispatchEvent(new PointerEvent(tipo, {pointerId: 7, pointerType: "touch", isPrimary: true, bubbles: true, cancelable: true, clientX: r.left + x, clientY: r.top + y}));
+      ev("pointerdown", 30, 30);
+      for(let i = 1; i <= 5; i++) ev("pointermove", 30 + i * 20, 30 + i * 4);
+      ev("pointerup", 130, 50);
+    });
+    await expect.poll(async () => (await st()).lon).toBeLessThan(b.lon - 0.05);   // trascinando a destra, la mappa va verso ovest
     await senzaScrollLaterale(page);
   });
 });
