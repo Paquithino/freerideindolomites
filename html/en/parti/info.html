@@ -1,0 +1,62 @@
+<!--title: Guide: how to read snow, forecasts and avalanches | FreeRide in Dolomites-->
+<!--description: How the FreeRide forecast works, how the models are calibrated on snow stations, snow by altitude, avalanche bulletins and the data sources of FreeRide in Dolomites.-->
+<div class="cover"><picture class="cv-img" aria-hidden="true"><source media="(max-width:699px)" srcset="copertina-mobile.jpg"><img src="copertina.jpg" alt="" decoding="async" fetchpriority="high"></picture><div class="cover-in wrap"><div class="cv-top"></div><div class="cv-title"><h1>Guide</h1><p>How to read the data on FreeRide in Dolomites</p></div><nav class="pills" aria-label="Sections"><a href="en/">Spots</a><a href="en/forecast/">Forecast</a><a href="en/avalanches/">Avalanches</a><a href="en/webcams/">Webcams</a></nav></div></div>
+<main class="wrap guida" id="contenuto">
+  <div class="sec"><h2 class="sh">Powder index (0–10)</h2>
+    <p class="note">A rough score to see at a glance where the snow may be best. It adds up: fresh snow in the last 48 h (up to 5 points), snow forecast in the next 24 h (up to 2), estimated snow depth (up to 1.5) and clear skies tomorrow morning (+1.5). It takes points off for strong wind up high (transport and crust), temperatures above zero at the spot's altitude and a freezing level above the spot's altitude.</p>
+    <p class="note"><b>It does not take avalanche danger into account</b>: a high index after a windy snowfall often comes with considerable or high danger.</p>
+  </div>
+  <div class="sec"><h2 class="sh">FreeRide forecast</h2>
+    <p class="note">The forecast snow is the <b>median</b> of several weather models (German ICON, Italian ICON-2I, European ECMWF, American GFS, Météo-France), with the <b>range</b> between the lowest and highest value shown below. Narrow range = models agree = more reliable forecast.</p>
+    <p class="note">The centimetres are recomputed with a <b>temperature-dependent snow-to-water ratio</b>: near 0 °C 1 mm of water gives about 0.7 cm of heavy snow, below −8 °C up to 1.5 cm of light snow. When the calibration is available the median becomes <b>weighted</b>: the models that erred less in past winters count more.</p>
+  </div>
+  <div class="sec" id="quote"><h2 class="sh">Snow by altitude: Top, Mid, Base</h2>
+    <p class="note">Every spot has three altitudes: <b>Base</b> in the village, <b>Top</b> at the top of the lifts (or at the top of the freeride terrain, for example Sass Pordoi) and <b>Mid</b> halfway. For each one the site requests the forecast corrected for that altitude and decides, hour by hour, whether the precipitation falls as <b>dry snow</b> (❄️, below −4 °C), <b>snow</b> (❄), <b>wet snow</b> (💧, near 0 °C), <b>sleet</b> (🌨) or <b>rain</b> (🌧), and how many cm it makes.</p>
+    <p class="note">The <b>snow line</b> is estimated 300 m below the freezing level during precipitation. Note: the amount of water is the same at all three altitudes, because the models only partly see the effect of the mountains; with station data at different altitudes we will learn to correct this too.</p>
+  </div>
+  <div class="sec" id="calibrazione"><h2 class="sh">Model calibration</h2>
+    <p class="note">Every model has its habits: some tend to inflate snowfalls, others underestimate them. To find out, for the winters from 2024 onwards we compare <b>what each model forecast 1, 2 and 3 days ahead</b> (Open-Meteo archive) with the <b>snow measured by snow stations</b>: in South Tyrol the ones near the spots (open data from the Province of Bolzano), in Veneto 11 automatic stations and the manual station in Arabba, with data provided by the <b>Arabba Avalanche Centre (ARPAV)</b>.</p>
+    <p class="note">Measured snow = increase in snow depth between 8:00 one day and 8:00 the next: it's the snow that "stays", a little less than what fell because of settling. From this each model gets a <b>factor</b> (e.g. ×0.8 = its cm are reduced by 20%) and a <b>weight</b> in the FreeRide forecast. To be honest about it we check the result <b>winter by winter</b>: the factors computed on the other winters are tested on the one left out.</p>
+    <p class="note"><b>Factors by area</b>: every spot uses the factors computed on the stations of its area (South Tyrol or Veneto, the network with the nearest station); Friuli uses Veneto's, and spots far from all stations (e.g. Brenta) use the general ones. The model comparison table shows which ones the spot is using.</p>
+    <p class="note">Measured snow in Veneto = new snow recorded at 8:00 over the previous 24 hours (official figure from the Avalanche Centre). Limits: there is no historical data for Friuli yet, so the calibration of the nearby areas applies there. With this winter's data it will become more accurate area by area.</p>
+  </div>
+  <div class="sec"><h2 class="sh">Winds up high</h2>
+    <p class="note">For each day the site identifies the dominant flow at about 3,000 m, weighted on the hours with precipitation:</p>
+    <p class="note">🌊 <b>Scirocco</b> (from the south-east) and 🌧 <b>Libeccio</b> (from the south-west): moist air hits the southern slopes (stau). Lots of snow on the southern Dolomites, Cadore, the Prealps and Friuli, but often heavy snow and a high snow line.<br>
+    ❄️ <b>Nordstau</b> (from the north): snow on the border ridge (Puster Valley, Ahrntal, sometimes Gardena and Badia), föhn and clear skies to the south.<br>
+    🌬 <b>Bora / Grecale</b> (from the north-east): cold dry air; usually little snow in the mountains, some towards Tarvisio and the Julian Alps.</p>
+    <p class="note">On each spot's card a green border means a favourable flow for that spot, yellow an unfavourable one (leeward). These are hypotheses from the literature and experience: the calibration also measures how much the models err with each flow, so we can check them with numbers.</p>
+  </div>
+  <div class="sec"><h2 class="sh">Forecast</h2>
+    <p class="note">The <b>Forecast</b> section has two views. <b>By day</b>: one card per day with the spots where it snows, the snowiest first, with a bar, centimetres and model range (e.g. 12–25); top right, the day's wind up high. <b>By spot</b>: one row per spot with the next days as coloured squares and the total. Unreliable forecasts are faded. Below, the <b>best days</b> coming up.</p>
+  </div>
+  <div class="sec"><h2 class="sh">Mountain weather</h2>
+    <p class="note">Forecasts are computed at each spot's <b>reference altitude</b> (e.g. 2,900 m for the Sella), not in the village. The <b>wind up high</b> is the wind at 700 hPa (about 3,000 m), the one that moves the snow on the ridges. Fresh snow and snow depth are model estimates: useful to compare spots, they don't replace the snow stations.</p>
+  </div>
+  <div class="sec"><h2 class="sh">Simple and full version</h2>
+    <p class="note">At the top of the spots page you choose how to see the site. <b>Simple</b>: for each spot a verdict in words (plenty of fresh snow, snowfall coming, no new snow…), three numbers (fresh snow in the last 2 days, snow coming in the next 3, avalanche level) and the next 5 days as icons. <b>Full</b>: all the data, models, altitudes, stations and charts. The choice is saved on your phone and you can change it whenever you like.</p></div>
+  <div class="sec"><h2 class="sh">Mountain in 3D</h2>
+    <p class="note">On each spot's page you can open the 3D terrain model by <a href="https://peakvisor.com" target="_blank" rel="noopener">PeakVisor</a> without leaving the site: rotate, zoom and look at slopes, couloirs and ridges to picture your line. It only loads when you tap it, to save data. It's an aid for reading the terrain: aspects and steepness must always be checked against the avalanche bulletin and what you see on the spot.</p></div>
+  <div class="sec"><h2 class="sh">Avalanche danger</h2>
+    <p class="note">The level shown is the one from the area's <b>official bulletin</b>: AINEVA Veneto for the Belluno Dolomites, the provincial services of South Tyrol and Trentino (AINEVA members, published with Euregio) and Friuli Venezia Giulia. Each spot shows which bulletin area is used. Always read the full text: altitudes, aspects and avalanche problems matter more than the number.</p>
+    <p class="note">The full bulletin text (avalanche activity, snowpack, tendency, problems with size and frequency) can be read directly in the Avalanches section and on each spot's page, without opening other sites. On the English site the South Tyrol and Trentino bulletins are shown in the English version published by Euregio; the Veneto and Friuli bulletins are only available in Italian. The site does not change or summarise the official text. The source and time of issue are shown under each bulletin.</p>
+    <div class="scale" style="margin-top:8px">
+      <div><span class="dsq d1">1</span>Low</div><div><span class="dsq d2">2</span>Moderate</div><div><span class="dsq d3">3</span>Considerable</div><div><span class="dsq d4">4</span>High</div><div><span class="dsq d5">5</span>Very high</div>
+    </div>
+  </div>
+  <div class="sec"><h2 class="sh">Flags</h2>
+    <div class="flags" style="margin:0 0 6px"><span class="flag w">💨 Wind slabs</span></div>
+    <p class="note">Fresh snow in the last 3 days with wind up high ≥ 40 km/h: wind slabs likely on leeward slopes.</p>
+    <div class="flags" style="margin:8px 0 6px"><span class="flag w">🌡 Wet snow</span></div>
+    <p class="note">Temperature above 0 °C or freezing level above the spot's altitude.</p>
+    <div class="flags" style="margin:8px 0 6px"><span class="flag p">☀️ Bluebird tomorrow</span></div>
+    <p class="note">Few clouds tomorrow morning after fresh snow.</p>
+  </div>
+  <div class="sec"><h2 class="sh">Install as an app</h2>
+    <p class="note">iPhone: Safari → Share → <i>Add to Home Screen</i>. Android: Chrome → menu ⋮ → <i>Install app</i>.</p>
+  </div>
+  <div class="sec"><h2 class="sh">Sources</h2>
+    <p class="note">Weather and snow up high: <a href="https://open-meteo.com/">Open-Meteo.com</a> (CC BY 4.0). Measured snow: Meteo Alto Adige and Meteotrentino stations via <a href="https://avalanche.report">avalanche.report</a> and <a href="https://meteo.arpa.veneto.it/?page=xml">ARPAV Veneto</a> snow stations (unvalidated real-time data, CC BY 4.0). Avalanches: <a href="https://bollettini.aineva.it/">AINEVA bulletins</a> and <a href="https://avalanche.report">avalanche.report</a>. Webcams: images © their respective operators (Panomax, feratel, Skyline, realcam, meteocam, ski areas), credited under each image.</p>
+  </div>
+  <div class="disc">Off-piste skiing involves serious risks. This site aggregates automatic data for information only and does not replace official bulletins, mountain guides and on-site assessment.</div>
+</main>

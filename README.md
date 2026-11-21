@@ -175,6 +175,19 @@ Ogni sezione e ogni spot ha il suo indirizzo vero (prima era tutto in una pagina
 - In sviluppo (`npm run dev`) gli indirizzi funzionano lo stesso. Per provare la build in locale: `SITO_URL=http://localhost:4173/ npm run build && npm run preview`.
 - Google: registra il sito in **Google Search Console** e invia `sitemap.xml`. Su GitHub Pages senza dominio il file `robots.txt` non è alla radice del dominio, quindi conta solo la sitemap inviata a mano; con il dominio tuo vale anche robots.txt.
 
+## Versione inglese
+
+Il sito esiste in italiano (predefinito) e in inglese. La lingua la decide l'indirizzo: tutto quello che inizia con `en/` è inglese
+(`en/`, `en/forecast/`, `en/avalanches/`, `en/webcams/`, `en/spot/cortina/`, `en/guide/`, `en/contact/`, `en/precipitation/`).
+Nella testata c'è il badge **IT | EN**: porta alla stessa pagina nell'altra lingua e ricorda la scelta sul dispositivo.
+
+- **Testi dell'app**: nel codice si scrive sempre l'italiano dentro `t("…")`; la traduzione inglese sta in `js/lingua-en.js`
+  (chiave = testo italiano). Se aggiungi un testo nuovo aggiungi anche la sua traduzione: il test `tests/unit/lingua.test.mjs` fallisce se ne manca una.
+- **Guida, Contatti, Animazione precipitazioni**: il testo inglese sta in `html/en/parti/*.html`. Dopo aver cambiato quei file
+  (o testata/piè di pagina delle pagine italiane) lancia `node scripts/crea-pagine-en.mjs`, che rigenera `html/en/*.html`.
+- **Google**: `scripts/genera-pagine.mjs` crea tutte le pagine nelle due lingue, con `hreflang` e sitemap con le alternative.
+- **Bollettini valanghe**: Alto Adige e Trentino in inglese (versione Euregio); Veneto e Friuli esistono solo in italiano e sono indicati come tali.
+
 ## Diritti
 
 © 2026 Francesco Fabbro. Tutti i diritti riservati. Il sito è stato ideato, progettato e realizzato da Francesco Fabbro, ingegnere informatico ([curriculum](https://paquithino.github.io)). Il codice è consultabile ma non riutilizzabile senza permesso scritto: vedi [LICENSE](LICENSE). I dati e le immagini di terzi restano dei rispettivi titolari.

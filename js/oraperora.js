@@ -7,6 +7,7 @@
    - lo storico (oltre le ultime 72 ore) si scarica solo quando si comincia ad andare indietro
    ========================================================= */
 import { state, esc, r0, r1 } from "./state.js";
+import { t } from "./i18n.js";
 import { ORA, GIORNI_STORICO, oraPiena, oreDaMeteo, daColonne, caricaStorico, percorsoSpot, romaLocale, giornoRoma, etichettaGiorno, aggiungiGiorni, msDaRoma } from "./storico.js";
 import { ventoIcona, inUnita, etichettaUnita, livello } from "./vento.js";
 
@@ -16,20 +17,21 @@ const desktop = () => typeof matchMedia !== "undefined" && matchMedia("(min-widt
 const PX = () => desktop() ? 14 : 12;          // larghezza di un'ora
 const ALT = () => desktop() ? 250 : 220;
 const CHIP = [["Oggi", 0], ["Ieri", -1], ["-3g", -3], ["-7g", -7], ["-14g", -14]];
+const chip = n => t(n);
 
 /* contenitore: si riempie con avviaOraPerOra() dopo che la pagina è nel DOM */
 export function oraPerOraHTML(spot){
   return `<div class="oo" data-oo="${esc(spot.id)}">
     <div class="oo-bar">
-      <button type="button" class="oo-fr" data-oo-sposta="-1" aria-label="Giorno prima">◀</button>
+      <button type="button" class="oo-fr" data-oo-sposta="-1" aria-label="${t("Giorno prima")}">◀</button>
       <div class="oo-giorno" aria-live="polite"><b>—</b><span class="oo-tipo"></span></div>
-      <button type="button" class="oo-fr" data-oo-sposta="1" aria-label="Giorno dopo">▶</button>
+      <button type="button" class="oo-fr" data-oo-sposta="1" aria-label="${t("Giorno dopo")}">▶</button>
     </div>
-    <div class="oo-chip" role="group" aria-label="Vai al giorno">${CHIP.map(([n, g]) => `<button type="button" data-oo-giorno="${g}">${n}</button>`).join("")}<button type="button" class="oo-adesso" data-oo-adesso>Torna ad adesso</button></div>
+    <div class="oo-chip" role="group" aria-label="${t("Vai al giorno")}">${CHIP.map(([n, g]) => `<button type="button" data-oo-giorno="${g}">${chip(n)}</button>`).join("")}<button type="button" class="oo-adesso" data-oo-adesso>${t("Torna ad adesso")}</button></div>
     <div class="oo-lettura" aria-live="polite"></div>
-    <div class="oo-area"><div class="oo-scorri" tabindex="0" aria-label="Grafico ora per ora: scorri a destra e a sinistra"></div>
+    <div class="oo-area"><div class="oo-scorri" tabindex="0" aria-label="${t("Grafico ora per ora: scorri a destra e a sinistra")}"></div>
       <div class="oo-asse oo-asse-s"></div><div class="oo-asse oo-asse-d"></div></div>
-    <div class="legend oo-leg"><span><i style="background:var(--c-temp)"></i>Temperatura</span><span><i style="background:var(--c-vento)"></i>Vento in quota</span><span><i style="background:#0ea5e9"></i>Neve caduta (cm/h)</span><span><i style="background:var(--c-hs)"></i>Neve al suolo</span><span><i class="oo-l-prev"></i>Previsto</span><span><i class="oo-l-buco"></i>Dato mancante</span></div>
+    <div class="legend oo-leg"><span><i style="background:var(--c-temp)"></i>${t("Temperatura")}</span><span><i style="background:var(--c-vento)"></i>${t("Vento in quota")}</span><span><i style="background:#0ea5e9"></i>${t("Neve caduta (cm/h)")}</span><span><i style="background:var(--c-hs)"></i>${t("Neve al suolo")}</span><span><i class="oo-l-prev"></i>${t("Previsto")}</span><span><i class="oo-l-buco"></i>${t("Dato mancante")}</span></div>
     <p class="small oo-nota"></p>
   </div>`;
 }
@@ -76,7 +78,7 @@ function svg(spot, dati){
   for(let i = 0; i < lista.length; i++){
     if(lista[i].r || lista[i].prev) continue;
     let j = i; while(j + 1 < lista.length && !lista[j + 1].r && !lista[j + 1].prev) j++;
-    buchi += `<rect class="oo-buco" x="${i * px}" y="${top - 4}" width="${(j - i + 1) * px}" height="${bot - top + 4}"><title>Dato non disponibile</title></rect>`;
+    buchi += `<rect class="oo-buco" x="${i * px}" y="${top - 4}" width="${(j - i + 1) * px}" height="${bot - top + 4}"><title>${t("Dato non disponibile")}</title></rect>`;
     i = j;
   }
   lista.forEach((o, i) => {
@@ -95,7 +97,7 @@ function svg(spot, dati){
   const hsArea = hsPath ? hsPath.replace(/M([\d.]+),/g, (s, a) => `M${a},${bot} L${a},`) : "";
   const nowX = iNow >= 0 ? x(iNow) : null;
   const zeroY = ty(0);
-  return {W, H, html: `<svg class="oo-svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="Ora per ora di ${esc(spot.name)}: temperatura, vento, neve caduta e neve al suolo, ${lista.length} ore">
+  return {W, H, html: `<svg class="oo-svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(t("Ora per ora di {spot}: temperatura, vento, neve caduta e neve al suolo, {n} ore", {spot: spot.name, n: lista.length}))}">
     <defs><pattern id="${id}-r" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" class="oo-r0"/><line x1="0" y1="0" x2="0" y2="8" class="oo-r1"/></pattern></defs>
     ${fondo}${buchi}${griglia}
     ${zeroY > top && zeroY < bot ? `<line x1="0" x2="${W}" y1="${zeroY}" y2="${zeroY}" class="oo-zero"/>` : ""}
@@ -104,7 +106,7 @@ function svg(spot, dati){
     <path d="${linea(lista, "w", x, v => bot - alto * v / wmax)}" class="oo-w"/>
     <path d="${linea(lista, "t", x, ty)}" class="oo-t"/>
     ${frecce}
-    ${nowX != null ? `<line x1="${nowX}" x2="${nowX}" y1="2" y2="${bot}" class="oo-now"/><rect x="${nowX - 27}" y="${bot - 2}" width="54" height="17" rx="8.5" class="oo-nowp"/><text x="${nowX}" y="${bot + 10}" text-anchor="middle" class="oo-nowt">Adesso</text>` : ""}
+    ${nowX != null ? `<line x1="${nowX}" x2="${nowX}" y1="2" y2="${bot}" class="oo-now"/><rect x="${nowX - 27}" y="${bot - 2}" width="54" height="17" rx="8.5" class="oo-nowp"/><text x="${nowX}" y="${bot + 10}" text-anchor="middle" class="oo-nowt">${t("Adesso")}</text>` : ""}
     <line class="oo-cur" x1="-10" x2="-10" y1="${top - 4}" y2="${bot}"/>
   </svg>`, assi: {tmin: tmin - 2, tmax: tmax + 2, hmax, wmax}};
 }
@@ -112,14 +114,14 @@ function svg(spot, dati){
 function lettura(o, adesso){
   if(!o) return "";
   const loc = romaLocale(o.t), r = o.r || {};
-  const tipo = o.prev ? `<span class="oo-pv">Previsto</span>` : o.t === adesso ? `<span class="oo-ad">Adesso</span>` : `<span class="oo-rg">Registrato</span>`;
-  const nd = `<span class="oo-nd" title="Dato non disponibile">—</span>`;
+  const tipo = o.prev ? `<span class="oo-pv">${t("Previsto")}</span>` : o.t === adesso ? `<span class="oo-ad">${t("Adesso")}</span>` : `<span class="oo-rg">${t("Registrato")}</span>`;
+  const nd = `<span class="oo-nd" title="${t("Dato non disponibile")}">—</span>`;
   return `<div class="oo-lt"><b>${esc(etichettaGiorno(loc.slice(0, 10)))}, ${loc.slice(11, 16)}</b>${tipo}</div>
     <div class="oo-lv">
-      <div><span>Temp.</span><b>${r.t != null ? r1(r.t) + "°" : nd}</b></div>
-      <div><span>Neve caduta</span><b>${r.n != null ? r1(r.n) + " cm" : nd}</b></div>
-      <div><span>Al suolo</span><b>${r.hs != null ? r0(r.hs) + " cm" : nd}</b></div>
-      <div class="oo-lw"><span>Vento in quota</span>${r.w != null ? ventoIcona(r.w, r.d, "mini") : nd}${r.g != null ? `<em>raffiche ${inUnita(r.g)} ${etichettaUnita()}</em>` : ""}</div>
+      <div><span>${t("Temp.")}</span><b>${r.t != null ? r1(r.t) + "°" : nd}</b></div>
+      <div><span>${t("Neve caduta")}</span><b>${r.n != null ? r1(r.n) + " cm" : nd}</b></div>
+      <div><span>${t("Al suolo")}</span><b>${r.hs != null ? r0(r.hs) + " cm" : nd}</b></div>
+      <div class="oo-lw"><span>${t("Vento in quota")}</span>${r.w != null ? ventoIcona(r.w, r.d, "mini") : nd}${r.g != null ? `<em>${t("raffiche")} ${inUnita(r.g)} ${etichettaUnita()}</em>` : ""}</div>
     </div>`;
 }
 
@@ -134,20 +136,20 @@ export function avviaOraPerOra(spot, root){
   const nota = box.querySelector(".oo-nota");
   const disegna = () => {
     dati = ore(spot); px = PX();
-    if(!dati.lista.length){ sc.innerHTML = `<p class="note" style="padding:12px">Dati orari non disponibili.</p>`; return false; }
+    if(!dati.lista.length){ sc.innerHTML = `<p class="note" style="padding:12px">${t("Dati orari non disponibili.")}</p>`; return false; }
     const g = svg(spot, dati);
     sc.innerHTML = g.html;
     box.querySelector(".oo-asse-s").innerHTML = `<span>${Math.round(g.assi.tmax)}°</span><span>${Math.round(g.assi.tmin)}°</span>`;
-    box.querySelector(".oo-asse-d").innerHTML = `<span>${Math.round(g.assi.hmax)} cm</span><span>vento 0–${inUnita(g.assi.wmax)}</span>`;
-    nota.innerHTML = m.stato === "assente" ? "Lo storico dei giorni passati non è ancora disponibile: si riempie da solo, un'ora alla volta." :
-      `Passato = stima oraria registrata ogni ora per la quota dello spot (non è una misura: le misure vere sono in "Neve misurata"). Sfondo a righe = previsione. Tocca il grafico per leggere i valori di un'ora.`;
+    box.querySelector(".oo-asse-d").innerHTML = `<span>${Math.round(g.assi.hmax)} cm</span><span>${t("vento")} 0–${inUnita(g.assi.wmax)}</span>`;
+    nota.innerHTML = m.stato === "assente" ? t("Lo storico dei giorni passati non è ancora disponibile: si riempie da solo, un'ora alla volta.") :
+      t("Passato = stima oraria registrata ogni ora per la quota dello spot (non è una misura: le misure vere sono in \"Neve misurata\"). Sfondo a righe = previsione. Tocca il grafico per leggere i valori di un'ora.");
     return true;
   };
   const aggiorna = () => {
     if(!dati || !dati.lista.length) return;
     const c = centro(), g = giornoRoma(c), oggi = giornoRoma(dati.adesso);
     box.querySelector(".oo-giorno b").textContent = etichettaGiorno(g);
-    box.querySelector(".oo-tipo").textContent = c > dati.adesso + ORA ? "Previsto" : g === oggi ? "Oggi" : "Registrato";
+    box.querySelector(".oo-tipo").textContent = c > dati.adesso + ORA ? t("Previsto") : g === oggi ? t("Oggi") : t("Registrato");
     const limite = m.stato === "ok" || m.stato === "assente";
     box.querySelector('[data-oo-sposta="-1"]').disabled = limite && sc.scrollLeft <= 2;
     box.querySelector('[data-oo-sposta="1"]').disabled = sc.scrollLeft + sc.clientWidth >= sc.scrollWidth - 2;

@@ -13,7 +13,10 @@ const PORT = +process.env.PORT || 4317;
 createServer(async (req, res) => {
   let p = decodeURIComponent(new URL(req.url, "http://x").pathname);
   // pagine dell'app (come npm run dev): spot/cortina/, valanghe/ … → index.html; guida/ → html/info.html
-  if(/^\/(spot|previsione|pianifica|valanghe|webcam)(\/|$)/.test(p)) p = "/index.html";
+  if(/^\/(spot|previsione|pianifica|valanghe|webcam)(\/|$)/.test(p) || /^\/en(\/?$|\/(spot|forecast|avalanches|webcams)(\/|$))/.test(p)) p = "/index.html";
+  else if(/^\/en\/guide\/?$/.test(p)) p = "/html/en/info.html";
+  else if(/^\/en\/precipitation\/?$/.test(p)) p = "/html/en/precipitazioni.html";
+  else if(/^\/en\/contact\/?$/.test(p)) p = "/html/en/contatti.html";
   else if(/^\/guida\/?$/.test(p)) p = "/html/info.html";
   else if(/^\/precipitazioni\/?$/.test(p)) p = "/html/precipitazioni.html";
   else if(/^\/contatti\/?$/.test(p)) p = "/html/contatti.html";

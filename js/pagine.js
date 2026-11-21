@@ -14,6 +14,7 @@
    ========================================================= */
 import { SPOTS } from "./config.js";
 import { esc } from "./state.js";
+import { t, url as u, loc, percorsoLogico, inglese } from "./i18n.js";
 
 export const SITO_NOME = "FreeRide in Dolomites";
 export const COPERTINA = "copertina.jpg";
@@ -27,6 +28,8 @@ export const AREE = [
   {slug: "trentino", area: "Trentino", nome: "Trentino"},
   {slug: "friuli", area: "Friuli VG", nome: "Friuli Venezia Giulia"}
 ];
+/* nome della zona nella lingua della pagina */
+export const nomeArea = a => t((AREE.find(x => x.area === a) || {}).nome || a);
 export const areaDaSlug = s => AREE.find(a => a.slug === s) || null;
 export const slugDaArea = a => (AREE.find(x => x.area === a) || {}).slug || null;
 export const percorsoSpot = id => `spot/${id}/`;
@@ -39,10 +42,12 @@ export const SEZIONI = [
   {path: "valanghe/", nome: "Valanghe", tab: "valanghe"},
   {path: "webcam/", nome: "Webcam", tab: "webcam"}
 ];
+/* indirizzo da usare nei link della lingua attuale ("" → "./" in italiano, "en/" in inglese) */
+export const href = p => u(p) || "./";
 
 /* "spot/cortina/" → {vista: "spot", id: "cortina", path} ; percorso relativo alla radice del sito */
 export function leggiPercorso(p){
-  p = String(p || "").replace(/^\/+/, "").replace(/index\.html$/, "").split(/[?#]/)[0];
+  p = percorsoLogico(String(p || "").replace(/^\/+/, "").replace(/index\.html$/, "").split(/[?#]/)[0]).percorso;
   const parti = p.split("/").filter(Boolean);
   if(!parti.length) return {vista: "home", path: ""};
   const [a, b] = parti;
@@ -78,7 +83,7 @@ export function tutteLeRotte(){
   ];
 }
 
-const mil = n => Number(n).toLocaleString("it-IT");
+const mil = n => Number(n).toLocaleString(loc());
 /* titolo, descrizione e titolo principale (h1) di ogni pagina */
 export function metaPer(r){
   const sito = ` | ${SITO_NOME}`;
@@ -87,27 +92,27 @@ export function metaPer(r){
       const s = SPOTS.find(x => x.id === r.id);
       const nome = s.name.split(" · ")[0];
       return {tab: "spot",
-        title: `${nome}: neve, meteo e valanghe per il freeride${sito}`,
+        title: t("{nome}: neve, meteo e valanghe per il freeride", {nome}) + sito,
         h1: s.name,
-        description: `Neve fresca, previsione a 10 giorni, neve per quota (vetta ${mil(s.q.top)} m, base ${mil(s.q.base)} m), bollettino valanghe, webcam e montagna in 3D per il fuoripista a ${nome}: ${s.zones}.`};
+        description: t("Neve fresca, previsione a 10 giorni, neve per quota (vetta {top} m, base {base} m), bollettino valanghe, webcam e montagna in 3D per il fuoripista a {nome}: {zone}.", {top: mil(s.q.top), base: mil(s.q.base), nome, zone: s.zones})};
     }
     case "lista": {
       const z = r.area ? AREE.find(a => a.area === r.area) : null;
       const n = z ? SPOTS.filter(s => s.area === r.area).length : SPOTS.length;
       return {tab: "spot",
-        title: z ? `Spot freeride in ${z.nome}: neve e meteo${sito}` : `Spot freeride delle Dolomiti: neve e meteo${sito}`,
-        h1: z ? `Spot freeride · ${z.nome}` : "Spot freeride",
-        description: z ? `Neve fresca, neve in arrivo e pericolo valanghe dei ${n} spot freeride in ${z.nome}, aggiornati ogni ora.`
-                       : `Neve fresca, neve in arrivo e pericolo valanghe di ${n} spot freeride tra Dolomiti e Friuli, aggiornati ogni ora.`};
+        title: (z ? t("Spot freeride in {zona}: neve e meteo", {zona: t(z.nome)}) : t("Spot freeride delle Dolomiti: neve e meteo")) + sito,
+        h1: z ? t("Spot freeride · {zona}", {zona: t(z.nome)}) : t("Spot freeride"),
+        description: z ? t("Neve fresca, neve in arrivo e pericolo valanghe dei {n} spot freeride in {zona}, aggiornati ogni ora.", {n, zona: t(z.nome)})
+                       : t("Neve fresca, neve in arrivo e pericolo valanghe di {n} spot freeride tra Dolomiti e Friuli, aggiornati ogni ora.", {n})};
     }
-    case "previsione": return {tab: "previsione", title: `Previsione neve sulle Dolomiti, giorno per giorno${sito}`, h1: "Previsione neve",
-      description: "Previsione della neve fresca per i prossimi 10 giorni su tutti gli spot freeride delle Dolomiti: confronto di 5 modelli meteo calibrati sulle stazioni nivometriche."};
-    case "valanghe": return {tab: "valanghe", title: `Bollettino valanghe Dolomiti oggi${sito}`, h1: "Pericolo valanghe",
-      description: "Bollettini valanghe ufficiali di Veneto, Alto Adige, Trentino e Friuli letti per intero: grado di pericolo per quota, problemi valanghivi, manto nevoso e tendenza."};
-    case "webcam": return {tab: "webcam", title: `Webcam in quota sulle Dolomiti${sito}`, h1: "Webcam",
-      description: "Le webcam in quota degli spot freeride delle Dolomiti, per controllare neve, visibilità e vento prima di partire."};
-    default: return {tab: "spot", title: `${SITO_NOME}: neve, meteo e valanghe per il freeride sulle Dolomiti`, h1: "Neve, meteo e valanghe per il freeride sulle Dolomiti",
-      description: "Neve fresca, previsione calibrata su 5 modelli, neve per quota, bollettini valanghe completi e webcam di 28 spot freeride tra Dolomiti e Friuli. Aggiornato ogni ora."};
+    case "previsione": return {tab: "previsione", title: t("Previsione neve sulle Dolomiti, giorno per giorno") + sito, h1: t("Previsione neve"),
+      description: t("Previsione della neve fresca per i prossimi 10 giorni su tutti gli spot freeride delle Dolomiti: confronto di 5 modelli meteo calibrati sulle stazioni nivometriche.")};
+    case "valanghe": return {tab: "valanghe", title: t("Bollettino valanghe Dolomiti oggi") + sito, h1: t("Pericolo valanghe"),
+      description: t("Bollettini valanghe ufficiali di Veneto, Alto Adige, Trentino e Friuli letti per intero: grado di pericolo per quota, problemi valanghivi, manto nevoso e tendenza.")};
+    case "webcam": return {tab: "webcam", title: t("Webcam in quota sulle Dolomiti") + sito, h1: t("Webcam"),
+      description: t("Le webcam in quota degli spot freeride delle Dolomiti, per controllare neve, visibilità e vento prima di partire.")};
+    default: return {tab: "spot", title: `${SITO_NOME}: ` + t("neve, meteo e valanghe per il freeride sulle Dolomiti"), h1: t("Neve, meteo e valanghe per il freeride sulle Dolomiti"),
+      description: t("Neve fresca, previsione calibrata su 5 modelli, neve per quota, bollettini valanghe completi e webcam di 28 spot freeride tra Dolomiti e Friuli. Aggiornato ogni ora.")};
   }
 }
 
@@ -115,6 +120,8 @@ export function metaPer(r){
    1 Dati raccolti: Adesso, Neve fresca, Neve misurata
    2 Previsioni: prossimi 10 giorni, Neve per quota, Confronto modelli, Ora per ora
    3 Valanghe: Pericolo valanghe · 4 3D: Montagna in 3D · 5 Webcam: Webcam */
+/* etichette brevi inglesi per le pillole (le parole lunghe non ci stanno sul telefono) */
+const CORTO_EN = {Dati: "Data", Previsioni: "Forecast", Valanghe: "Avalanche", "3D": "3D", Webcam: "Cams"};
 export const GRUPPI_SPOT = [
   {id: "s-dati", nome: "Dati raccolti", corto: "Dati"},
   {id: "s-prev", nome: "Previsioni", corto: "Previsioni"},
@@ -126,7 +133,7 @@ export const GRUPPI_SPOT = [
 export function gruppoHTML(i, corpo){
   if(!corpo) return "";
   const g = GRUPPI_SPOT[i];
-  return `<section class="grp ${g.id}" id="${g.id}" aria-labelledby="${g.id}-t"><h2 class="gh" id="${g.id}-t"><span class="gn" aria-hidden="true">${i + 1}</span>${esc(g.nome)}</h2><div class="grp-b">${corpo}</div></section>`;
+  return `<section class="grp ${g.id}" id="${g.id}" aria-labelledby="${g.id}-t"><h2 class="gh" id="${g.id}-t"><span class="gn" aria-hidden="true">${i + 1}</span>${esc(t(g.nome))}</h2><div class="grp-b">${corpo}</div></section>`;
 }
 /* una tabella dentro la sezione (h3) */
 export const tabellaHTML = (cls, titolo, corpo, extra = "") => `<section class="sec ${cls}${extra ? " " + extra : ""}" id="${cls}"><h3 class="sh">${titolo}</h3>${corpo}</section>`;
@@ -138,15 +145,15 @@ export function coverHTML(r, quando, opz = {}){
   const data = quando ? `<span class="cv-date">${esc(quando)}</span>` : "";
   if(r.vista === "spot"){
     const s = SPOTS.find(x => x.id === r.id);
-    const parti = GRUPPI_SPOT.map(g => [g.id, g.corto]);
+    const parti = GRUPPI_SPOT.map(g => [g.id, inglese() ? (CORTO_EN[g.corto] || g.corto) : g.corto]);
     return `${fotoCopertina()}<div class="cover-in wrap">
-      <div class="cv-top"><a class="cv-back" href="${percorsoArea(s.area)}" data-back>${ICO_INDIETRO}<span>Spot</span></a>
-        ${opz.fav != null ? `<button class="cv-fav ${opz.fav ? "on" : ""}" data-fav="${s.id}" aria-label="${opz.fav ? "Togli dai preferiti" : "Aggiungi ai preferiti"}">${opz.fav ? "★" : "☆"}</button>` : ""}</div>
-      <div class="cv-title"><h1>${esc(s.name)}</h1><p>${esc(s.area)} · ${mil(s.q.base)} – ${mil(s.q.top)} m</p></div>
-      <nav class="pills" aria-label="Parti della pagina">${parti.map(([id, n], i) => `<button class="${i ? "" : "on"}" data-goto="${id}">${n}</button>`).join("")}</nav>
+      <div class="cv-top"><a class="cv-back" href="${href(percorsoArea(s.area))}" data-back>${ICO_INDIETRO}<span>${t("Spot")}</span></a>
+        ${opz.fav != null ? `<button class="cv-fav ${opz.fav ? "on" : ""}" data-fav="${s.id}" aria-label="${opz.fav ? t("Togli dai preferiti") : t("Aggiungi ai preferiti")}">${opz.fav ? "★" : "☆"}</button>` : ""}</div>
+      <div class="cv-title"><h1>${esc(s.name)}</h1><p>${esc(nomeArea(s.area))} · ${mil(s.q.base)} – ${mil(s.q.top)} m</p></div>
+      <nav class="pills" aria-label="${t("Parti della pagina")}">${parti.map(([id, n], i) => `<button class="${i ? "" : "on"}" data-goto="${id}">${n}</button>`).join("")}</nav>
     </div>`;
   }
-  const pills = `<nav class="pills" aria-label="Sezioni">${SEZIONI.map(x => `<a href="${x.path || "./"}" class="${x.tab === meta.tab ? "on" : ""}"${x.tab === meta.tab ? ' aria-current="page"' : ""}>${x.nome}</a>`).join("")}</nav>`;
+  const pills = `<nav class="pills" aria-label="${t("Sezioni")}">${SEZIONI.map(x => `<a href="${href(x.path)}" class="${x.tab === meta.tab ? "on" : ""}"${x.tab === meta.tab ? ' aria-current="page"' : ""}>${t(x.nome)}</a>`).join("")}</nav>`;
   if(r.vista === "home"){
     return `${fotoCopertina()}<div class="cover-in wrap"><div class="cv-top">${data}</div><h1 class="sr">${esc(meta.h1)}</h1>${pills}</div>`;
   }

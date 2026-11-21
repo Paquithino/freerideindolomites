@@ -12,6 +12,8 @@
    Niente DOM qui: lo usano anche il robot e i test.
    ========================================================= */
 
+import { inglese } from "./i18n.js";
+
 export const ORA = 3600e3;
 export const GIORNI_STORICO = 14;
 export const ORE_STORICO = GIORNI_STORICO * 24;
@@ -36,9 +38,11 @@ export function msDaRoma(loc){
   return base - ORA;
 }
 const GG = ["dom", "lun", "mar", "mer", "gio", "ven", "sab"], MM = ["gen", "feb", "mar", "apr", "mag", "giu", "lug", "ago", "set", "ott", "nov", "dic"];
+const GG_EN = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"], MM_EN = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 /* "2026-11-18" → "Mar 18 nov" */
 export function etichettaGiorno(g){
   const d = new Date(g + "T12:00:00Z");
+  if(inglese()) return `${GG_EN[d.getUTCDay()]} ${d.getUTCDate()} ${MM_EN[d.getUTCMonth()]}`;
   const s = `${GG[d.getUTCDay()]} ${d.getUTCDate()} ${MM[d.getUTCMonth()]}`;
   return s[0].toUpperCase() + s.slice(1);
 }

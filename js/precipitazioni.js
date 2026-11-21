@@ -12,6 +12,7 @@ import { RIQUADRO, valoreIn, colore, lineaNeve, indiceAdesso, tipoDa, SOGLIE, SC
 import { creaMappa } from "./mappa.js";
 import { romaLocale, etichettaGiorno } from "./storico.js";
 import "./menu.js";
+import { t as tr, loc, url as u } from "./i18n.js";
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
@@ -40,15 +41,15 @@ box.dataset.centro = spotIniz ? spotIniz.id : "tutto";
 const sopra = S.mappa.sopra;
 sopra.innerHTML = `<canvas class="pc-cv on" aria-hidden="true"></canvas><canvas class="pc-cv" aria-hidden="true"></canvas>
   <svg class="pc-linea" aria-hidden="true"></svg><div class="pc-spot"></div><div class="pc-pop" hidden></div>
-  <details class="pc-leg mp-no" ${matchMedia("(min-width: 700px)").matches ? "open" : ""}><summary>Legenda</summary>${legendaHTML()}</details>`;
+  <details class="pc-leg mp-no" ${matchMedia("(min-width: 700px)").matches ? "open" : ""}><summary>${tr("Legenda")}</summary>${legendaHTML()}</details>`;
 const [cvA, cvB] = sopra.querySelectorAll(".pc-cv");
 let attivo = cvA;
 
 function legendaHTML(){
   const riga = (tipo, nome) => `<div class="pc-lr"><span class="pc-ln">${nome}</span>${SCALE[tipo].map(c => `<i style="background:rgb(${c.join(",")})"></i>`).join("")}</div>`;
-  return `<div class="pc-legc">${riga("neve", "Neve")}${riga("mista", "Mista")}${riga("pioggia", "Pioggia")}
-    <div class="pc-lr pc-ls"><span class="pc-ln">mm/h</span>${SOGLIE.map(s => `<b>${String(s).replace(".", ",")}</b>`).join("")}</div>
-    <div class="pc-lr pc-lline"><span class="pc-ln"></span><svg width="28" height="8" aria-hidden="true"><line x1="0" y1="4" x2="28" y2="4"/></svg> limite neve</div></div>`;
+  return `<div class="pc-legc">${riga("neve", tr("Neve"))}${riga("mista", tr("Mista"))}${riga("pioggia", tr("Pioggia"))}
+    <div class="pc-lr pc-ls"><span class="pc-ln">mm/h</span>${SOGLIE.map(s => `<b>${s.toLocaleString(loc())}</b>`).join("")}</div>
+    <div class="pc-lr pc-lline"><span class="pc-ln"></span><svg width="28" height="8" aria-hidden="true"><line x1="0" y1="4" x2="28" y2="4"/></svg> ${tr("limite neve")}</div></div>`;
 }
 
 /* ---------- disegno di un'ora ---------- */
@@ -90,10 +91,10 @@ function popup(){
   const el = sopra.querySelector(".pc-pop"), s = SPOTS.find(x => x.id === S.scelto);
   if(!s || !S.dati){ el.hidden = true; return; }
   const v = valoreIn(S.dati, S.k, s.lat, s.lon), [x, y] = S.mappa.px(s.lat, s.lon), st = S.mappa.stato();
-  const testo = !v ? "Fuori dall'area dei dati" : v.mm < 0.1 ? "Niente precipitazioni" : `${v.mm.toFixed(1).replace(".", ",")} mm/h · ${tipoDa(v.neve)}`;
+  const testo = !v ? tr("Fuori dall'area dei dati") : v.mm < 0.1 ? tr("Niente precipitazioni") : `${v.mm.toLocaleString(loc(), {minimumFractionDigits: 1, maximumFractionDigits: 1})} mm/h · ${tr(tipoDa(v.neve))}`;
   el.hidden = false;
-  el.innerHTML = `<b>${esc(s.name)}</b><span class="pc-pv">${testo}</span>${v && v.quotaNeve != null ? `<span>Quota neve circa ${v.quotaNeve.toLocaleString("it-IT")} m</span>` : ""}
-    <a href="spot/${s.id}/">Apri lo spot →</a><button type="button" class="pc-popx" data-pcchiudi aria-label="Chiudi">×</button>`;
+  el.innerHTML = `<b>${esc(s.name)}</b><span class="pc-pv">${testo}</span>${v && v.quotaNeve != null ? `<span>${tr("Quota neve circa {q} m", {q: v.quotaNeve.toLocaleString(loc())})}</span>` : ""}
+    <a href="${u(`spot/${s.id}/`)}">${tr("Apri lo spot →")}</a><button type="button" class="pc-popx" data-pcchiudi aria-label="${tr("Chiudi")}">×</button>`;
   const left = Math.max(8, Math.min(st.w - 228, x - 110)), top = y > 150 ? y - 12 : y + 22;
   el.style.left = left + "px"; el.style.top = top + "px";
   el.classList.toggle("sotto", y <= 150);
@@ -118,7 +119,7 @@ const slider = $("#pcSlider"), lab = $("#pcOra"), tipo = $("#pcTipo");
 function aggiornaTempo(){
   const o = S.dati.ore[S.k], loc = romaLocale(Date.parse(o));
   lab.textContent = `${etichettaGiorno(loc.slice(0, 10))} · ${loc.slice(11, 16)}`;
-  const t = S.k === S.kAdesso ? ["Adesso", "ad"] : S.k < S.kAdesso ? ["Ore passate · modello", "pa"] : [`Previsto · +${S.k - S.kAdesso} h`, "pv"];
+  const t = S.k === S.kAdesso ? [tr("Adesso"), "ad"] : S.k < S.kAdesso ? [tr("Ore passate · modello"), "pa"] : [`${tr("Previsto")} · +${S.k - S.kAdesso} h`, "pv"];
   tipo.textContent = t[0]; tipo.className = "pc-tipo " + t[1];
   slider.value = S.k;
   slider.setAttribute("aria-valuetext", `${lab.textContent}, ${t[0]}`);
@@ -134,7 +135,7 @@ function play(on){
     S.play = setInterval(() => { mostra(S.k >= S.dati.ore.length - 1 ? S.kAdesso : S.k + 1, true); }, VELOCITA[S.velocita] || VELOCITA.normale);
   }
   b.setAttribute("aria-pressed", String(!!S.play));
-  b.setAttribute("aria-label", S.play ? "Pausa" : "Avvia l'animazione");
+  b.setAttribute("aria-label", S.play ? tr("Pausa") : tr("Avvia l'animazione"));
   b.innerHTML = S.play ? "❚❚" : "▶";
 }
 const passo = n => { play(false); mostra(S.k + n, true); };
@@ -176,16 +177,16 @@ disegnaSpot();
 /* ---------- dati ---------- */
 const stato = $("#pcStato");
 function messaggio(testo, tipo = "info"){ stato.innerHTML = testo ? `<div class="banner ${tipo === "err" ? "err" : tipo === "warn" ? "demo" : "wip"}" role="status">${testo}</div>` : ""; }
-const ora = iso => new Date(iso).toLocaleTimeString("it-IT", {hour: "2-digit", minute: "2-digit", timeZone: "Europe/Rome"});
+const ora = iso => new Date(iso).toLocaleTimeString(loc(), {hour: "2-digit", minute: "2-digit", timeZone: "Europe/Rome"});
 async function carica(){
-  messaggio("Carico le precipitazioni…");
+  messaggio(tr("Carico le precipitazioni…"));
   let d = null;
   try{
     const r = await fetch("./dati/precipitazioni/ultimo.json", {cache: "no-cache"});
     if(r.ok) d = await r.json();
   }catch(e){}
   if(!d || !Array.isArray(d.ore) || !d.ore.length || !d.griglia || !Array.isArray(d.p)){
-    messaggio("L'animazione non è ancora disponibile: i dati si generano ogni 3 ore. Riprova più tardi; nel frattempo trovi la previsione neve di ogni spot nelle loro pagine.", "err");
+    messaggio(tr("L'animazione non è ancora disponibile: i dati si generano ogni 3 ore. Riprova più tardi; nel frattempo trovi la previsione neve di ogni spot nelle loro pagine."), "err");
     $("#pcCtrl").classList.add("pc-off");
     box.dataset.pronta = "vuota";
     return;
@@ -193,13 +194,13 @@ async function carica(){
   S.dati = d;
   S.kAdesso = indiceAdesso(d.ore);
   const fine = Date.parse(d.ore[d.ore.length - 1]), eta = (Date.now() - Date.parse(d.generato)) / 3600e3;
-  if(Date.now() > fine + 3600e3) messaggio(`Questi dati sono vecchi (scaricati ${Math.round(eta)} ore fa) e non coprono più l'ora attuale: li mostriamo comunque, ma non usarli per decidere.`, "warn");
-  else if(eta > VECCHIO_ORE) messaggio(`Dati scaricati ${Math.round(eta)} ore fa: l'aggiornamento è in ritardo.`, "warn");
-  else if(d.demo) messaggio("Anteprima con dati dimostrativi: una volta pubblicato il sito mostra i dati veri.", "warn");
+  if(Date.now() > fine + 3600e3) messaggio(tr("Questi dati sono vecchi (scaricati {n} ore fa) e non coprono più l'ora attuale: li mostriamo comunque, ma non usarli per decidere.", {n: Math.round(eta)}), "warn");
+  else if(eta > VECCHIO_ORE) messaggio(tr("Dati scaricati {n} ore fa: l'aggiornamento è in ritardo.", {n: Math.round(eta)}), "warn");
+  else if(d.demo) messaggio(tr("Anteprima con dati dimostrativi: una volta pubblicato il sito mostra i dati veri."), "warn");
   else messaggio("");
   slider.max = d.ore.length - 1;
   slider.style.setProperty("--adesso", `${(S.kAdesso / Math.max(1, d.ore.length - 1) * 100).toFixed(1)}%`);
-  $("#pcInfo").innerHTML = `Aggiornato alle ${ora(d.generato)}${d.corsa ? ` – corsa del modello delle ${d.corsa.slice(11, 13)} UTC` : ""}. Dati: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a> (CC BY 4.0) – modello ${esc(d.etichetta || d.modello)}. Le ore passate sono quelle calcolate dal modello, non osservazioni.`;
+  $("#pcInfo").innerHTML = `${tr("Aggiornato alle {ora}", {ora: ora(d.generato)})}${d.corsa ? ` – ${tr("corsa del modello delle {h} UTC", {h: d.corsa.slice(11, 13)})}` : ""}. ${tr("Dati")}: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a> (CC BY 4.0) – ${tr("modello")} ${esc(d.etichetta || d.modello)}. ${tr("Le ore passate sono quelle calcolate dal modello, non osservazioni.")}`;
   $("#pcCtrl").classList.remove("pc-off");
   mostra(S.kAdesso);
 }

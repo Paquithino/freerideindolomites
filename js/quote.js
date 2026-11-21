@@ -6,6 +6,7 @@
    se è neve, mista o pioggia e quanti cm rende, in base alla temperatura.
    ========================================================= */
 import { SPOTS, WORKER_URL } from "./config.js";
+import { t as tr, num } from "./i18n.js";
 import { state, esc, r0, fetchRetry, snowColor } from "./state.js";
 import { snowRatio } from "./modelli.js";
 import { romeNowISO, dayName, dayNum } from "./meteo.js";
@@ -108,32 +109,32 @@ const NOME = {polvere: "neve asciutta", neve: "neve", bagnata: "neve bagnata", m
 
 export function quoteHTML(spot){
   const Q = state.quote && state.quote[spot.id];
-  if(!Q || !Object.keys(Q.lv || {}).length) return `<p class="note" style="margin:0">Previsione per quota non disponibile al momento.</p>`;
+  if(!Q || !Object.keys(Q.lv || {}).length) return `<p class="note" style="margin:0">${tr("Previsione per quota non disponibile al momento.")}</p>`;
   const today = romeNowISO().slice(0, 10);
   const dates = Object.keys((Q.lv.top || Q.lv.mid || {}).d || {}).filter(d => d >= today).slice(0, 6);
   const cella = x => {
-    if(!x) return `<td class="z">n.d.</td>`;
+    if(!x) return `<td class="z">${tr("n.d.")}</td>`;
     const t = x.tmax != null ? `${r0(x.tmin)}/${r0(x.tmax)}°` : "";
     if(!x.tipo) return `<td class="z">–<span>${t}</span></td>`;
-    if(x.tipo === "pioggia") return `<td class="qr" title="pioggia">${ICONA.pioggia} ${r0(x.pioggia)} mm<span>${t}</span></td>`;
+    if(x.tipo === "pioggia") return `<td class="qr" title="${tr("pioggia")}">${ICONA.pioggia} ${r0(x.pioggia)} mm<span>${t}</span></td>`;
     const cm = x.cm;
-    return `<td class="${cm >= 1 ? "s" : "z"}" ${cm >= 1 ? `style="--sc:${snowColor(cm) || "#bae6fd"}"` : ""} title="${NOME[x.tipo]}">${cm >= 0.5 ? r0(cm) : "–"} ${ICONA[x.tipo]}<span>${t}</span></td>`;
+    return `<td class="${cm >= 1 ? "s" : "z"}" ${cm >= 1 ? `style="--sc:${snowColor(cm) || "#bae6fd"}"` : ""} title="${tr(NOME[x.tipo])}">${cm >= 0.5 ? r0(cm) : "–"} ${ICONA[x.tipo]}<span>${t}</span></td>`;
   };
   const righe = LIVELLI.filter(l => Q.lv[l.k]).map(l => {
     const L = Q.lv[l.k];
-    return `<tr><td class="l"><b>${l.nome}</b><span>${r0(L.elev).toLocaleString("it-IT")} m</span></td>${dates.map(d => cella(L.d[d])).join("")}</tr>`;
+    return `<tr><td class="l"><b>${tr(l.nome)}</b><span>${num(r0(L.elev))} m</span></td>${dates.map(d => cella(L.d[d])).join("")}</tr>`;
   }).join("");
-  const zt = `<tr class="zt"><td class="l">Quota neve<span>zero termico</span></td>${dates.map(d => {
+  const zt = `<tr class="zt"><td class="l">${tr("Quota neve")}<span>${tr("zero termico")}</span></td>${dates.map(d => {
     const z = Q.z[d];
     if(!z) return `<td class="z">–</td>`;
-    return `<td>${z.qn != null ? `<b>${r0(z.qn).toLocaleString("it-IT")}</b>` : "–"}<span>0° ${r0(z.zt).toLocaleString("it-IT")}</span></td>`;
+    return `<td>${z.qn != null ? `<b>${num(r0(z.qn))}</b>` : "–"}<span>0° ${num(r0(z.zt))}</span></td>`;
   }).join("")}</tr>`;
   return `<div class="st-wrap"><table class="mdl qt">
-    <thead><tr><th class="l">cm di neve</th>${dates.map((d, i) => `<th>${i === 0 ? "Oggi" : dayName(d)}<br>${dayNum(d)}</th>`).join("")}</tr></thead>
+    <thead><tr><th class="l">${tr("cm di neve")}</th>${dates.map((d, i) => `<th>${i === 0 ? tr("Oggi") : dayName(d)}<br>${dayNum(d)}</th>`).join("")}</tr></thead>
     <tbody>${righe}${zt}</tbody></table></div>
-    <p class="small" style="margin:8px 0 0">❄️ neve asciutta (sotto −4 °C) · ❄ neve · 💧 neve bagnata · 🌨 neve e pioggia · 🌧 pioggia. Sotto ogni valore: temperatura minima/massima del giorno a quella quota.
-    Quote: base in paese, vetta in cima agli impianti${spot.q && spot.q.nota ? ` (qui ${esc(spot.q.nota)})` : ""}, metà a metà. Quota neve stimata 300 m sotto lo zero termico durante le precipitazioni.
-    La quantità d'acqua è la stessa per le tre quote (i modelli vedono solo in parte l'effetto delle montagne): cambia se cade come neve o pioggia e quanto rende.</p>`;
+    <p class="small" style="margin:8px 0 0">${tr("❄️ neve asciutta (sotto −4 °C) · ❄ neve · 💧 neve bagnata · 🌨 neve e pioggia · 🌧 pioggia. Sotto ogni valore: temperatura minima/massima del giorno a quella quota.")}
+    ${tr("Quote: base in paese, vetta in cima agli impianti")}${spot.q && spot.q.nota ? ` (${tr("qui")} ${esc(spot.q.nota)})` : ""}, ${tr("metà a metà. Quota neve stimata 300 m sotto lo zero termico durante le precipitazioni.")}
+    ${tr("La quantità d'acqua è la stessa per le tre quote (i modelli vedono solo in parte l'effetto delle montagne): cambia se cade come neve o pioggia e quanto rende.")}</p>`;
 }
 
 /* dati dimostrativi: partono dalla previsione dello spot e spostano la temperatura con la quota (−0,65 °C ogni 100 m) */

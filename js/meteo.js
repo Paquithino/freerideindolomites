@@ -1,4 +1,5 @@
 import { SPOTS, FORECAST_DAYS, WORKER_URL } from "./config.js";
+import { t, loc } from "./i18n.js";
 import { state, LS, fetchRetry } from "./state.js";
 import { correctHourly, ensembleFor, dayRegime } from "./modelli.js";
 
@@ -10,9 +11,9 @@ export const WMO = {0:["☀️","Sereno"],1:["🌤","Poco nuvoloso"],2:["⛅","P
  61:["🌧","Pioggia debole"],63:["🌧","Pioggia"],65:["🌧","Pioggia forte"],66:["🌧","Pioggia gelata"],67:["🌧","Pioggia gelata"],
  71:["🌨","Neve debole"],73:["🌨","Neve"],75:["❄️","Neve forte"],77:["🌨","Granuli di neve"],80:["🌦","Rovesci"],81:["🌧","Rovesci"],82:["⛈","Rovesci forti"],
  85:["🌨","Rovesci di neve"],86:["❄️","Rovesci di neve forti"],95:["⛈","Temporale"],96:["⛈","Temporale"],99:["⛈","Temporale"]};
-export const wmo = c => WMO[c] || ["·", "—"];
+export const wmo = c => { const w = WMO[c] || ["·", "—"]; return [w[0], t(w[1])]; };
 export const DIRS = ["N","NE","E","SE","S","SO","O","NO"];
-export const dirName = d => d == null ? "" : DIRS[Math.round((d % 360) / 45) % 8];
+export const dirName = d => d == null ? "" : t(DIRS[Math.round((d % 360) / 45) % 8]);
 
 export function wxQuery(){
   return new URLSearchParams({
@@ -44,7 +45,7 @@ export function romeNowISO(){
   return p.replace(" ", "T");
 }
 export function addDaysISO(iso, n){ const d = new Date(iso + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); }
-export const dayName = iso => new Date(iso + "T12:00:00Z").toLocaleDateString("it-IT", {weekday:"short", timeZone:"UTC"});
+export const dayName = iso => new Date(iso + "T12:00:00Z").toLocaleDateString(loc(), {weekday:"short", timeZone:"UTC"});
 export const dayNum = iso => +iso.slice(8, 10);
 export const isWeekend = iso => [0, 6].includes(new Date(iso + "T12:00:00Z").getUTCDay());
 

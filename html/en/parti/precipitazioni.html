@@ -1,0 +1,30 @@
+<!--title: Snow and rain animation, Dolomites – hour by hour | FreeRide in Dolomites-->
+<!--description: Animated map of snow and rain over the Dolomites and Friuli, hour by hour up to 72 hours ahead, with the snow line. ICON-2I high-resolution model.-->
+<main class="wrap pc" id="contenuto">
+  <div class="pc-testa">
+    <h1>Precipitation animation</h1>
+    <p>Where it snows and where it rains over the Dolomites and Friuli, hour by hour, up to 72 hours ahead.</p>
+  </div>
+  <div id="pcStato"></div>
+  <div class="pc-mappa" id="pcMappa" role="region" aria-label="Precipitation map: drag to move, pinch or use + and − to zoom"></div>
+  <div class="pc-ctrl pc-off" id="pcCtrl">
+    <div class="pc-tempo"><b id="pcOra" aria-live="polite">—</b><span id="pcTipo" class="pc-tipo"></span><button type="button" id="pcAdesso" class="pc-adesso" hidden>Now</button></div>
+    <div class="pc-barra">
+      <button type="button" id="pcPrima" class="pc-b" aria-label="Previous hour">◀</button>
+      <button type="button" id="pcPlay" class="pc-b pc-play" aria-label="Play the animation" aria-pressed="false">▶</button>
+      <button type="button" id="pcDopo" class="pc-b" aria-label="Next hour">▶</button>
+      <input type="range" id="pcSlider" min="0" max="0" step="1" value="0" aria-label="Animation hour">
+    </div>
+    <div class="pc-opz">
+      <span class="seg2 pc-vel" role="group" aria-label="Speed"><button type="button" data-vel="lenta">Slow</button><button type="button" data-vel="normale">Normal</button><button type="button" data-vel="veloce">Fast</button></span>
+      <label class="pc-chk"><input type="checkbox" id="pcLimite" checked> Show snow line</label>
+      <label class="pc-chk"><input type="checkbox" id="pcDiss" checked> Crossfade</label>
+    </div>
+    <p class="small pc-tasti">Keyboard: ← → one hour, space plays or stops.</p>
+  </div>
+  <p class="small" id="pcInfo">Data: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a> (CC BY 4.0).</p>
+  <div class="sec"><h2 class="sh">How to read the map</h2>
+    <p class="note"><b>Blue and purple = snow</b>, <b>pink = snow mixed with rain</b>, <b>green, yellow and red = rain</b>; the more intense the colour, the heavier the precipitation (mm of water per hour). The dashed white line is the <b>snow line</b>: on one side it snows, on the other it rains.</p>
+    <p class="note">The map uses the <b>ICON-2I</b> high-resolution model by ItaliaMeteo-ARPAE (fallbacks: ICON-D2 and ECMWF) on a grid of about 10 km, then smoothed: individual valleys aren't visible and local phenomena may be missed. For a spot, open its page: there you'll find the FreeRide forecast with several models and snow by altitude.</p>
+  </div>
+</main>

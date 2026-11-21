@@ -8,10 +8,11 @@
    Niente DOM qui: lo usano anche le pagine statiche e i test.
    ========================================================= */
 import { state, esc } from "./state.js";
+import { t } from "./i18n.js";
 
 export const NODI = 1.852;                       // 1 nodo = 1,852 km/h
 export const unita = () => state.ventoUnita === "kn" ? "kn" : "kmh";
-export const etichettaUnita = (u = unita()) => u === "kn" ? "nodi" : "km/h";
+export const etichettaUnita = (u = unita()) => u === "kn" ? t("nodi") : "km/h";
 export const inUnita = (kmh, u = unita()) => kmh == null || !isFinite(kmh) ? null : Math.round(u === "kn" ? kmh / NODI : kmh);
 /* valore + unità, per i testi: "48 km/h" / "26 nodi" */
 export const testoVento = (kmh, u = unita()) => kmh == null ? "–" : `${inUnita(kmh, u)} ${etichettaUnita(u)}`;
@@ -44,11 +45,12 @@ const FRECCIA = `<path d="M12 2.5 L18.5 13 L13.4 11.6 L13.4 21.5 L10.6 21.5 L10.
 /* L'icona del vento. dimensione: "mini" (in riga), "cella" (tabelle), "grande" (riquadri).
    opz.nome = false per nasconderlo (la direzione resta nel testo per lettori di schermo) */
 export function ventoIcona(kmh, dir, dimensione = "cella", opz = {}){
-  if(kmh == null || !isFinite(kmh)) return `<span class="vw vw-${dimensione} vw-nd">n.d.</span>`;
+  if(kmh == null || !isFinite(kmh)) return `<span class="vw vw-${dimensione} vw-nd">${t("n.d.")}</span>`;
   const u = unita(), l = livello(kmh), s = settore(dir), val = inUnita(kmh, u);
   const calma = kmh < 5 || !s;
-  const nome = calma ? "Calma" : s.nome;
-  const descr = calma ? `Vento calmo, ${val} ${etichettaUnita(u)}` : `${s.nome}, vento ${l.nome} da ${s.da}, ${val} ${etichettaUnita(u)}${opz.extra ? ", " + opz.extra : ""}`;
+  const nome = calma ? t("Calma") : t(s.nome);
+  const descr = calma ? t("Vento calmo, {v}", {v: `${val} ${etichettaUnita(u)}`})
+    : t("{nome}, vento {liv} da {da}, {v}", {nome: t(s.nome), liv: t(l.nome), da: t(s.da), v: `${val} ${etichettaUnita(u)}`}) + (opz.extra ? ", " + opz.extra : "");
   const freccia = calma ? `<svg class="vw-a" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/></svg>`
     : `<svg class="vw-a" viewBox="0 0 24 24" aria-hidden="true" style="transform:rotate(${Math.round((dir + 180) % 360)}deg)">${FRECCIA}</svg>`;
   return `<span class="vw vw-${dimensione} ${l.cls}" role="img" aria-label="${esc(descr)}" title="${esc(descr)}">${freccia}<b>${val}</b>${dimensione === "mini" ? `<i>${etichettaUnita(u)}</i>` : ""}${opz.nome === false ? "" : `<small>${esc(nome)}</small>`}${opz.extra && dimensione !== "mini" ? `<em>${esc(opz.extra)}</em>` : ""}</span>`;
@@ -57,11 +59,11 @@ export function ventoIcona(kmh, dir, dimensione = "cella", opz = {}){
 /* interruttore km/h ↔ nodi (vicino a ogni dato di vento) */
 export function unitaToggle(){
   const u = unita();
-  return `<span class="vu-t" role="group" aria-label="Unità del vento"><button type="button" data-vu="kmh" class="${u === "kmh" ? "on" : ""}" aria-pressed="${u === "kmh"}">km/h</button><button type="button" data-vu="kn" class="${u === "kn" ? "on" : ""}" aria-pressed="${u === "kn"}">nodi</button></span>`;
+  return `<span class="vu-t" role="group" aria-label="${t("Unità del vento")}"><button type="button" data-vu="kmh" class="${u === "kmh" ? "on" : ""}" aria-pressed="${u === "kmh"}">km/h</button><button type="button" data-vu="kn" class="${u === "kn" ? "on" : ""}" aria-pressed="${u === "kn"}">${t("nodi")}</button></span>`;
 }
 
 /* legenda della scala nell'unità scelta */
 export function legendaVento(){
   const u = unita(), lim = SCALA.slice(1).map(x => x.min);
-  return `<span class="vw-leg">${SCALA.slice(1).map((x, i) => `<span class="${x.cls}">${x.nome} ${i < lim.length - 1 ? `${inUnita(x.min, u)}–${inUnita(lim[i + 1], u)}` : `≥ ${inUnita(x.min, u)}`}</span>`).join("")} <span class="u">${etichettaUnita(u)}</span></span>`;
+  return `<span class="vw-leg">${SCALA.slice(1).map((x, i) => `<span class="${x.cls}">${t(x.nome)} ${i < lim.length - 1 ? `${inUnita(x.min, u)}–${inUnita(lim[i + 1], u)}` : `≥ ${inUnita(x.min, u)}`}</span>`).join("")} <span class="u">${etichettaUnita(u)}</span></span>`;
 }

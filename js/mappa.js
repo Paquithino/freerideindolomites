@@ -4,10 +4,11 @@
    Niente librerie esterne: il sito resta leggero e i test girano senza rete.
    Coordinate: Web Mercator, tasselli 256 px.
    ========================================================= */
+import { t } from "./i18n.js";
 const T = 256;
 export const SFONDO = {
   url: (z, x, y) => `https://${"abc"[(x + y) % 3]}.tile.opentopomap.org/${z}/${x}/${y}.png`,
-  crediti: 'Mappa © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>, SRTM · stile © <a href="https://opentopomap.org" target="_blank" rel="noopener">OpenTopoMap</a> (CC BY-SA)'
+  crediti: () => t('Mappa') + ' © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>, SRTM · ' + t('stile') + ' © <a href="https://opentopomap.org" target="_blank" rel="noopener">OpenTopoMap</a> (CC BY-SA)'
 };
 export const ZMIN = 7, ZMAX = 13;
 
@@ -20,8 +21,8 @@ export const yLat = (y, z) => { const n = Math.PI - 2 * Math.PI * y / (T * 2 ** 
 export function creaMappa(el, opz = {}){
   el.classList.add("mp");
   el.innerHTML = `<div class="mp-tasselli" aria-hidden="true"></div><div class="mp-sopra"></div>
-    <div class="mp-zoom"><button type="button" data-mp="+" aria-label="Avvicina">+</button><button type="button" data-mp="-" aria-label="Allontana">−</button></div>
-    <div class="mp-crediti">${SFONDO.crediti}</div>`;
+    <div class="mp-zoom"><button type="button" data-mp="+" aria-label="${t("Avvicina")}">+</button><button type="button" data-mp="-" aria-label="${t("Allontana")}">−</button></div>
+    <div class="mp-crediti">${SFONDO.crediti()}</div>`;
   const strato = el.querySelector(".mp-tasselli"), sopra = el.querySelector(".mp-sopra");
   const lim = opz.limiti;
   let z = opz.zoom || 8, lat = opz.centro ? opz.centro[0] : 46.5, lon = opz.centro ? opz.centro[1] : 12.2;

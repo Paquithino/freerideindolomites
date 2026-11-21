@@ -1,3 +1,4 @@
+import { avviaBadgeLingua } from "./badge-lingua.js";
 /* Menu a scomparsa per le pagine senza l'app (la guida). */
 const m = document.getElementById("menu"), b = document.getElementById("menuBtn");
 function menu(apri){
@@ -16,3 +17,6 @@ document.addEventListener("click", e => {
   const t = document.getElementById(a.getAttribute("href").slice(1)); if(!t) return;
   e.preventDefault(); t.scrollIntoView(); history.replaceState(null, "", "#" + t.id);
 });
+
+/* badge lingua: la pagina dice qual è il suo percorso italiano (data-percorso sul body) */
+avviaBadgeLingua(document.body.dataset.percorso || "");

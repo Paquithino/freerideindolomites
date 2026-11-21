@@ -65,6 +65,7 @@ test("copertina: un solo h1, pillole delle sezioni con quella attiva, spot con r
 const dir = await mkdtemp(join(tmpdir(), "pagine-"));
 await mkdir(join(dir, "html"), {recursive: true});
 await cp("index.html", join(dir, "index.html")); await cp("html/info.html", join(dir, "html/info.html")); await cp("html/precipitazioni.html", join(dir, "html/precipitazioni.html")); await cp("html/contatti.html", join(dir, "html/contatti.html"));
+await cp("html/en", join(dir, "html/en"), {recursive: true});
 await mkdir(join(dir, "dati"));
 await promisify(execFile)(process.execPath, ["scripts/aggiorna-dati.mjs", "--demo"], {env: {...process.env, OUT_FILE: join(dir, "dati/ultimo.json"), ARCHIVIO_DIR: join(dir, "arch")}});
 const { stdout } = await promisify(execFile)(process.execPath, ["scripts/genera-pagine.mjs", dir], {env: {...process.env, SITO_URL: "https://www.esempio.it/"}});
@@ -76,7 +77,7 @@ test("generatore: una pagina per ogni indirizzo, più guida, 404, sitemap e robo
   for(const r of tutteLeRotte()) assert.ok((await stat(join(dir, r.path, "index.html"))).isFile(), r.path);
   for(const f of ["guida/index.html", "precipitazioni/index.html", "contatti/index.html", "404.html", "sitemap.xml", "robots.txt"]) assert.ok((await stat(join(dir, f))).isFile(), f);
   const sm = await leggi("sitemap.xml");
-  assert.equal((sm.match(/<loc>/g) || []).length, tutteLeRotte().length + 3);
+  assert.equal((sm.match(/<loc>/g) || []).length, (tutteLeRotte().length + 3) * 2, "ogni pagina in italiano e in inglese");
   const ct = await leggi("contatti/index.html");
   assert.match(ct, /"@type":"Person","name":"Francesco Fabbro"/);
   assert.match(ct, /Tutti i diritti riservati/);
@@ -113,6 +114,35 @@ test("generatore: liste di zona con link veri, home con In breve, 404 non indici
   const nf = await leggi("404.html");
   assert.match(nf, /<meta name="robots" content="noindex">/);
   assert.doesNotMatch(nf, /rel="canonical"/);
+});
+
+test("generatore: versione inglese con indirizzi tradotti, hreflang e testi in inglese", async () => {
+  for(const f of ["en/index.html", "en/forecast/index.html", "en/avalanches/index.html", "en/webcams/index.html", "en/spot/cortina/index.html", "en/spot/south-tyrol/index.html".replace("south-tyrol", "alto-adige"),
+    "en/guide/index.html", "en/contact/index.html", "en/precipitation/index.html"]) assert.ok((await stat(join(dir, f))).isFile(), f);
+  const h = await leggi("en/spot/cortina/index.html");
+  assert.match(h, /<html lang="en"/);
+  assert.match(h, /<title>Cortina d&#39;Ampezzo: snow, weather and avalanches for freeride \| FreeRide in Dolomites<\/title>/);
+  assert.match(h, /<link rel="canonical" href="https:\/\/www\.esempio\.it\/en\/spot\/cortina\/"/);
+  assert.match(h, /<link rel="alternate" hreflang="it" href="https:\/\/www\.esempio\.it\/spot\/cortina\/"/);
+  assert.match(h, /<link rel="alternate" hreflang="en" href="https:\/\/www\.esempio\.it\/en\/spot\/cortina\/"/);
+  assert.match(h, /Forecast · next 10 days/);
+  assert.match(h, /href="en\/spot\/arabba\/"/, "link agli altri spot in inglese");
+  assert.match(h, /<a href="en\/forecast\/" data-tab="previsione">Forecast<\/a>/, "menu in inglese");
+  assert.match(h, /class="lang-b"[\s\S]*?href="spot\/cortina\/"[^>]*data-lingua="it"[\s\S]*?href="en\/spot\/cortina\/"[^>]*class="on"/, "badge lingua già scritto");
+  assert.doesNotMatch(h, /Previsioni · prossimi|Dati raccolti<\/h2>/);
+  const it = await leggi("spot/cortina/index.html");
+  assert.match(it, /<link rel="alternate" hreflang="en" href="https:\/\/www\.esempio\.it\/en\/spot\/cortina\/"/);
+  assert.match(it, /<html lang="it"/);
+  const g = await leggi("en/guide/index.html");
+  assert.match(g, /<html lang="en"/);
+  assert.match(g, /<h1>Guide<\/h1>/);
+  assert.match(g, /<link rel="canonical" href="https:\/\/www\.esempio\.it\/en\/guide\/"/);
+  assert.doesNotMatch(g, /"(\.\.\/)+(assets|js|css)\//);
+  const ct = await leggi("en/contact/index.html");
+  assert.match(ct, /All rights reserved/);
+  assert.match(ct, /"jobTitle":"Software engineer"/);
+  const sm = await leggi("sitemap.xml");
+  assert.match(sm, /<loc>https:\/\/www\.esempio\.it\/en\/avalanches\/<\/loc>.*hreflang="it" href="https:\/\/www\.esempio\.it\/valanghe\/"/);
 });
 
 test("generatore: sito in una sottocartella (GitHub Pages)", async () => {
