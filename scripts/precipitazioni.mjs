@@ -70,7 +70,7 @@ export async function scaricaGriglia(modello, fetchFn = fetch, adesso = Date.now
 
 /* opz: {dir (…/dati), sitoUrl, fetchFn, adesso, log, forza, demo} */
 export async function aggiornaPrecipitazioni(opz){
-  const {dir, sitoUrl, fetchFn = fetch, adesso = Date.now(), log = () => {}, forza = false, demo = false} = opz;
+  const {dir, sitoUrl, fetchFn = fetch, adesso = Date.now(), log = () => {}, forza = false, demo = false, attesaPrima = 0} = opz;
   const file = resolve(dir, REL);
   const scrivi = async d => { await mkdir(dirname(file), {recursive: true}); await writeFile(file, JSON.stringify(d)); };
   if(demo){ await scrivi(datiFinti(adesso)); log("precipitazioni: dati dimostrativi"); return {stato: "demo"}; }
@@ -88,6 +88,8 @@ export async function aggiornaPrecipitazioni(opz){
   const corsa = await ultimaCorsa(MODELLI[0].id, fetchFn);
   if(!forza && prima && corsa && prima.corsa === corsa && prima.modello === MODELLI[0].id && eta < 12) return tieni(`corsa ICON-2I delle ${corsa.slice(11, 13)} UTC già scaricata`);
 
+  // il bot ha appena scaricato modelli e quote: aspettiamo che passi il minuto di Open-Meteo (max 600 chiamate al minuto)
+  if(attesaPrima){ log(`precipitazioni: aspetto ${Math.round(attesaPrima / 1000)} s per non superare il limite al minuto di Open-Meteo`); await new Promise(r => setTimeout(r, attesaPrima)); }
   for(const m of MODELLI){
     try{
       const d = await scaricaGriglia(m, fetchFn, adesso);

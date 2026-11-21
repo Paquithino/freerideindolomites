@@ -63,8 +63,23 @@ async function fetchModel(m){
   }
   return null;
 }
-export async function loadModels(){
-  const res = await Promise.all(MODELS.map(fetchModel));
+/* Nel browser i 5 modelli si scaricano insieme. Nel bot (Node) uno alla volta: Open-Meteo conta ogni spot
+   come una chiamata e oltre 600 al minuto risponde "429, troppe richieste". Se un modello non arriva
+   si aspetta che passi il minuto e si riprova una volta. */
+const dorme = ms => new Promise(r => setTimeout(r, ms));
+export async function loadModels(opz = {}){
+  const {unoAllaVolta = typeof window === "undefined", attesa = 65000, pausa = 4000, log = () => {}} = opz;
+  let res;
+  if(!unoAllaVolta) res = await Promise.all(MODELS.map(fetchModel));
+  else{
+    res = [];
+    for(const [i, m] of MODELS.entries()){
+      if(i) await dorme(pausa);
+      let r = await fetchModel(m);
+      if(!r && attesa){ log(`modello ${m.id}: nessuna risposta, riprovo tra ${Math.round(attesa / 1000)} s`); await dorme(attesa); r = await fetchModel(m); }
+      res.push(r);
+    }
+  }
   state.ens = {}; state.ensMemo = {};
   MODELS.forEach((m, i) => { if(res[i]) state.ens[m.id] = res[i]; });
 }

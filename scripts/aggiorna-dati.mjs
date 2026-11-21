@@ -85,6 +85,7 @@ async function caricaCalibrazione(){
 }
 
 let riuso = null;   // orario del meteo riusato, se Open-Meteo non ha risposto
+let modelliScaricati = false;   // in questo giro si sono già fatte molte chiamate a Open-Meteo
 
 async function main(){
   const t0 = Date.now();
@@ -99,12 +100,27 @@ async function main(){
     if(new Date().getUTCHours() % 3 !== 0 && !process.argv.includes("--modelli")){
       const prev = await ultimoPubblicato();
       const eta = prev ? (Date.now() - new Date(prev.aggiornato || prev.generated).getTime()) / 3600e3 : null;
-      if(prev && prev.ens && Object.keys(prev.ens).length && eta < 4){ state.ens = prev.ens; state.ensMemo = {}; modelliRiusati = true; }
+      // si riusano solo se c'erano tutti: se l'ultimo giro ne ha persi alcuni, si riscaricano subito
+      if(prev && prev.ens && MODELS.every(m => prev.ens[m.id]) && eta < 4){ state.ens = prev.ens; state.ensMemo = {}; modelliRiusati = true; }
       // anche la neve per quota segue le corse dei modelli: la riscarichiamo con loro (−1.300 chiamate al giorno)
       if(modelliRiusati && prev.quote){ state.quote = prev.quote; quoteRiusate = true; }
     }
-    const res = await Promise.allSettled([loadWeather(), modelliRiusati ? Promise.resolve() : loadModels(), loadAvalanche(), loadStations(), quoteRiusate ? Promise.resolve() : loadQuote()]);
-    const names = ["meteo", modelliRiusati ? "modelli (riusati, si aggiornano ogni 3 ore)" : "modelli", "valanghe", "stazioni", quoteRiusate ? "quote (riusate, ogni 3 ore)" : "quote"];
+    // modelli e quote uno dopo l'altro (non tutti insieme): così Open-Meteo non risponde "troppe richieste"
+    const modelliPoiQuote = (async () => {
+      if(!modelliRiusati){ modelliScaricati = true; await loadModels({log}); }
+      if(!quoteRiusate){ await new Promise(r => setTimeout(r, modelliRiusati ? 0 : 4000)); await loadQuote(); }
+    })();
+    const res = await Promise.allSettled([loadWeather(), modelliPoiQuote, loadAvalanche(), loadStations()]);
+    const names = ["meteo", (modelliRiusati ? "modelli (riusati, si aggiornano ogni 3 ore)" : "modelli") + " + " + (quoteRiusate ? "quote (riusate)" : "quote"), "valanghe", "stazioni"];
+    // un modello che non ha risposto: si tiene il suo ultimo dato (fino a 12 ore), invece di sparire dal confronto
+    const mancanti = MODELS.filter(m => !(state.ens || {})[m.id]).map(m => m.id);
+    if(mancanti.length && !modelliRiusati){
+      const prev = await ultimoPubblicato();
+      const eta = prev ? (Date.now() - new Date(prev.aggiornato || prev.generated).getTime()) / 3600e3 : null;
+      const ripresi = prev && prev.ens && eta < 12 ? mancanti.filter(id => prev.ens[id]) : [];
+      if(ripresi.length){ state.ens = {...(state.ens || {})}; ripresi.forEach(id => { state.ens[id] = prev.ens[id]; }); state.ensMemo = {}; }
+      log(`modelli mancanti: ${mancanti.join(", ")}` + (ripresi.length ? ` · ripresi dal giro di ${Math.round(eta * 10) / 10} ore fa: ${ripresi.join(", ")}` : " · nessun dato recente da riprendere"));
+    }
     res.forEach((r, i) => log(names[i].padEnd(9), r.status === "fulfilled" ? "ok" : "ERRORE " + (r.reason && r.reason.message)));
     const meteoOk = !!state.wx[SPOTS[0].id], modelliOk = Object.keys(state.ens || {}).length > 0, quoteOk = !!state.quote;
     if(!meteoOk || !modelliOk || !quoteOk){
@@ -149,7 +165,7 @@ async function main(){
   /* ---------- animazione precipitazioni (griglia ogni 3 ore) ---------- */
   try{
     await aggiornaPrecipitazioni({dir: dirname(OUT), sitoUrl: DEMO ? null : process.env.SITO_URL, log, demo: DEMO,
-      forza: process.argv.includes("--precipitazioni") || process.env.FORZA_PRECIPITAZIONI === "1"});
+      forza: process.argv.includes("--precipitazioni") || process.env.FORZA_PRECIPITAZIONI === "1", attesaPrima: modelliScaricati ? 65000 : 0});
   }catch(e){ log("precipitazioni ERRORE", e.message); }
   // copia della calibrazione per il sito quando scarica i dati da solo
   if(state.cal) await writeFile(resolve(dirname(OUT), "calibrazione.json"), JSON.stringify(state.cal));
